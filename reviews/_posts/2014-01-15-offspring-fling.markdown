@@ -2,7 +2,6 @@
 layout: post
 title:  "Offspring Fling"
 date:   2014-01-15 21:00:41
-categories: reviews offspring fling
 ---
 
 ##Wow.

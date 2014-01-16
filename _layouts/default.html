@@ -22,34 +22,14 @@
 
       <div id="wrapper">
 
-          <!-- Sidebar -->
-          <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-              <li class="sidebar-brand"><a href="#">Start Bootstrap</a>
-              </li>
-              <li><a href="#">Dashboard</a>
-              </li>
-              <li><a href="#">Shortcuts</a>
-              </li>
-              <li><a href="#">Overview</a>
-              </li>
-              <li><a href="#">Events</a>
-              </li>
-              <li><a href="#">About</a>
-              </li>
-              <li><a href="#">Services</a>
-              </li>
-              <li><a href="#">Contact</a>
-              </li>
-            </ul>
-          </div>
+          {% include sidebar.html %}
 
           <!-- Page content -->
           <div id="page-content-wrapper">
             <div class="content-header">
                 <h1>
-                    <a id="menu-toggle" href="#" class="btn btn-default"><i class="icon-reorder"></i></a>
-                    Simple Sidebar
+                    <a id="menu-toggle" href="#"><span class="right-caret"></span></a> 
+                    {{ page.title }}
                 </h1>
             </div>
             <!-- Keep all page content within the page-content inset div! -->
@@ -67,6 +47,7 @@
       $("#menu-toggle").click(function(e) {
           e.preventDefault();
           $("#wrapper").toggleClass("active");
+          $(".right-caret").toggleClass("flip");
       });
       </script>
 

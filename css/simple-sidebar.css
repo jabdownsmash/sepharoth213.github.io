@@ -1,16 +1,17 @@
 #wrapper {
-  padding-left: 250px;
+  padding-left: 220px;
   transition: all 0.4s ease 0s;
 }
 
 #sidebar-wrapper {
-  margin-left: -250px;
-  left: 250px;
-  width: 250px;
+  margin-left: -220px;
+  left: 220px;
+  width: 220px;
   background: #000;
   position: fixed;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1000;
   transition: all 0.4s ease 0s;
 }
@@ -19,18 +20,41 @@
   width: 100%;
 }
 
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  margin-right: 30px;
+  padding: 0;
+  left: -20px;
+}
+
+.sidebar-list li{
+  margin-top: 10px;
+}
+
 .sidebar-nav {
   position: absolute;
   top: 0;
-  width: 250px;
+  width: 220px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .sidebar-nav li {
-  line-height: 40px;
-  text-indent: 20px;
+  text-indent: 0px;
+  margin-top: 20px;
+  padding-left: 10px;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+
+  /*
+   Introduced in IE 10.
+   See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+  */
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .sidebar-nav li a {
@@ -77,6 +101,23 @@
   display: inline-block;
 }
 
+.right-caret {
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    border-left: 4px solid #000000;
+    border-right: 4px solid transparent;
+    display: inline-block;
+    height: 0;
+    opacity: 0.8;
+    width: 0;
+    vertical-align: 10%;
+}
+
+.right-caret.flip {
+    border-right: 4px solid #000000;
+    border-left: 4px solid transparent;
+}
+
 #menu-toggle {
   display: none;
 }
@@ -97,12 +138,12 @@
 
 #wrapper.active {
   position: relative;
-  left: 250px;
+  left: 220px;
 }
 
 #wrapper.active #sidebar-wrapper {
-  left: 250px;
-  width: 250px;
+  left: 220px;
+  width: 220px;
   transition: all 0.4s ease 0s;
 }
 

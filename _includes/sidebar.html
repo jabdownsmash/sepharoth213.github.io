@@ -1,21 +1,33 @@
+<!-- Sidebar -->
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+      <li class="sidebar-brand" style="margin-top: 0"><a href="/">hi i'm aaron</a></li>
+      {% for item in site.navbar_items %}
+        {% if item.dropdown == 'true' %}
+            <li>
+                <!-- <button type="button" class="btn" data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>
+                    {{item.title}} <span class="caret"></span>
+                </button> -->
+                <a data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>{{item.title}} <span class="caret"> </a>
+                <ul class="sidebar-list">
+                    <div id={{item.title}} class="collapse out">
+                      {% for dropdown_item in item.dropdown_items %}
+                        <li><a href='#'>{{dropdown_item.title}} </a></li>
+                      {% endfor %}
+                    </div>
+                </ul>
+            </li>
 
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand"><a href="#">Start Bootstrap</a>
-                </li>
-                <li><a href="#">Dashboard</a>
-                </li>
-                <li><a href="#">Shortcuts</a>
-                </li>
-                <li><a href="#">Overview</a>
-                </li>
-                <li><a href="#">Events</a>
-                </li>
-                <li><a href="#">About</a>
-                </li>
-                <li><a href="#">Services</a>
-                </li>
-                <li><a href="#">Contact</a>
-                </li>
-            </ul>
-        </div>
+        {% else %}
+          {% if item.name == page.name %}
+            <button type="button" class="btn btn-danger" data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>
+                {{item.title}}
+            </button>
+            <li class="active"><a href={{ site.baseurl | append:item.link }}>{{item.title}}</a></li>
+          {% else %}
+            <li><a href={{ site.baseurl | append:item.link }}>{{item.title}}</a></li>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+</div>
