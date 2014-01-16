@@ -3,42 +3,72 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <!-- <meta name="description" content=""> -->
+        <!-- <meta name="author" content=""> -->
         <title>{{ page.title }}</title>
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- syntax highlighting CSS -->
         <link rel="stylesheet" href="/css/syntax.css">
 
         <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/main.css">
+        <!-- <link rel="stylesheet" href="/css/main.css"> -->
+
+        <link href="/css/bootstrap.css" rel="stylesheet">
+        <link href="/css/simple-sidebar.css" rel="stylesheet">
 
     </head>
     <body>
 
-        <div class="site">
-          <div class="header">
-            <h1 class="title"><a href="/">{{ site.name }}</a></h1>
-            <a class="extra" href="/">home</a>
+      <div id="wrapper">
+
+          <!-- Sidebar -->
+          <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+              <li class="sidebar-brand"><a href="#">Start Bootstrap</a>
+              </li>
+              <li><a href="#">Dashboard</a>
+              </li>
+              <li><a href="#">Shortcuts</a>
+              </li>
+              <li><a href="#">Overview</a>
+              </li>
+              <li><a href="#">Events</a>
+              </li>
+              <li><a href="#">About</a>
+              </li>
+              <li><a href="#">Services</a>
+              </li>
+              <li><a href="#">Contact</a>
+              </li>
+            </ul>
           </div>
 
-          {{ content }}
-
-          <div class="footer">
-            <div class="contact">
-              <p>
-                Your Name<br />
-                What You Are<br />
-                you@example.com
-              </p>
+          <!-- Page content -->
+          <div id="page-content-wrapper">
+            <div class="content-header">
+                <h1>
+                    <a id="menu-toggle" href="#" class="btn btn-default"><i class="icon-reorder"></i></a>
+                    Simple Sidebar
+                </h1>
             </div>
-            <div class="contact">
-              <p>
-                <a href="https://github.com/yourusername">github.com/yourusername</a><br />
-                <a href="https://twitter.com/yourusername">twitter.com/yourusername</a><br />
-              </p>
+            <!-- Keep all page content within the page-content inset div! -->
+            <div class="page-content inset">
+                {{ content }}
             </div>
           </div>
-        </div>
+
+      </div>
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="/js/bootstrap.min.js"></script>
+      <!-- Custom JavaScript for the Menu Toggle -->
+      <script>
+      $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("active");
+      });
+      </script>
 
     </body>
 </html>
