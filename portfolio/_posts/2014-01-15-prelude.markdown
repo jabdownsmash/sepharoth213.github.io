@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Prelude"
+date:   2013-01-31
+name: "prelude"
+abstract: "The very first game I ever really produced. I sent this in along with my application to Simon's Rock."
+---
+
+####I want to see it!
+
+[This](https://crossword-solver.googlecode.com/files/prelude-final.exe) is the binary I distributed when I finished (it's a self extracting archive), but the problem is it's locked into fullscreen at a couple really specific resolutions, and I only recently found the source. Maybe I can get around to building it again, but I'll most likely just end up porting it or releasing a new something based on it. There's a video of it [here](https://www.youtube.com/watch?v=zCgaH-z4T6U).
+
+####What's it like?
+
+The idea is that it's just a normal platformer, but you can't control yourself in midair. The only thing you can do is double jump, which allows you to augment your horizontal momentum in midar. Double jumping forwards allows you to increase your speed by a little bit.  
+The coolest bit is that if you hit a wall, you can chose to either retain some momentum inwards towards the wall, stop your momentum entirely, or bounce off of the wall.
+
+There's some pretty clever level design in there, though it's really very unpolished and I can't even get it to run on most computers.

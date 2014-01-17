@@ -6,11 +6,6 @@ name: "haxel"
 abstract: "A pseudo-low-level framework for Haxe utilizing OpenFL to try to bring easy to use tools like pygame to the language."
 ---
 
-####What it is
+####What is it? 
 
-Simple thing.
-
-####Here it is
-
-on [GitHub](https://github.com/sepharoth213/haxel)
-the [website](http://sepharoth213.github.io/haxel)
+For more information check out the [haxel website](http://sepharoth213.github.io/haxel) I made to go along with it. It was the prototype for this website. The source is available on my github page [here](https://github.com/sepharoth213/haxel).

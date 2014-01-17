@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Prelude Remake"
+date:   2013-01-31
+name: "prelude"
+abstract: "Prelude was the first game I ever made, and it's completely unplayable."
+---
+
+####So?
+
+I'll either make a redux or a remake. If you want to know more, check out the entry in my portfolio.

@@ -1,0 +1,19 @@
+---
+layout: post
+title:  "Synthepyzer"
+date:   2014-01-29
+name: "synthepyzer"
+abstract: "The fruit of HackPrinceton 2013, done with Kevin Leutzinger, Jody Leonard, and Harrison Gregg."
+---
+
+####What is it?
+
+It's a synthesizer/sequencer that is written completely in Python. It can do some stuff, it's all in these two videos [here](https://www.youtube.com/watch?v=mNen0qSmvP8) and [here](https://www.youtube.com/watch?v=T4Q5yzpT2dQ).
+
+####HackPrinceton?
+
+It was a super cool 48 hour hackathon. They gave us food and everything, though they paid for our transportation using an incredibly stupid app called [Venmo](https://venmo.com/). At least they paid for it.
+
+####Can I download it?
+
+Why would you want to do that? You wouldn't. But [here](https://www.dropbox.com/s/96l8v37nv531vlf/real-synthepyzer.zip) it is anyway. I think. I'll put it onto GitHub eventually.

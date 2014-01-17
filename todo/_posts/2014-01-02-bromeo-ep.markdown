@@ -1,0 +1,13 @@
+---
+layout: post
+title:  "Bromeo EP"
+date:   2014-01-30
+name: "bromeoep"
+abstract: "Bromeo EP is the working title for a set of small games focused on musical experiences."
+---
+
+####What kind of musical experiences?
+
+I wanted to combine the idea of episodic releases with the traditional EP release system the music industry has had for decades and release a bunch of games under the same 'EP,' which all would be focused on a single song.
+
+The entire project was inspired by [Keyboard Drumset Fucking Werewolf](http://cactusquid.blogspot.com/2011/10/keyboard-drumset-fucking-werewolf.html) -- which is still my favorite Cactus game, much more so than Hotline Miami -- and [Kevin's game](http://kevinleutzinger.com/game). You have to get past the 30 second mark to understand why Kevin's game is worth playing, but it's pretty difficult. I'd suggest giving up after that point.
