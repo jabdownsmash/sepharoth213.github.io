@@ -134,7 +134,7 @@ html {
 }
 
 .content-header {
-  height: 65px;
+  /*height: 65px;*/
   line-height: 65px;
   font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
