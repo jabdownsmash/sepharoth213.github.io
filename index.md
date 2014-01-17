@@ -9,6 +9,6 @@ Behind the to do list button you'll find a list of project ideas and works in pr
 
 The what I've done page holds a portfolio of things I've created.
 
-If you are looking for more resume-esque type stuff, if you want to get a hold of me, or if you are interested in me as a person, there's the about me page.
+If you are looking for more resume-esque stuff, if you want to get a hold of me, or if you are interested in me as a person, there's the about me page.
 
 Lastly, if you're confused about all of this, hit the triangle up at the top, next to welcome. It'll all make sense then.
