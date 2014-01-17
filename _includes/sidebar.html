@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
-      <li class="sidebar-brand" style="margin-top: 0"><a href="/">hi i'm aaron</a></li>
+      <li class="sidebar-brand"><a href="/">hi i'm aaron</a></li>
       {% include categoryrecent.html id="blog" title="recent blog posts" posts=site.categories.blog %}
       {% include categoryrecent.html id="review" title="recent reviews" posts=site.categories.reviews %}
       {% for item in site.navbar_items %}
@@ -19,7 +19,6 @@
                       </div>
                   </ul>
               </li>
-
           {% else %}
             {% if item.name == page.name %}
               <li class="active"><a href="{{ site.baseurl }}/{{ item.name }}">{{item.title}}</a></li>

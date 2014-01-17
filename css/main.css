@@ -48,11 +48,11 @@ html {
   overflow-x: hidden;
   z-index: 1000;
   transition: all 0.4s ease 0s;
+  font-family: 'Nunito', sans-serif;
 }
 
 #page-content-wrapper {
   width: 100%;
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .active {
@@ -82,18 +82,12 @@ html {
 
 .sidebar-nav li {
   text-indent: 0px;
-  font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
   margin-top: 20px;
   padding-left: 10px;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
-
-  /*
-   Introduced in IE 10.
-   See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-  */
   -ms-user-select: none;
   user-select: none;
 }
@@ -119,6 +113,7 @@ html {
   height: 65px;
   line-height: 60px;
   font-size: 18px;
+  margin-top: 0
 }
 
 .sidebar-nav > .sidebar-brand a {
@@ -134,7 +129,6 @@ html {
   /*height: 65px;*/
   line-height: 65px;
   text-transform: lowercase;
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .content-header h1 {
@@ -142,7 +136,32 @@ html {
   margin-left: 20px;
   line-height: 65px;
   display: inline-block;
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-family: "helvetica neue", sans-serif;
+}
+
+.inset {
+  padding: 20px;
+  padding-right: 100px;
+  font-family: "helvetica neue", sans-serif;
+}
+.inset2 {
+  padding: 20px;
+}
+
+.inset h4 {
+  font-family: "helvetica neue", sans-serif;
+}
+
+.inset h3 {
+  font-family: "helvetica neue", sans-serif;
+}
+
+.inset h5 {
+  font-family: "helvetica neue", sans-serif;
+}
+
+#menu-toggle {
+  display: none;
 }
 
 .right-caret {
@@ -162,25 +181,8 @@ html {
     border-left: 4px solid transparent;
 }
 
-#menu-toggle {
-  display: none;
-}
-
-.inset {
-  padding: 20px;
-  padding-right: 100px;
-}
-.inset2 {
-  padding: 20px;
-}
-
-h1, h2, h3, h4 ,h5 {
+h1, h2, h3, h4{
   text-transform: lowercase;
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
-}
-
-p {
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 @media (max-width:767px) {
@@ -192,7 +194,6 @@ p {
 
   #sidebar-wrapper {
     left: 0;
-    font-family: 'Nunito', sans-serif;
     text-transform: lowercase;
   }
 
