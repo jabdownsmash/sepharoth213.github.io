@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: dynamo
 title: to do list
 name: todo
 ---
 
- - this list
+{% include dynamo.html posts=site.categories.todo %}
