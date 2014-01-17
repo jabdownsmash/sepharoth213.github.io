@@ -28,9 +28,7 @@ html {
 }
  
 ::-webkit-scrollbar-thumb {
-    /*background: rgba(100,100,100,1); */
     background-color: #555555;
-    /*border: 2px solid #0000;*/
 }
 
 
@@ -58,7 +56,6 @@ html {
 }
 
 .page-content{
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .active {
@@ -88,6 +85,7 @@ html {
 
 .sidebar-nav li {
   text-indent: 0px;
+  font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
   margin-top: 20px;
   padding-left: 10px;
@@ -138,6 +136,7 @@ html {
 .content-header {
   height: 65px;
   line-height: 65px;
+  font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
 }
 
@@ -173,6 +172,35 @@ html {
   padding: 20px;
 }
 
+h1 {
+  text-transform: lowercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+h2 {
+  text-transform: lowercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+h3 {
+  text-transform: lowercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+h4 {
+  text-transform: lowercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+h5 {
+  text-transform: lowercase;
+  font-family: 'Nunito', sans-serif;
+}
+
+p {
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+}
+
 @media (max-width:767px) {
 
 #wrapper {
@@ -181,6 +209,7 @@ html {
 
 #sidebar-wrapper {
   left: 0;
+  font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
 }
 
