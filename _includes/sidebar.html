@@ -2,8 +2,8 @@
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
       <li class="sidebar-brand" style="margin-top: 0"><a href="/">hi i'm aaron</a></li>
-      {% include categoryrecent.html id="review" title="recent reviews" posts=site.categories.reviews %}
       {% include categoryrecent.html id="blog" title="recent blog posts" posts=site.categories.blog %}
+      {% include categoryrecent.html id="review" title="recent reviews" posts=site.categories.reviews %}
       {% for item in site.navbar_items %}
         {% if item.spacer == 'true' %}
           <br/><hr>
