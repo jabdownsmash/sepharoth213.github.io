@@ -25,5 +25,5 @@ This will make more sense in a bit.
 
 This is it. This is the huge, glaring problem. Where do I start?
 
-The 'levels' are framed by the border around the screen, and are marred by levels that are still too big for the screen space used by them. This is where the controls really just push the game deeper into the hole that it's in: each puzzle can be solved in the first second you spend looking at it, but you have to spend the rest of the time executing the level. However, the platforming bits of the puzzles aren't interesting or challenging, and whenever they are challenging 
+The 'levels' are framed by the border around the screen, and are marred by levels that are still too big for the screen space used by them. This is where the controls really just push the game deeper into the hole that it's in: each puzzle can be solved in the first second you spend looking at it, but you have to spend the rest of the time executing the level. However, the platforming bits of the puzzles aren't interesting or challenging, and whenever they are challenging they're just frustrating.
 
