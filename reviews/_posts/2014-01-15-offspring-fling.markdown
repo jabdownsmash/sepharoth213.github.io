@@ -4,12 +4,7 @@ title:  "Offspring Fling"
 date:   2014-01-15 21:00:41
 ---
 
-##Wow.
-
-I'm going to be honest, this game is awful. Like, really just ugh.
-
-###Alright, fine, why?
-
+I'm going to be honest, this game is awful. Like, really bad.
 There are multiple points of contention here, let's do a nice little breakdown.
 
 ####The Concept
