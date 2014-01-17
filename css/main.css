@@ -133,7 +133,6 @@ html {
 .content-header {
   /*height: 65px;*/
   line-height: 65px;
-  font-family: 'Nunito', sans-serif;
   text-transform: lowercase;
 }
 
@@ -142,7 +141,6 @@ html {
   margin-left: 20px;
   line-height: 65px;
   display: inline-block;
-  font-family: 'Nunito', sans-serif;
 }
 
 .right-caret {
