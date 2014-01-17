@@ -53,9 +53,7 @@ html {
 
 #page-content-wrapper {
   width: 100%;
-}
-
-.page-content{
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .active {
@@ -179,7 +177,7 @@ html {
 
 h1, h2, h3, h4 ,h5 {
   text-transform: lowercase;
-  font-family: 'Nunito', sans-serif;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 p {
