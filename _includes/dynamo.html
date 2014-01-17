@@ -2,10 +2,9 @@
     <div class="row">
         <div class="col-sm-12">
             {% for post in include.posts %}
-                <div class="col-md-12 col-lg-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <a href="#" class="pull-right" data-toggle="collapse" data-target="#{{post.name}}">show/hide</a>
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                    <div class="panel panel-default" >
+                        <div class="panel-heading" data-toggle="collapse" data-target="#{{post.name}}">
                             <h3>{{post.title}}</h3>
                         </div>
                         <div class="panel-body">
