@@ -134,6 +134,7 @@ html {
   /*height: 65px;*/
   line-height: 65px;
   text-transform: lowercase;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .content-header h1 {
@@ -141,6 +142,7 @@ html {
   margin-left: 20px;
   line-height: 65px;
   display: inline-block;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
 }
 
 .right-caret {
