@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: dynamo
 title: what i've done
 name: portfolio
 ---
 
-not much yet
+{% include dynamo.html posts=site.categories.portfolio %}

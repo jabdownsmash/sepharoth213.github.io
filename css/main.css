@@ -170,29 +170,13 @@ html {
 
 .inset {
   padding: 20px;
+  padding-right: 100px;
+}
+.inset2 {
+  padding: 20px;
 }
 
-h1 {
-  text-transform: lowercase;
-  font-family: 'Nunito', sans-serif;
-}
-
-h2 {
-  text-transform: lowercase;
-  font-family: 'Nunito', sans-serif;
-}
-
-h3 {
-  text-transform: lowercase;
-  font-family: 'Nunito', sans-serif;
-}
-
-h4 {
-  text-transform: lowercase;
-  font-family: 'Nunito', sans-serif;
-}
-
-h5 {
+h1, h2, h3, h4 ,h5 {
   text-transform: lowercase;
   font-family: 'Nunito', sans-serif;
 }
@@ -203,33 +187,34 @@ p {
 
 @media (max-width:767px) {
 
-#wrapper {
-  padding-left: 0;
-}
+  #wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
 
-#sidebar-wrapper {
-  left: 0;
-  font-family: 'Nunito', sans-serif;
-  text-transform: lowercase;
-}
+  #sidebar-wrapper {
+    left: 0;
+    font-family: 'Nunito', sans-serif;
+    text-transform: lowercase;
+  }
 
-#wrapper.active {
-  position: relative;
-  left: 220px;
-}
+  #wrapper.active {
+    position: relative;
+    left: 220px;
+  }
 
-#wrapper.active #sidebar-wrapper {
-  left: 220px;
-  width: 220px;
-  transition: all 0.4s ease 0s;
-}
+  #wrapper.active #sidebar-wrapper {
+    left: 220px;
+    width: 220px;
+    transition: all 0.4s ease 0s;
+  }
 
-#menu-toggle {
-  display: inline-block;
-}
+  #menu-toggle {
+    display: inline-block;
+  }
 
-.inset {
-  padding: 15px;
-}
+  .inset {
+    padding: 15px;
+  }
 
 }
