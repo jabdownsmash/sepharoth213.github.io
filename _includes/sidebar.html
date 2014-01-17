@@ -2,30 +2,30 @@
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
       <li class="sidebar-brand" style="margin-top: 0"><a href="/">hi i'm aaron</a></li>
+      {% include categoryrecent.html id="review" title="recent reviews" posts=site.categories.reviews %}
+      {% include categoryrecent.html id="blog" title="recent blog posts" posts=site.categories.blog %}
       {% for item in site.navbar_items %}
-        {% if item.dropdown == 'true' %}
-            <li>
-                <!-- <button type="button" class="btn" data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>
-                    {{item.title}} <span class="caret"></span>
-                </button> -->
-                <a data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>{{item.title}} <span class="caret"> </a>
-                <ul class="sidebar-list">
-                    <div id={{item.title}} class="collapse out">
-                      {% for dropdown_item in item.dropdown_items %}
-                        <li><a href='#'>{{dropdown_item.title}} </a></li>
-                      {% endfor %}
-                    </div>
-                </ul>
-            </li>
-
+        {% if item.spacer == 'true' %}
+          <br/><hr>
         {% else %}
-          {% if item.name == page.name %}
-            <button type="button" class="btn btn-danger" data-toggle="collapse" data-target={{ item.title | prepend: '#'}}>
-                {{item.title}}
-            </button>
-            <li class="active"><a href={{ site.baseurl | append:item.link }}>{{item.title}}</a></li>
+          {% if item.dropdown == 'true' %}
+              <li>
+                  <a data-toggle="collapse" data-target="{{ item.title | prepend: '#'}}">{{item.title}} <span class="caret"> </a>
+                  <ul class="sidebar-list">
+                      <div id="{{item.title}}" class="collapse out">
+                        {% for dropdown_item in item.dropdown_items %}
+                          <li><a href='#'>{{dropdown_item.title}} </a></li>
+                        {% endfor %}
+                      </div>
+                  </ul>
+              </li>
+
           {% else %}
-            <li><a href={{ site.baseurl | append:item.link }}>{{item.title}}</a></li>
+            {% if item.name == page.name %}
+              <li class="active"><a href="{{ site.baseurl }}/{{ item.name }}">{{item.title}}</a></li>
+            {% else %}
+              <li><a href="{{ site.baseurl }}/{{ item.name }}">{{item.title}}</a></li>
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endfor %}

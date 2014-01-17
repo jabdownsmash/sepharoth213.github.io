@@ -1,0 +1,15 @@
+<li>
+<a data-toggle="collapse" data-target="#{{include.id}}">{{include.title}}<span class="caret"> </a>
+<ul class="sidebar-list">
+  <div id="{{include.id}}" class="collapse out">
+    {% for post in include.posts %}
+      {% if forloop.index > 5 %}
+        {% break %}
+      {% endif %}
+      <li>
+        <a href="{{ post.url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </div>
+</ul>
+</li>
