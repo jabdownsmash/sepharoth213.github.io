@@ -3,7 +3,7 @@ layout: post
 title:  "Sequence Based Game"
 date:   2014-01-15
 name: "sequence"
-abstract: "Sequence is one of my favorite games, mostly because if its incredible difficulty potential."
+abstract: "Sequence is one of my favorite games, mostly because of its incredible difficulty potential."
 ---
 
 ####What's Sequence?
