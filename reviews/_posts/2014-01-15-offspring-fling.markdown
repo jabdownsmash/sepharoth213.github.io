@@ -4,26 +4,28 @@ title:  "Offspring Fling"
 date:   2014-01-15 21:00:41
 ---
 
-I'm going to be honest, this game is awful. Like, really bad.
-There are multiple points of contention here, let's do a nice little breakdown.
+I played Offspring Fling for about 2 hours, only because I wanted to get the rest of the Steam cards I needed for it. I dreaded those two hours because I knew why I never earned all of those cards in the first place.
 
-####The Concept
+Offspring Fling is a really bad game.
 
-Offspring Fling has a pretty simple concept: you're a motherly little chicken duck thing who lost all of her little chick duckling things. Go get 'em, tiger. Except they can't move on their own. Not only can they not move on their own, they're apparently as heavy as stones of the same size, and they get eaten up at the touch of a gator or a bee, of which there are many in the odd enclosed spaces that you open doors to move between.
+####The Amazingly Compelling Story
 
-I guess you're thinking "just suspend disbelief here, seeing as there is 0 story obviously' no I can't really. Preceding the game, there's a slideshow that shows you just how all of the mother chicken duck lost all of her little chicklings: they ran away. Ugh no that. No.
+When you started up, you're greeted with the cheery Offspring Fling music and the wonderfully done Offspring Fling art style. There's a nice slideshow that is the entirety of the exposition in Offspring Fling: you're the mother of a bunch of baby whatever-you-ares and a big, bad dinosaur looking thing scared them all away into hiding. Now you have to go find them all.
 
-On to more legitimate complaints.
+I mean, sure, I'm not supposed to pay much attention to the story in a game like this, but when the entire game is trying to ride off of the charm of the protagonist and her adorable children, you'd think that there would be something that would make me care about them.
 
-####Controls
+But instead, the little babies sit like rocks, waiting for their heroic mother to come and get them. The same dinosaur that scared them away they now allow to not only approach but chomp away at the helpless little babies. Now that's not right at all.
 
-"Wow Aaron, you're going to complain about the controls?" Yeah, I am. The problem is that they're too good. Sounds stupid, but with tight controls and well built physics, the game waves its lost potential around your face every time you press a button.
+The rocks metaphor goes even further, though: a bit into the game, Offspring Fling introduces actual rocks that, amazingly, have the exact same properties as the babies: weight, size, ability to be thrown at enemies to stun them. You know, why didn't she just chuck one of her babies at the one dinosaur that scared all the hundreds of them away? She has to deal with a lot more than one dinosaur now.
 
-This will make more sense in a bit.
+Then there's the whole magic door thing and the fact that the babies are in precarious and impossible to reach places.
 
-####Puzzles and Level Design
+####The actual issue with Offspring Fling
 
-This is it. This is the huge, glaring problem. Where do I start?
+Babies or rocks, if the game had shipped with a more engaging storyline, I don't think i would have cared. The real problem is the level design.
 
-The 'levels' are framed by the border around the screen, and are marred by levels that are still too big for the screen space used by them. This is where the controls really just push the game deeper into the hole that it's in: each puzzle can be solved in the first second you spend looking at it, but you have to spend the rest of the time executing the level. However, the platforming bits of the puzzles aren't interesting or challenging, and whenever they are challenging they're just frustrating.
+Every level is like a single gimmick built into a little frame the size of the screen, or sometimes a frame a little bit bigger than the screen. There's the wonderfully clever level built off of the fact that two offsprings can fit on one game tile entitled 'Room for Two' for example. This would be fine if that wasn't how every level went. I'd say 80% to 90% of the levels are solvable by a single glance, and it just becomes a chore to go through them all.
 
+The platforming bits aren't really very interesting either. There are just jumps that you have to make to solve the puzzles, and really annoying things you have to do if you want to beat the dev times. There's no jump buffer for pressing the jump button before you hit the ground and it's one of the more incredibly annoying things I've ever had to deal with.
+
+So what happens when a puzzle platformer takes the worst of both puzzling and platforming? This game. If you were thinking of spending money on Offspring Fling, don't. Just go play Yoshi's Island instead. It's a much more exciting puzzle action platformer with more adorable graphics, better cheery music, a storyline that is both plausible and actually makes you care about baby Mario, and above all, much, much better gameplay.
