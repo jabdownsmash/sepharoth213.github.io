@@ -3,7 +3,7 @@ layout: post
 title:  "ChromaCobra"
 date:   2014-01-28
 name: "chromacobra"
-abstract: "A shelved prototype of an interesting take on Snake"
+abstract: "A shelved prototype of an interesting take on Snake."
 ---
 
 ####Sounds dumb.
