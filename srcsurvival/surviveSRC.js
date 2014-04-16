@@ -1,6 +1,6 @@
 //http://code.createjs.com/soundjs-0.5.0.min.js
 // WIN AT > 157
-var thisURL = 'http://localhost:8000/srcsurvival'
+var thisURL = 'http://sepharoth213.github.io/srcsurvival'
 var rotation = false;
 var cTime;
 var startTime = Date.now();
@@ -255,8 +255,8 @@ Game.update = function() {
         FB.ui(
           {
            method: 'feed',
-           name: 'I lasted ' + document.getElementById('soundEfx') + ' before...',
-           caption: bigmessage,
+           caption: 'I lasted ' + document.getElementById('soundEfx') + ' seconds in Survive SRC!',
+           name: names[Game.enemies[i].randPic] +" "+actions[action]+" me.",
            description: (
               'dis game is leet'
            ),
