@@ -158,30 +158,30 @@ function update() {
         doubleJumped = true;
     }
     
-    if (cursors.up.justPressed && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
         player.body.velocity.y = -350;
-        // FB.Event.subscribe('auth.authResponseChange', function(response) {
-        //     if (response.status === 'connected') {
-        //       console.log('Logged in');
-        //     } else {
-        //             FB.login(function(){
-        //          FB.api('/me/feed', 'post', {message: 'Hello, world!'});
-        //         }, {scope: 'publish_actions'});
-        //     }
-        //   });
+        FB.Event.subscribe('auth.authResponseChange', function(response) {
+            if (response.status === 'connected') {
+              console.log('Logged in');
+            } else {
+                    FB.login(function(){
+                 FB.api('/me/feed', 'post', {message: 'Hello, world!'});
+                }, {scope: 'publish_actions'});
+            }
+          });
 
     }
-    else if (cursors.up.justPressed && !doubleJumped)
-    {
-        player.body.velocity.y = -350;
-        doubleJumped = true;
-    }
+    // else if (cursors.up.justPressed && !doubleJumped)
+    // {
+    //     player.body.velocity.y = -350;
+    //     doubleJumped = true;
+    // }
 
-    if (cursors.down.justPressed)
-    {
-        player.body.velocity.y = 600;
-    }
+    // if (cursors.down.justPressed)
+    // {
+    //     player.body.velocity.y = 600;
+    // }
 
 }
 
