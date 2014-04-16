@@ -1,6 +1,9 @@
 //http://code.createjs.com/soundjs-0.5.0.min.js
 // WIN AT > 157
 var thisURL = 'http://sepharoth213.github.io/srcsurvival'
+var lastScore = -1;
+var deathPost = '';
+var deathPic = '';
 var rotation = false;
 var cTime;
 var startTime = Date.now();
@@ -236,11 +239,38 @@ function isBigEnough(element) {
   return element.x > -element.size;
 }
 
+function shareLastDeath() {
+  if(lastScore > 0)
+  {
+    FB.ui(
+      {
+       method: 'feed',
+       caption: 'I lasted ' + lastScore + ' seconds in Survive SRC!',
+       name: deathPost,
+       description: (
+          'Survive SRC: can you survive the onslaught of SRC students?'
+       ),
+       link: thisURL,
+       picture: deathPic
+      },
+      function(response) {
+        if (response && response.post_id) {
+          alert('Post was published.');
+        } else {
+          alert('Post was not published.');
+        }
+      }
+    );
+  }
+}
+
 Game.update = function() {
     score += 1;
   for (var i = 0; i < Game.enemies.length; i++) {
     Game.enemies[i].update()
     if (hitPlayer(Game.enemies[i])){
+      lastScore = document.getElementById('soundEfx').currentTime;
+      document.getElementById('soundEfx').currentTime = 0;
       if(document.getElementById('soundEfx').currentTime > hiScore)
         hiScore = document.getElementById('soundEfx').currentTime;
       console.log(hiScore);
@@ -252,26 +282,8 @@ Game.update = function() {
         bigmessage = names[Game.enemies[i].randPic] +" "+actions[action]+" you.";
         lastDeathMessage = bigmessage;
         if(names[Game.enemies[i].randPic] == "Kevin"){bigmessage = "Kevin made this game"};
-        FB.ui(
-          {
-           method: 'feed',
-           caption: 'I lasted ' + document.getElementById('soundEfx').currentTime + ' seconds in Survive SRC!',
-           name: names[Game.enemies[i].randPic] +" "+actions[action]+" me.",
-           description: (
-              'dis game is leet'
-           ),
-           link: thisURL,
-           picture: deadpic.src
-          },
-          function(response) {
-            if (response && response.post_id) {
-              alert('Post was published.');
-            } else {
-              alert('Post was not published.');
-            }
-          }
-        );
-      document.getElementById('soundEfx').currentTime = 0;
+        deathPost = names[Game.enemies[i].randPic] +" "+actions[action]+" me.";
+        deathPic = deadpic.src;
       Game.enemies = []
       maxEnemy = 0;
       //Game.context.fillStyle = "purple";
