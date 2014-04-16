@@ -1,0 +1,238 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 9</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '563827220401562',
+          status     : true,
+          xfbml      : true
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      // FB.login(function(){}, {scope: 'publish_actions'});
+    </script>
+<div class="fb-like" data-send="true" data-width="450" data-show-faces="true"></div>
+</body>
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script> -->
+
+
+
+<script>
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    game.load.image('sky', 'assets/bg.png');
+    game.load.image('square', 'assets/square.png');
+    game.load.image('block', 'assets/block.png');
+    // game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+
+}
+
+var player;
+var doubleJumped;
+var platforms;
+var cursors;
+
+// var stars;
+// var score = 0;
+// var scoreText;
+
+function create() {
+
+    //  We're going to be using physics, so enable the Arcade Physics system
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // //  A simple background for our game
+    var bg = game.add.sprite(0, 0, 'sky');
+    bg.scale.setTo(3,2);
+
+    platforms = game.add.group();
+    platforms.enableBody = true;
+    var ground = platforms.create(0, game.world.height - 64, 'block');
+    ground.scale.setTo(50, 2);
+    ground.body.immovable = true;
+
+    var ledge = platforms.create(400, 400, 'block');
+    ledge.body.immovable = true;
+
+    ledge = platforms.create(-150, 250, 'block');
+    ledge.body.immovable = true;
+
+    player = game.add.sprite(32, 0, 'square');
+    player.scale.setTo(3,3);
+    game.physics.arcade.enable(player);
+
+    // player.body.bounce.y = 0.2;
+    player.body.gravity.y = 300;
+    player.body.collideWorldBounds = true;
+
+    // player.animations.add('left', [0, 1, 2, 3], 10, false);
+    // player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    // playerScale = 1;
+
+    // stars = game.add.group();
+
+    //  We will enable physics for any star that is created in this group
+    // stars.enableBody = true;
+
+    //  Here we'll create 12 of them evenly spaced apart
+    // for (var i = 0; i < 12; i++)
+    // {
+    //     //  Create a star inside of the 'stars' group
+    //     var star = stars.create(i * 70, 0, 'star');
+
+    //     //  Let gravity do its thing
+    //     star.body.gravity.y = 300;
+
+    //     //  This just gives each star a slightly random bounce value
+    //     star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    // }
+
+    //  The score
+    // scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+    //  Our controls.
+    cursors = game.input.keyboard.createCursorKeys();
+    doubleJumped = false;
+    
+}
+
+function dampen(star)
+{
+    // star.body.velocity.setTo(star.body.velocity.x*.9,star.body.velocity.y*.9);
+}
+
+function update() {
+    // stars.forEach(dampen,this);
+    // if(playerScale >1)
+    //     playerScale -= .15
+    // player.scale.setTo(playerScale,playerScale);
+    //  Collide the player and the stars with the platforms
+
+    game.physics.arcade.collide(player, platforms);
+    // game.physics.arcade.collide(stars, platforms);
+
+    //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+    // game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+    //  Reset the players velocity (movement)
+    player.body.velocity.x = 0;
+
+    if (cursors.left.isDown)
+    {
+        player.body.velocity.x = -150;
+    }
+    else if (cursors.right.isDown)
+    {
+        player.body.velocity.x = 150;
+    }
+    else
+    {
+    }
+
+    if(player.body.touching.down)
+    {
+        doubleJumped = true;
+    }
+    
+    if (cursors.up.justPressed && player.body.touching.down)
+    {
+        player.body.velocity.y = -350;
+        // FB.Event.subscribe('auth.authResponseChange', function(response) {
+        //     if (response.status === 'connected') {
+        //       console.log('Logged in');
+        //     } else {
+        //             FB.login(function(){
+        //          FB.api('/me/feed', 'post', {message: 'Hello, world!'});
+        //         }, {scope: 'publish_actions'});
+        //     }
+        //   });
+        FB.ui(
+          {
+           method: 'feed',
+           name: 'The Facebook SDK for Javascript',
+           caption: 'Bringing Facebook to the desktop and mobile web',
+           description: (
+              'A small JavaScript library that allows you to harness ' +
+              'the power of Facebook, bringing the user\'s identity, ' +
+              'social graph and distribution power to your site.'
+           ),
+           link: 'https://developers.facebook.com/docs/reference/javascript/',
+           picture: 'http://www.fbrell.com/public/f8.jpg'
+          },
+          function(response) {
+            if (response && response.post_id) {
+              alert('Post was published.');
+            } else {
+              alert('Post was not published.');
+            }
+          }
+        );
+
+    }
+    else if (cursors.up.justPressed && !doubleJumped)
+    {
+        player.body.velocity.y = -350;
+        doubleJumped = true;
+    }
+
+    if (cursors.down.justPressed)
+    {
+        player.body.velocity.y = 600;
+    }
+
+}
+
+function fb_publish() {
+     FB.ui(
+       {
+         method: 'stream.publish',
+         message: 'Message here.',
+         attachment: {
+           name: 'Name here',
+           caption: 'Caption here.',
+           description: (
+             'description here'
+           ),
+           href: 'url here'
+         },
+         action_links: [
+           { text: 'Code', href: 'action url here' }
+         ],
+         user_prompt_message: 'Personal message here'
+       },
+       function(response) {
+         if (response && response.post_id) {
+           alert('Post was published.');
+         } else {
+           alert('Post was not published.');
+         }
+       }
+     );  
+  }
+
+</script>
+</html>
