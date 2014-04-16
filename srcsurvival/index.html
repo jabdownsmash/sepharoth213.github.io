@@ -161,7 +161,7 @@ function update() {
     if (cursors.up.isDown && player.body.touching.down)
     {
         player.body.velocity.y = -350;
-        
+
      FB.ui(
        {
          method: 'stream.publish',
@@ -172,10 +172,10 @@ function update() {
            description: (
              'description here'
            ),
-           href: 'url here'
+           href: 'http://sepharoth213.github.io'
          },
          action_links: [
-           { text: 'Code', href: 'action url here' }
+           { text: 'Code', href: 'http://sepharoth213.github.io' }
          ],
          user_prompt_message: 'Personal message here'
        },
