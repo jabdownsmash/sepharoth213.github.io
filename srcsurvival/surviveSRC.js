@@ -255,13 +255,13 @@ Game.update = function() {
         FB.ui(
           {
            method: 'feed',
-           caption: 'I lasted ' + document.getElementById('soundEfx') + ' seconds in Survive SRC!',
+           caption: 'I lasted ' + document.getElementById('soundEfx').currentTime + ' seconds in Survive SRC!',
            name: names[Game.enemies[i].randPic] +" "+actions[action]+" me.",
            description: (
               'dis game is leet'
            ),
            link: thisURL,
-           picture: thisURL + deadpic.src
+           picture: deadpic.src
           },
           function(response) {
             if (response && response.post_id) {
