@@ -161,15 +161,32 @@ function update() {
     if (cursors.up.isDown && player.body.touching.down)
     {
         player.body.velocity.y = -350;
-        FB.Event.subscribe('auth.authResponseChange', function(response) {
-            if (response.status === 'connected') {
-              console.log('Logged in');
-            } else {
-                    FB.login(function(){
-                 FB.api('/me/feed', 'post', {message: 'Hello, world!'});
-                }, {scope: 'publish_actions'});
-            }
-          });
+        
+     FB.ui(
+       {
+         method: 'stream.publish',
+         message: 'Message here.',
+         attachment: {
+           name: 'Name here',
+           caption: 'Caption here.',
+           description: (
+             'description here'
+           ),
+           href: 'url here'
+         },
+         action_links: [
+           { text: 'Code', href: 'action url here' }
+         ],
+         user_prompt_message: 'Personal message here'
+       },
+       function(response) {
+         if (response && response.post_id) {
+           alert('Post was published.');
+         } else {
+           alert('Post was not published.');
+         }
+       }
+     );  
 
     }
     // else if (cursors.up.justPressed && !doubleJumped)
@@ -185,33 +202,8 @@ function update() {
 
 }
 
-// function fb_publish() {
-//      FB.ui(
-//        {
-//          method: 'stream.publish',
-//          message: 'Message here.',
-//          attachment: {
-//            name: 'Name here',
-//            caption: 'Caption here.',
-//            description: (
-//              'description here'
-//            ),
-//            href: 'url here'
-//          },
-//          action_links: [
-//            { text: 'Code', href: 'action url here' }
-//          ],
-//          user_prompt_message: 'Personal message here'
-//        },
-//        function(response) {
-//          if (response && response.post_id) {
-//            alert('Post was published.');
-//          } else {
-//            alert('Post was not published.');
-//          }
-//        }
-//      );  
-//   }
+function fb_publish() {
+  }
 
 </script>
 </html>
