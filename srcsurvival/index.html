@@ -10,9 +10,27 @@
   </head>
 
   <body onload="Game.start()">
-  <!-- facebook init -->
+  <!-- Thanks to Aaron Santiago for FB sharing -->
   <div id="fb-root"></div>
-    <script>
+  <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '563827220401562',
+          status     : true,
+          xfbml      : true
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "http://connect.facebook.net/en_US/all.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      // FB.login(function(){}, {scope: 'publish_actions'});
+    </script><script>
       window.fbAsyncInit = function() {
         FB.init({
           appId      : '563827220401562',
@@ -31,9 +49,10 @@
 
       // FB.login(function(){}, {scope: 'publish_actions'});
     </script>
-    
+
+
     <audio id="soundEfx"
-      src="http://www.tannerhelland.com/dmusic/FindYou.ogg"
+      src="https://dl.dropboxusercontent.com/u/1703360/c/11%20She%27s%20An%20Angel.ogg"
       style="display: none;">
     </audio>
     <audio id="winSong"
@@ -50,7 +69,8 @@
 <input id="MM_checkbox" type="checkbox" name="option3" value="MegaMode">Mega Mode</input>
 <input id="ROT_checkbox" type="checkbox" name="option4" value="RotationMode">Spin to Win</input>
 <input id="saveButton" type="button" name="option5" value="Save Image" onclick="saveImage()"></input>
-<input id="shareButton" type="button" name="option6" value="Share Last Death" onclick="shareLastDeath()"></input>
+<input id="shareButton" type="button" name="option6" value="Share Last Death on FB (test)" onclick="shareLastDeath()"></input>
+<input id="winButton" visibility="hidden" type="button" name="option7" value="Share your victory!" onclick="shareWon()"></input>
 
 </div>
 </body>

@@ -1,6 +1,6 @@
 //http://code.createjs.com/soundjs-0.5.0.min.js
 // WIN AT > 157
-var thisURL = 'http://sepharoth213.github.io/srcsurvival'
+var thisURL = 'http://kevinleutzinger.com/surviveSRC'
 var lastScore = -1;
 var deathPost = '';
 var deathPic = '';
@@ -25,6 +25,7 @@ var dollymode = false;
 var bigmessage = "";
 var deadpic = new Image()
 var lastDeathMessage = ""
+var sharePic =new Image()
 deadpic.src = "./pictures/nothing.png"
 
 if(location.hash == "#dollymode")
@@ -34,7 +35,7 @@ var numberOfSprites = 9
 
 var actions = ["licked", "shot", "kicked", "smashed", "body slammed", "thrusted", "killed", "smoked", "got", "said Oscar's name to"
 ,"sassed", "fell on", "rammed", "max cut", "hugged", "slapped", "body checked", "falcon punched", "quickscoped", "juked",
-"ran into", "sat on", "spooned", "punched", "out-debated", "out-danced", "stabbed",
+"ran into", "sat on", "spooned", "punched", "out-debated", "out-danced", "stabbed", "rekt", "tried to look nonchalant to",
 "outscored", "outsmarted", "ate", "loved", "told you, and had to kill", "slept on", "misinterpreted", "kissed",
 "undid", "outdid", "ended", "buried", "ran over", "forked", "karate chopped", "surprised", "sneaked up on", "didn't want this to happen to",
 "farted on", "touched","rolled onto","jumped onto", "shamed","sniped", "got caught with","dropped",
@@ -57,9 +58,9 @@ var actions = ["licked", "shot", "kicked", "smashed", "body slammed", "thrusted"
 "ding dong ditched","sexiled","reminded","showed no mercy toward","played this song to","blocked this website for",
 "told Kevin about","betrayed","backstabbed","taught","outplayed","corrupted","too many verbs","coughed on",
 "digitized","dated","learned about","1080 backflipped","acted normal around","lent a Shriner's car to",
-"no contact ordered","investigated","snacked on","noticed","zapped","shanked","imprisoned","incarcerated",];
+"no contact ordered","investigated","snacked on","noticed","zapped","shanked","imprisoned","incarcerated","helped","cha-cha slided"];
 
-var names  = ["Sara","Sarah","Ethan","Eliana","Courtney","Tony","Tessa","Kathleen","Zara","Daniel","Ishmael","Jin","Edward","Makaela","Alexandra","Meredith","Natalie","Klodian","Garland","Paul","Brianna","Sarah","Guthrie","Adam","Elijah","Alexandra","Maritza","Jackson","Ceilidh","Hanna","Kaelyn","Cayle","Kori","Hannah","Alexis","Sahra","David","Jack","Cat","Sabrina","Chi","Will","Gina","Simay","Joyce","Khin","Michael","Nina","Quille","Lulu","Yueming","Katherine","Grifﬁn","Naomi","Kolya","Rebecca","Mina","Mikaela","Alexander","Alef","Elibba","Kate","Anna","Rose","Michael","Demitria","Natalie","Olivia","Haley","Freya","House","Cian","Leo","Rachel","Jenny","Martha","Anton","Shahreen","Winter","Becka","Najwa","Colin","Delaney","Hannah","Greig","Isabel","Michael","Avonlea","Stephanie","Ligaya","Oliver","Theodor","Rhiannon","Harry","Marcel","Julian","Courtney-Marie","Victoria","Paige","Gemma","Bethany","Ella","Robert","Rohan","Aidan","Lillian","Trixie","Julia","Courtney","Tyler","Nicole","Ishan","Naomi","Samuel","Lee","Hazemach","Jasmine","Izaak","Lorelei","Oscar","Ian","Patrick","Niah","Sophie","London","Zoe","Chloe","Regan","Sahal","Shannon","Greg","Lucy","Jacob","Nishant","Malcolm","Sarah","Bianca","Jan","Elliot","Julian","Youjeen","Feston","Spencer","Emma","Jacob","Reed","Maksim","Madeleine","Andrew","Ei","Ray","Ben","James","Dakotah","Jake","Amara","Eldred","Isabella","Connor","Hannah","Kevin","Jonathan","Wanying","Zhaoran","Hannah","Jordan","Cary","Jazmine","Christina","Elliot","Ross","Theo","Luke","Juliette","Cary","Audrey","Kulu","Alicia","Marianna","Sarena","David","Avery","Wyatt","Rachel","Sophie","Mia","Molly","Kirsiah","Chelsea","Heather","Matthew","Jade","Matthew","David","Sophie","Kendra","Drew","Meghan","Aung","Meredith","Elise","Jenifer","Cassandra","Kayleigh","Chazlee","Jaeeun","Kai","Mika","Vinzie","Evan","Huw","Jake","Michael","Isabel","Jeheli","Bradley","Max","Serina","Alana","Benjamin","Sam","Bryce","Grant","Megan","Ashley","Lucy","Neil","Queen-Ama","Georges","Vijay","Alexander","Naomi","Konrad","Ingrid","Solomon","Taylor","Jaeme","Brianna","Phil","Simon","Anna","Dante","Joelle","Cameron","Maria","Mallie","Philip","Diego","Dominica","Camille","Vasu","Soﬁa","Payal","Katharine","Laurens","AJ","Virginia","Seth","Maya","Grace","Abi","Kahlia","Nathan","Emma","Andre","Daniel","Thomas","Andrea","Johanna","Samm","Hayden","Patricia","Linsen","Irene","Michael","Melissa","Daneil","Leandra","Nate","Ihor","Simon","Mercy","Sebastian","Elle","Ian","Cori","Ali","Luke","Moses","Chelsea","Koshu","Bazl","Danya","Tara","Uzoamaka","Nichol","Zev","Samantha","Yuxing","George","Sierra","Pearl","Aaron","Jared","Naida","Erin","Kiyomi","Jonathan","Samantha","Amy","June","Nancy","Samantha","Sophie","Minji","Gavin","James","Maisha","Spencer","Mengtian","Alwaleed","Amber","Molly","Sally","Gabe","Dawson","Andy","Julian",]
+var names  = ["Sara","Sarah","Ethan","Eliana","Courtney","Tony","Tessa","Kathleen","Zara","Daniel","Ishmael","Jin","Edward","Makaela","Alexandra","Meredith","Natalie","Klodian","Garland","Paul","Brianna","Sarah","Guthrie","Adam","Elijah","Alexandra","Maritza","Jackson","Ceilidh","Hanna","Kaelyn","Cayle","Kori","Hannah","Alexis","Sahra","David","Jack","Cat","Sabrina","Chi","Will","Gina","Simay","Joyce","Khin","Michael","Nina","Quille","Lulu","Yueming","Katherine","Grifﬁn","Naomi","Kolya","Rebecca","Mina","Mikaela","Alexander","Alef","Elibba","Kate","Anna","Rose","Michael","Demitria","Natalie","Olivia","Haley","Freya","House","Cian","Leo","Rachel","Jenny","Martha","Anton","Shahreen","Winter","Becka","Najwa","Colin","Delaney","Hannah","Greig","Isabel","Michael","Avonlea","Stephanie","Ligaya","Oliver","Theodor","Rhiannon","Harry","Marcel","Julian","Courtney-Marie","Victoria","Paige","Gemma","Bethany","Ella","Robert","Rohan","Aidan","Lillian","Trixie","Julia","Courtney","Tyler","Nicole","Ishan","Naomi","Samuel","Lee","Hazemach","Jasmine","Izaak","Lorelei","Oscar","Ian","Patrick","Niah","Sophie","London","Zoe","Chloe","Regan","Sahal","Shannon","Greg","Lucy","Jacob","Nishant","Malcolm","Sarah","Bianca","Jan","Elliot","Julian","Youjeen","Feston","Spencer","Emma","Jacob","Reed","Maksim","Madeleine","Andrew","Ei","Ray","Ben","James","Dakotah","Jake","Amara","Eldred","Isabella","Connor","Hannah","Kevin","Jonathan","Wanying","Zhaoran","Hannah","Jordan","Cary","Jazmine","Christina","Elliot","Ross","Theo","Luke","Juliette","Cary","Audrey","Kulu","Alicia","Marianna","Sarena","David","Avery","Wyatt","Rachel","Sophie","Mia","Molly","Kirsiah","Chelsea","Heather","Matthew","Jade","Matthew","David","Sophie","Kendra","Drew","Meghan","Aung","Meredith","Elise","Jenifer","Cassandra","Kayleigh","Chazlee","Jaeeun","Kai","Mika","Vinzie","Evan","Huw","Jake","Michael","Isabel","Jeheli","Bradley","Max","Serina","Alana","Benjamin","Sam","Bryce","Grant","Megan","Ashley","Lucy","Neil","Queen-Ama","Georges","Vijay","Alexander","Naomi","Konrad","Ingrid","Solomon","Taylor","Jaeme","Brianna","Phil","Simon","Anna","Dante","Joelle","Cameron","Maria","Mallie","Philip","Diego","Dominica","Camille","Vasu","Soﬁa","Payal","Katharine","Laurens","AJ","Virginia","Seth","Maya","Grace","Abi","Kahlia","Nathan","Emma","Andre","Daniel","Thomas","Andrea","Johanna","Sam","Hayden","Patricia","Linsen","Irene","Michael","Melissa","Daneil","Leandra","Nate","Ihor","Simon","Mercy","Sebastian","Elle","Ian","Cori","Ali","Luke","Moses","Chelsea","Koshu","Bazl","Danya","Tara","Uzoamaka","Nichol","Zev","Samantha","Yuxing","George","Sierra","Pearl","Aaron","Jared","Naida","Erin","Kiyomi","Jonathan","Samantha","Amy","June","Nancy","Samantha","Sophie","Minji","Gavin","James","Maisha","Spencer","Mengtian","Alwaleed","Amber","Molly","Sally","Gabe","Dawson","Andy","Julian",]
 var deathmessages = ["Daniel ninja kicked you",
 "Spencer outslept you",
 "Ishmael kamehamehad you",
@@ -81,9 +82,7 @@ for (var i = 0; i < names.length; i++){
      picNameLookup.push(customNames[i]);
      names.push(customNames[i])
  }
- console.log(picNameLookup);
-console.log("length of sprites == length of deathmessages")
-console.log(numberOfSprites == deathmessages.length)
+
 
 var focused = true;
 $(window).blur(function() {
@@ -159,7 +158,7 @@ Game._onEachFrame = (function() {
 })();
 
 Game.start = function() {
-  console.log(location.hash);
+  //console.log(location.hash);
   var startTime = Date.now();
   var soundEfx;
   var winSong;
@@ -205,9 +204,14 @@ Game.draw = function() {
   Game.enemies = [];
   Game.context.clearRect(0,0, Game.width, Game.height);
   Game.context.fillStyle = 'black';
+  document.getElementById("winButton").style.visibility="visible";
     Game.context.fillText("You win! Also I fixed the glitches now, so it's legit. Tell Kevin.", Game.width/2, Game.height/2);
     winSong.play();  
-  };
+  }
+  else
+  {
+    document.getElementById("winButton").style.visibility="hidden";
+  }
 /*  else{
     if (Game.enemies.length == 0){
       maxEnemy = 10;
@@ -239,6 +243,27 @@ function isBigEnough(element) {
   return element.x > -element.size;
 }
 
+function shareWon() {
+  FB.ui(
+    {
+     method: 'feed',
+     name: 'I survived SRC!',
+     description: (
+        'Can you survive the onslaught of SRC students?'
+     ),
+     link: thisURL,
+     picture: sharePic.src,
+    },
+    function(response) {
+      if (response && response.post_id) {
+        alert('Post was published.');
+      } else {
+        alert('Post was not published.');
+      }
+    }
+  );
+}
+
 function shareLastDeath() {
   if(lastScore > 0)
   {
@@ -248,10 +273,10 @@ function shareLastDeath() {
        caption: 'I lasted ' + lastScore + ' seconds in Survive SRC!',
        name: deathPost,
        description: (
-          'Survive SRC: can you survive the onslaught of SRC students?'
+          'Can you survive the onslaught of SRC students?'
        ),
        link: thisURL,
-       picture: deathPic
+       picture: sharePic.src,
       },
       function(response) {
         if (response && response.post_id) {
@@ -268,17 +293,17 @@ Game.update = function() {
     score += 1;
   for (var i = 0; i < Game.enemies.length; i++) {
     Game.enemies[i].update()
-    if (hitPlayer(Game.enemies[i])){
+    if (hitPlayer(Game.enemies[i])){ // ------ DEAD HERE -------------
       lastScore = document.getElementById('soundEfx').currentTime;
-      document.getElementById('soundEfx').currentTime = 0;
-      if(document.getElementById('soundEfx').currentTime > hiScore)
-        hiScore = document.getElementById('soundEfx').currentTime;
-      console.log(hiScore);
-        console.log("HIT!!");
+      if(lastScore > hiScore)
+        hiScore = lastScore;
+      
         hit = true;
         died = true;
         action = Math.floor(Math.random()*actions.length);
         deadpic.src = "./pictures/" +picNameLookup[Game.enemies[i].randPic]+".jpg";
+        sharePic.src = "http://www.kevinleutzinger.com/surviveSRC/pictures/"+picNameLookup[Game.enemies[i].randPic]+".jpg";
+        //http://www.kevinleutzinger.com/surviveSRC/pictures/Edan.jpg
         bigmessage = names[Game.enemies[i].randPic] +" "+actions[action]+" you.";
         lastDeathMessage = bigmessage;
         if(names[Game.enemies[i].randPic] == "Kevin"){bigmessage = "Kevin made this game"};
@@ -287,6 +312,7 @@ Game.update = function() {
       Game.enemies = []
       maxEnemy = 0;
       //Game.context.fillStyle = "purple";
+      document.getElementById('soundEfx').currentTime = 0;
       Game.context.clearRect(0, 0, Game.width, Game.height);
     }
   }
@@ -387,7 +413,6 @@ function hitPlayer(e){
 function Enemy() {
   this.img = new Image();
   this.randPic = Math.floor(Math.random() * names.length)
-  console.log("dollymode");     
   this.img.src = "./pictures/" +picNameLookup[this.randPic]+".jpg";
 
                 //if (this.xVel > -7)  
@@ -421,6 +446,9 @@ function Enemy() {
 Enemy.prototype.draw = function(context) {
   Game.context.fillStyle = 'red';
   
+  this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (25/18))/(25/18))
+  this.beatDistance = this.beatDistance * 30
+  console.log(this.beatDistance)
   if(rotMode){
   context.save()
   
@@ -429,13 +457,13 @@ Enemy.prototype.draw = function(context) {
   context.translate(this.x, this.y)
   context.translate(this.width/2, this.height/2)
   context.rotate(this.rot);
-  context.drawImage(this.img, -this.width/2,-this.height/2, this.width, this.height);
+  context.drawImage(this.img, -this.width/2,-this.height/2, this.width + this.beatDistance, this.height + this.beatDistance);
   context.restore()
-}
-else{
-    context.drawImage(this.img, this.x, this.y, this.width, this.height);
-    
-};
+  }
+  else{
+      context.drawImage(this.img, this.x, this.y, this.width + this.beatDistance, this.height + this.beatDistance);
+      
+  };
 
 
 };
