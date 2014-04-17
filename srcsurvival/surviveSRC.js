@@ -201,6 +201,11 @@ Game.draw = function() {
   Game.context.fillRect(0, 0, Game.width, Game.height);
   }
   if (soundEfx.currentTime >= 29) wavy=true;
+  if (soundEfx.currentTime >= 97)
+    {
+      pulseMode=true;
+      rotMode=true;
+    }
   if(win){
   Game.enemies = [];
   Game.context.clearRect(0,0, Game.width, Game.height);
@@ -449,6 +454,10 @@ Enemy.prototype.draw = function(context) {
   
   this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (60/83))/(60/83))
   this.beatDistance = this.beatDistance * 30
+  if(!pulseMode)
+  {
+    this.beatDistance = 0;
+  }
 
   console.log(this.beatDistance)
   if(rotMode){
