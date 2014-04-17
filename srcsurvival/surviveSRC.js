@@ -15,6 +15,7 @@ var dG = 1;
 var hiScore = 0;
 var win = false;
 var score =0;
+var pulseMode = false;
 var rotMode = false;
 var wavy= true;
 var evilHensley = new Image()
@@ -446,8 +447,9 @@ function Enemy() {
 Enemy.prototype.draw = function(context) {
   Game.context.fillStyle = 'red';
   
-  this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (25/18))/(25/18))
+  this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (83/60))/(83/60))
   this.beatDistance = this.beatDistance * 30
+
   console.log(this.beatDistance)
   if(rotMode){
   context.save()
