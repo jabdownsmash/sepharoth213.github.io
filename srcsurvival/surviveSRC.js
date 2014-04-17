@@ -327,7 +327,7 @@ Game.update = function() {
   //Game.enemies = Game.enemies.filter(isBigEnough);
   //lastFilter =  0;
 //};
-  rotMode = document.getElementById("ROT_checkbox").checked
+  // rotMode = document.getElementById("ROT_checkbox").checked
   
   cTime = soundEfx.currentTime;
   if(cTime >= 155) win = true;
