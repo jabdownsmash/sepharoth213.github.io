@@ -447,7 +447,7 @@ function Enemy() {
 Enemy.prototype.draw = function(context) {
   Game.context.fillStyle = 'red';
   
-  this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (60/83.2))/(60/83.2))
+  this.beatDistance = 1 - ((document.getElementById('soundEfx').currentTime % (60/83))/(60/83))
   this.beatDistance = this.beatDistance * 30
 
   console.log(this.beatDistance)
