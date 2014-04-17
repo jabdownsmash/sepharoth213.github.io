@@ -299,7 +299,7 @@ Game.update = function() {
     score += 1;
   for (var i = 0; i < Game.enemies.length; i++) {
     Game.enemies[i].update()
-    if (hitPlayer(Game.enemies[i])){ // ------ DEAD HERE -------------
+    if (false && hitPlayer(Game.enemies[i])){ // ------ DEAD HERE -------------
       lastScore = document.getElementById('soundEfx').currentTime;
       if(lastScore > hiScore)
         hiScore = lastScore;
