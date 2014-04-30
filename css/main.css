@@ -1,3 +1,7 @@
+html {
+  overflow-y: auto;
+  /*background-color: transparent;*/
+}
 
 body   {
   position: absolute;
@@ -7,13 +11,9 @@ body   {
   right: 0px;
   overflow-y: scroll;
   overflow-x: hidden;
+  background-color: #eee;
+  margin: 0px auto;
 }
-
-html {
-  overflow-y: auto;
-  background-color: transparent;
-}
-
 
 ::-webkit-scrollbar {
     width: 14px;
@@ -35,13 +35,14 @@ html {
 #wrapper {
   padding-left: 220px;
   transition: all 0.4s ease 0s;
+  /*background-color: #eee*/
 }
 
 #sidebar-wrapper {
   margin-left: -220px;
   left: 220px;
   width: 220px;
-  background: #000;
+  background: #222;
   position: fixed;
   height: 100%;
   overflow-y: auto;
@@ -56,7 +57,7 @@ html {
 }
 
 .active {
-  background: rgba(255,255,255,0.1);
+  background: rgba(200,205,220,0.1);
 }
 
 .sidebar-list {
