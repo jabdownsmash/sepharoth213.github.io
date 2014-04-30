@@ -11,7 +11,9 @@ body   {
   right: 0px;
   overflow-y: scroll;
   overflow-x: hidden;
-  background-color: #eee;
+  background: -webkit-canvas(mybackground);
+  /*background-color: #eee;*/
+  /*background-image: url('http://image.made-in-china.com/4f0j00vCMEgTirOtVO/Glass-Mosaic-RAINBOW-MIX-MRY933-.jpg');*/
   margin: 0px auto;
 }
 
