@@ -37,7 +37,8 @@ body   {
 #wrapper {
   padding-left: 220px;
   transition: all 0.4s ease 0s;
-  /*background-color: #eee*/
+  /*background-color: #eee;*/
+  height: 100vh;
 }
 
 #sidebar-wrapper {
