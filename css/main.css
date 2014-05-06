@@ -37,7 +37,6 @@ body   {
 #wrapper {
   padding-left: 220px;
   transition: all 0.4s ease 0s;
-  /*background-color: #eee;*/
   height: 100vh;
 }
 
@@ -56,7 +55,9 @@ body   {
 }
 
 #page-content-wrapper {
-  width: 100%;
+  height: 600vh;
+  background-color: #eee;
+  width: 600px;
 }
 
 .active {
@@ -145,7 +146,7 @@ body   {
 
 .inset {
   padding: 20px;
-  padding-right: 100px;
+  /*padding-right: 100px;*/
   font-family: "helvetica neue", sans-serif;
 }
 .inset2 {

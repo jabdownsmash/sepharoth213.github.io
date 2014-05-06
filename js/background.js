@@ -24,7 +24,7 @@ Background.start = function() {
   // Background.canvas = document.createElement("canvas");
   // Background.canvas.width = Background.width;
   // Background.canvas.height = Background.height;
-  // var ctx = document.getCSSCanvasContext("2d", "mybackground", 2000, 2000);
+  // var ctx = document.getCSSCanvasContext("2d", "mybackground", 200, 200);
 
   // // ctx.rotate(Math.random() * 2 * Mathz.PI);
   // ctx.fillStyle = "rgb(200,0,0)";
@@ -48,7 +48,7 @@ Background.start = function() {
 };
 
 Background.run = function() {
-  var ctx = document.getCSSCanvasContext("2d", "mybackground", 2000, 2000);
+  var ctx = document.getCSSCanvasContext("2d", "mybackground", 200, 200);
   // ctx.rotate( * 2 * Math.PI);
   ctx.fillStyle = '#ffeeee'
   ctx.fillRect(0, 0, Background.width, Background.height);
@@ -58,10 +58,10 @@ Background.run = function() {
 
   ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
   ctx.fillRect (30, 30, 55, 50);
-  var boxWidth = 30;
-  for(var i = 0; i < 2000; i += boxWidth)
+  var boxWidth = 20;
+  for(var i = 0; i < 200; i += boxWidth)
   {
-    for(var j = 0; j < 2000; j += boxWidth)
+    for(var j = 0; j < 200; j += boxWidth)
     {
       ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
       ctx.fillRect (i, j, boxWidth, boxWidth);
