@@ -25,7 +25,15 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight)
 var Game = {
   fps: 60,
   width: 600,
-  height: 480
+  height: 480,
+  data: [
+  {response: "beneath the surface", options: ["click here to start"], optionPaths: [1]},
+  {response: "what?", options: ["oh, nothing. i was just spacing out."], optionPaths: [2]},
+  {response: "uh, alright. anyway, what do you want to do?", options: ["we could just stay here.", "let's go take a walk.", "i'm starving."], optionPaths: [3,4,5]},
+  {response: "yeah, sounds good.", options: ["restart"], optionPaths: [0]},
+  {response: "alright, let me grab my coat.", options: ["restart"], optionPaths: [0]},
+  {response: "me too, but i don't have any money.", options: ["restart"], optionPaths: [0]},
+  ]
 };
 
 var lineHeight = 20;
@@ -44,6 +52,7 @@ var rightX = 250;
 var bottomMargin = 100;
 var textLines = [];
 var textOptions = [];
+var currentIndex = 0;
 
 
 Game.generateTextOptions = function(optionStrings) 
@@ -101,6 +110,15 @@ Game.displayTextOptions = function()
   }
 }
 
+Game.appendLine = function(text, right)
+{
+  var ctx = Game.canvas.getContext("2d");
+  ctx.fillStyle = textColor;
+  ctx.font = textFont;
+  var line = {text:wrapText(ctx, text, 0, 0, textWidth, lineHeight), right: right};
+  textLines.push(line);
+}
+
 Game.start = function()
 {
   Game.canvas = document.createElement("canvas");
@@ -110,13 +128,7 @@ Game.start = function()
   var ctx = Game.canvas.getContext("2d");
   ctx.fillStyle = textColor;
   ctx.font = textFont;
-  var blah = {text:wrapText(ctx, "look at this game isn't it so cool", 0, 0, textWidth, lineHeight), right: false};
-  var blah2 = {text:wrapText(ctx, "yeah check out the white text on the black background", 0, 0, textWidth, lineHeight), right: true};
-  var blah3 = {text:wrapText(ctx, "so super artsy fuck", 0, 0, textWidth, lineHeight), right: false};
-  textLines.push(blah);
-  textLines.push(blah2);
-  textLines.push(blah3);
-  setInterval(Game.run, 1000 / Game.fps);
+  Game.appendLine( "beneath the surface", true);
   var canvasPosition = {
       x: Game.canvas.offsetLeft,
       y: Game.canvas.offsetTop
@@ -128,7 +140,8 @@ Game.start = function()
       }
       Game.checkInput(mouse.x,mouse.y)
   }, false);
-  Game.generateTextOptions(["arsientarst aienstiat", "ywfubytuaw wyufty wfulbt wyuft ywuft", "wyufbhtyauwhft qywuhft wyfuh uf f"])
+  Game.generateTextOptions(Game.data[currentIndex].options);
+  setInterval(Game.run, 1000 / Game.fps);
 };
 
 Game.run = function()
@@ -146,13 +159,19 @@ Game.clearOptions = function()
 
 }
 
+Game.selectOption = function(index)
+{
+  Game.appendLine( textOptions[index].source, false);
+  currentIndex = Game.data[currentIndex].optionPaths[index];
+  Game.appendLine( Game.data[currentIndex].response, true);
+  Game.generateTextOptions(Game.data[currentIndex].options);
+}
+
 Game.checkInput = function(x, y)
 {
-  if(y > optionBottomMargin - optionHeight && x > optionMargin && x < Game.width - optionMargin)
+  if((y > Game.height - (optionBottomMargin + optionHeight*2)) && x > optionMargin && x < Game.width - optionMargin)
   {
-    var ctx = Game.canvas.getContext("2d");
     var optionIndex = Math.floor((x-optionMargin)/optionWidth*textOptions.length);
-    var blah = {text:wrapText(ctx, textOptions[optionIndex].source, 0, 0, textWidth, lineHeight), right: false};
-    textLines.push(blah);
+    Game.selectOption(optionIndex);
   }
 }
