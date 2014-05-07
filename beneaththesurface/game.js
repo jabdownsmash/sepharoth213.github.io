@@ -25,16 +25,10 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight)
 var Game = {
   fps: 60,
   width: 600,
-  height: 480,
-  data: [
-  {response: "beneath the surface", options: ["click here to start"], optionPaths: [1]},
-  {response: "what?", options: ["oh, nothing. i was just spacing out."], optionPaths: [2]},
-  {response: "uh, alright. anyway, what do you want to do?", options: ["we could just stay here.", "let's go take a walk.", "i'm starving."], optionPaths: [3,4,5]},
-  {response: "yeah, sounds good.", options: ["restart"], optionPaths: [0]},
-  {response: "alright, let me grab my coat.", options: ["restart"], optionPaths: [0]},
-  {response: "me too, but i don't have any money.", options: ["restart"], optionPaths: [0]},
-  ]
+  height: 480
 };
+
+var dataString = "beneath the surface|1|click here to start|#what?|2|oh, nothing. i was just spacing out.|#uh, alright. anyway, what do you want to do?|3,4,5|we could just stay here.|let's go take a walk.|i'm starving.|#yeah, sounds good.|0|restart|#alright, let me grab my coat.|0|restart|#me too, but i don't have any money.|0|restart|";
 
 var lineHeight = 20;
 var lineSpacing = 30;
@@ -54,6 +48,38 @@ var textLines = [];
 var textOptions = [];
 var currentIndex = 0;
 
+Game.parseOptionPaths = function(optionPathString)
+{
+  var paths = optionPathString.split(',');
+  var optionPaths = [];
+  for(var i = 0; i < paths.length; i++)
+  {
+    optionPaths.push(parseInt(paths[i]));
+  }
+  return optionPaths;
+}
+
+Game.parseEventString = function(eventString)
+{
+  return [];
+}
+
+Game.generateData = function(dataString)
+{
+  var dataEntries = dataString.split('#');
+  var data = [];
+  for(var i = 0; i < dataEntries.length; i++)
+  {
+    var sections = dataEntries[i].split('|');
+    data.push({
+      response: sections[0],
+      options: sections.slice(2,-1),
+      optionPaths: Game.parseOptionPaths(sections[1]),
+      events: Game.parseEventString(sections[sections.length -1])
+    });
+  }
+  return data;
+}
 
 Game.generateTextOptions = function(optionStrings) 
 {
@@ -140,6 +166,7 @@ Game.start = function()
       }
       Game.checkInput(mouse.x,mouse.y)
   }, false);
+  Game.data = Game.generateData(dataString);
   Game.generateTextOptions(Game.data[currentIndex].options);
   setInterval(Game.run, 1000 / Game.fps);
 };
