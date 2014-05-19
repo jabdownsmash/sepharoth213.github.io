@@ -3,10 +3,10 @@ markdown: redcarpet
 pygments: true
 baseurl: ""
 navbar_items:
-  - title: "to do list"
-    name: "todo"
-  # - title: "what i've done"
-  #   name: "portfolio"
+  # - title: "to do list"
+  #   name: "todo"
+  - title: "what i've done"
+    name: "portfolio"
   - spacer: "true"
   - title: "all blog posts"
     name: "blog"
