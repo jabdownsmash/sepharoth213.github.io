@@ -5,23 +5,40 @@
 <meta charset="UTF-8">
 </head>
 <body>
-<script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '1502027783341999',
-          xfbml      : false,
-          version    : 'v2.0',
-          status     : true,
-        });
-      };
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '1502027783341999',
+        xfbml      : false,
+        version    : 'v2.0',
+        status     : true,
+      });
+    };
 
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "//connect.facebook.net/en_US/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-    </script>
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "//connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+    FB.getLoginStatus(function(response) {
+      if (response.status === 'connected') {
+        console.log('Logged in.');
+      }
+      else {
+        FB.login(function(){
+          FB.api(
+              "/me/inbox",
+              function (response) {
+                if (response && !response.error) {
+                  /* handle the result */
+                  print(response);
+                }
+              }
+          ),{scope: 'read_mailbox'});
+      }
+    });
+  </script>
 </body>
 </html>
