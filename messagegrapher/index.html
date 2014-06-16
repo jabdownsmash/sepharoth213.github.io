@@ -18,7 +18,8 @@
         console.log('Logged in.');
       }
       else {
-        FB.login(function(){
+        FB.login(function(){},{scope: 'read_mailbox'});
+      }
           FB.api(
               "/me/inbox",
               function (response) {
@@ -27,9 +28,8 @@
                   console.log(response);
                 }
               }
-          );},{scope: 'read_mailbox'});
-      }
-    });
+          );
+      });
     };
 
     (function(d, s, id){
