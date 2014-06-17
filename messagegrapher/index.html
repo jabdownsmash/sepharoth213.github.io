@@ -59,10 +59,13 @@
                         strokeColor : "rgba(220,220,220,1)",
                         pointColor : "rgba(220,220,220,1)",
                         pointStrokeColor : "#fff",
-                        data : numbers[dateIndex]
+                        data : numbers[dates]
                       }
                     ]
                   }
+                  console.log(numbers[dates]);
+                  console.log(numbers);
+                  console.log(dates);
                   var myNewChart = new Chart(ctx).Line(data);
                 }
               }
