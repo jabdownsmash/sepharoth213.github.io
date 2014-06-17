@@ -42,7 +42,7 @@
 
                   messages.data.forEach(function(message)
                   {
-                    dateIndex = message.created_time.substr(0,14);
+                    dateIndex = message.created_time.substr(0,15);
                     if(!(dateIndex in numbers))
                     {
                       numbers[dateIndex] = 0;
@@ -55,7 +55,7 @@
 
                   dates.forEach(function(date)
                   {
-                    numberArray.push(numbers[dateIndex]);
+                    numberArray.push(numbers[date]);
                   });
 
                   var data = {
