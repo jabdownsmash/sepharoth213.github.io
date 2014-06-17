@@ -42,13 +42,20 @@
 
                   messages.data.forEach(function(message)
                   {
-                    dateIndex = message.created_time;//.substr(0,6);
+                    dateIndex = message.created_time.substr(0,14);
                     if(!(dateIndex in numbers))
                     {
                       numbers[dateIndex] = 0;
                       dates.push(dateIndex)
                     }
                     numbers[dateIndex] += 1;
+                  });
+
+                  var numberArray = [];
+
+                  dates.forEach(function(date)
+                  {
+                    numberArray.push(numbers[dateIndex]);
                   });
 
                   var data = {
@@ -59,11 +66,11 @@
                         strokeColor : "rgba(220,220,220,1)",
                         pointColor : "rgba(220,220,220,1)",
                         pointStrokeColor : "#fff",
-                        data : numbers[dates]
+                        data : numberArray
                       }
                     ]
                   }
-                  console.log(numbers[dates]);
+                  console.log(numberArray);
                   console.log(numbers);
                   console.log(dates);
                   var myNewChart = new Chart(ctx).Line(data);
