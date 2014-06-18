@@ -26,13 +26,13 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	var sounds = [];
 	var id;
 	var image = new Image();
-	id = "assets/hpbarred.png";
+	id = "assets/floor.png";
 	ApplicationMain.images.set(id,image);
 	image.onload = ApplicationMain.image_onLoad;
 	image.src = id;
 	ApplicationMain.total++;
 	var image1 = new Image();
-	id = "assets/hpbarblue.png";
+	id = "assets/wall.png";
 	ApplicationMain.images.set(id,image1);
 	image1.onload = ApplicationMain.image_onLoad;
 	image1.src = id;
@@ -62,7 +62,7 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	image5.src = id;
 	ApplicationMain.total++;
 	var image6 = new Image();
-	id = "assets/hpbaroverlay.png";
+	id = "assets/chickenmaster2.png";
 	ApplicationMain.images.set(id,image6);
 	image6.onload = ApplicationMain.image_onLoad;
 	image6.src = id;
@@ -1039,14 +1039,9 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 });
 var Main = function() {
 	haxel.Core.call(this);
-	var hitbox = new utils.Hitbox(3,3,6,6);
-	var attacks = new Array();
-	attacks.push(new overworld.Attack("assets/attack.png",10,10,10,2,new utils.Hitbox(3,3,6,6),2));
-	var chicken = new battle.BattleChicken(true,new overworld.Chicken(attacks,"assets/winged.png",hitbox,20,2));
-	var attacks2 = new Array();
-	attacks2.push(new overworld.Attack("assets/attack.png",6,6,10,2,new utils.Hitbox(3,3,6,6),2));
-	var chicken2 = new battle.BattleChicken(false,new overworld.Chicken(attacks2,"assets/elvis.png",hitbox,15,3));
-	battle.Battle.init([chicken],[chicken2]);
+	var map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
+	var types = [new overworld.TileClass(false,"assets/floor.png"),new overworld.TileClass(true,"assets/wall.png")];
+	overworld.Overworld.init(map,types);
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -1139,10 +1134,10 @@ var DefaultAssetLibrary = function() {
 	this.className = new haxe.ds.StringMap();
 	openfl.AssetLibrary.call(this);
 	var id;
-	id = "assets/hpbarred.png";
+	id = "assets/floor.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/hpbarblue.png";
+	id = "assets/wall.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/bg.png";
@@ -1157,7 +1152,7 @@ var DefaultAssetLibrary = function() {
 	id = "assets/chicken.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/hpbaroverlay.png";
+	id = "assets/chickenmaster2.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/elvis.png";
@@ -1812,6 +1807,7 @@ battle.Results.rightChickens = null;
 battle.Results.leftWinner = null;
 battle.Results.background = null;
 battle.Results.winnerBitmap = null;
+battle.Results.timeCounter = null;
 battle.Results.init = function(left,right) {
 	battle.Results.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/resultsbg.png"));
 	haxel.Core.viewport.addChild(battle.Results.background);
@@ -1832,10 +1828,10 @@ battle.Results.init = function(left,right) {
 		while(_g2 < _g11.length) {
 			var chicken1 = _g11[_g2];
 			++_g2;
-			var winnerBitmap = new openfl.display.Bitmap(openfl.Assets.getBitmapData(chicken1.chickenClass.sprite));
-			winnerBitmap.set_x(100 - winnerBitmap.get_width() / 2);
-			winnerBitmap.set_y(75 - winnerBitmap.get_height() / 2);
-			haxel.Core.viewport.addChild(winnerBitmap);
+			battle.Results.winnerBitmap = new openfl.display.Bitmap(openfl.Assets.getBitmapData(chicken1.chickenClass.sprite));
+			battle.Results.winnerBitmap.set_x(100 - battle.Results.winnerBitmap.get_width() / 2);
+			battle.Results.winnerBitmap.set_y(75 - battle.Results.winnerBitmap.get_height() / 2);
+			haxel.Core.viewport.addChild(battle.Results.winnerBitmap);
 		}
 	} else {
 		var _g3 = 0;
@@ -1843,19 +1839,24 @@ battle.Results.init = function(left,right) {
 		while(_g3 < _g12.length) {
 			var chicken2 = _g12[_g3];
 			++_g3;
-			var winnerBitmap1 = new openfl.display.Bitmap(openfl.Assets.getBitmapData(chicken2.chickenClass.sprite));
-			winnerBitmap1.set_x(100 - winnerBitmap1.get_width() / 2);
-			winnerBitmap1.set_y(75 - winnerBitmap1.get_height() / 2);
-			haxel.Core.viewport.addChild(winnerBitmap1);
+			battle.Results.winnerBitmap = new openfl.display.Bitmap(openfl.Assets.getBitmapData(chicken2.chickenClass.sprite));
+			battle.Results.winnerBitmap.set_x(100 - battle.Results.winnerBitmap.get_width() / 2);
+			battle.Results.winnerBitmap.set_y(75 - battle.Results.winnerBitmap.get_height() / 2);
+			haxel.Core.viewport.addChild(battle.Results.winnerBitmap);
 		}
 	}
 	haxel.Time.callbackFunction = battle.Results.update;
+	battle.Results.timeCounter = 0;
 };
 battle.Results.unload = function() {
 	haxel.Core.viewport.removeChild(battle.Results.background);
 	haxel.Core.viewport.removeChild(battle.Results.winnerBitmap);
 };
 battle.Results.update = function(deltaTime) {
+	if((battle.Results.timeCounter += deltaTime) > 3000) {
+		overworld.Overworld.reset();
+		battle.Results.unload();
+	}
 };
 var haxe = {};
 haxe.StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
@@ -7790,6 +7791,89 @@ overworld.Attack.prototype = {
 	}
 	,__class__: overworld.Attack
 };
+overworld.Avatar = function(spriteString,startX,startY,spd) {
+	if(spd == null) spd = 1;
+	openfl.display.Sprite.call(this);
+	var bitmap = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	bitmap.set_x(0);
+	bitmap.set_y(0);
+	this.addChild(bitmap);
+	this.mapX = startX;
+	this.mapY = startY;
+	this.set_x(this.mapX * overworld.Overworld.tileWidth);
+	this.set_y(this.mapY * overworld.Overworld.tileWidth);
+	this.speed = spd;
+	this.moving = -1;
+};
+$hxClasses["overworld.Avatar"] = overworld.Avatar;
+overworld.Avatar.__name__ = ["overworld","Avatar"];
+overworld.Avatar.__super__ = openfl.display.Sprite;
+overworld.Avatar.prototype = $extend(openfl.display.Sprite.prototype,{
+	move: function(direction) {
+		if(this.moving < 0) {
+			this.moving = direction;
+			if(this.moving == utils.Directions.UP) {
+				if(overworld.Overworld.getTileClass(this.mapX,this.mapY - 1).isWall) this.moving = -1;
+			}
+			if(this.moving == utils.Directions.DOWN) {
+				if(overworld.Overworld.getTileClass(this.mapX,this.mapY + 1).isWall) this.moving = -1;
+			}
+			if(this.moving == utils.Directions.LEFT) {
+				if(overworld.Overworld.getTileClass(this.mapX - 1,this.mapY).isWall) this.moving = -1;
+			}
+			if(this.moving == utils.Directions.RIGHT) {
+				if(overworld.Overworld.getTileClass(this.mapX + 1,this.mapY).isWall) this.moving = -1;
+			}
+			if(this.moving > 0) return true;
+		}
+		return false;
+	}
+	,update: function() {
+		if(this.moving > -1) {
+			if(this.moving == utils.Directions.UP) {
+				if(this.get_y() - (this.mapY - 1) * overworld.Overworld.tileWidth < this.speed) {
+					this.moving = -1;
+					this.mapY -= 1;
+					this.set_y(this.mapY * overworld.Overworld.tileWidth);
+				} else {
+					var _g = this;
+					_g.set_y(_g.get_y() - this.speed);
+				}
+			}
+			if(this.moving == utils.Directions.DOWN) {
+				if((this.mapY + 1) * overworld.Overworld.tileWidth - this.get_y() < this.speed) {
+					this.moving = -1;
+					this.mapY += 1;
+					this.set_y(this.mapY * overworld.Overworld.tileWidth);
+				} else {
+					var _g1 = this;
+					_g1.set_y(_g1.get_y() + this.speed);
+				}
+			}
+			if(this.moving == utils.Directions.LEFT) {
+				if(this.get_x() - (this.mapX - 1) * overworld.Overworld.tileWidth < this.speed) {
+					this.moving = -1;
+					this.mapX -= 1;
+					this.set_x(this.mapX * overworld.Overworld.tileWidth);
+				} else {
+					var _g2 = this;
+					_g2.set_x(_g2.get_x() - this.speed);
+				}
+			}
+			if(this.moving == utils.Directions.RIGHT) {
+				if((this.mapX + 1) * overworld.Overworld.tileWidth - this.get_x() < this.speed) {
+					this.moving = -1;
+					this.mapX += 1;
+					this.set_x(this.mapX * overworld.Overworld.tileWidth);
+				} else {
+					var _g3 = this;
+					_g3.set_x(_g3.get_x() + this.speed);
+				}
+			}
+		}
+	}
+	,__class__: overworld.Avatar
+});
 overworld.Chicken = function(attackList,spriteSheet,hitb,health,spd) {
 	this.attacks = attackList;
 	this.sprite = spriteSheet;
@@ -7802,7 +7886,98 @@ overworld.Chicken.__name__ = ["overworld","Chicken"];
 overworld.Chicken.prototype = {
 	__class__: overworld.Chicken
 };
+overworld.Overworld = function() { };
+$hxClasses["overworld.Overworld"] = overworld.Overworld;
+overworld.Overworld.__name__ = ["overworld","Overworld"];
+overworld.Overworld.background = null;
+overworld.Overworld.overworld = null;
+overworld.Overworld.map = null;
+overworld.Overworld.tileTypes = null;
+overworld.Overworld.player = null;
+overworld.Overworld.entities = null;
+overworld.Overworld.tiles = null;
+overworld.Overworld.init = function(mapArray,tileClasses) {
+	overworld.Overworld.map = mapArray;
+	overworld.Overworld.tileTypes = tileClasses;
+	overworld.Overworld.tiles = new Array();
+	overworld.Overworld.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/resultsbg.png"));
+	haxel.Core.viewport.addChild(overworld.Overworld.background);
+	var currentX = 0;
+	var _g = 0;
+	while(_g < mapArray.length) {
+		var column = mapArray[_g];
+		++_g;
+		var currentY = 0;
+		var _g1 = 0;
+		while(_g1 < column.length) {
+			var cell = column[_g1];
+			++_g1;
+			var newTile = new overworld.Tile(currentX,currentY,overworld.Overworld.tileTypes[cell]);
+			overworld.Overworld.tiles.push(newTile);
+			haxel.Core.viewport.addChild(newTile);
+			currentY += 1;
+		}
+		currentX += 1;
+	}
+	overworld.Overworld.player = new overworld.Avatar("assets/chickenmaster2.png",4,4);
+	haxel.Core.viewport.addChild(overworld.Overworld.player);
+	haxel.Time.callbackFunction = overworld.Overworld.update;
+};
+overworld.Overworld.reset = function() {
+	haxel.Time.callbackFunction = overworld.Overworld.update;
+};
+overworld.Overworld.getTileClass = function(x,y) {
+	return overworld.Overworld.tileTypes[overworld.Overworld.map[x][y]];
+};
+overworld.Overworld.unload = function() {
+	haxel.Core.viewport.removeChild(overworld.Overworld.background);
+};
+overworld.Overworld.update = function(deltaTime) {
+	overworld.Overworld.player.update();
+	var moveDirection = -1;
+	if(haxel.KeyboardInput.check(38)) moveDirection = utils.Directions.UP;
+	if(haxel.KeyboardInput.check(37)) moveDirection = utils.Directions.LEFT;
+	if(haxel.KeyboardInput.check(39)) moveDirection = utils.Directions.RIGHT;
+	if(haxel.KeyboardInput.check(40)) moveDirection = utils.Directions.DOWN;
+	if(overworld.Overworld.player.move(moveDirection) || haxel.MouseInput.mouseDown) {
+		if(Math.random() > .9) {
+			var hitbox = new utils.Hitbox(3,3,6,6);
+			var attacks = new Array();
+			attacks.push(new overworld.Attack("assets/attack.png",10,10,10,2,new utils.Hitbox(3,3,6,6),2));
+			var chicken = new battle.BattleChicken(true,new overworld.Chicken(attacks,"assets/winged.png",hitbox,20,2));
+			var attacks2 = new Array();
+			attacks2.push(new overworld.Attack("assets/attack.png",6,6,10,2,new utils.Hitbox(3,3,6,6),2));
+			var chicken2 = new battle.BattleChicken(false,new overworld.Chicken(attacks2,"assets/elvis.png",hitbox,15,3));
+			battle.Battle.init([chicken],[chicken2]);
+		}
+	}
+};
+overworld.Tile = function(mapX,mapY,tileClass) {
+	openfl.display.Sprite.call(this);
+	var bitmap = new openfl.display.Bitmap(openfl.Assets.getBitmapData(tileClass.sprite));
+	this.addChild(bitmap);
+	this.set_x(mapX * bitmap.get_width());
+	this.set_y(mapY * bitmap.get_height());
+};
+$hxClasses["overworld.Tile"] = overworld.Tile;
+overworld.Tile.__name__ = ["overworld","Tile"];
+overworld.Tile.__super__ = openfl.display.Sprite;
+overworld.Tile.prototype = $extend(openfl.display.Sprite.prototype,{
+	__class__: overworld.Tile
+});
+overworld.TileClass = function(wall,spriteString) {
+	this.sprite = spriteString;
+	this.isWall = wall;
+};
+$hxClasses["overworld.TileClass"] = overworld.TileClass;
+overworld.TileClass.__name__ = ["overworld","TileClass"];
+overworld.TileClass.prototype = {
+	__class__: overworld.TileClass
+};
 var utils = {};
+utils.Directions = function() { };
+$hxClasses["utils.Directions"] = utils.Directions;
+utils.Directions.__name__ = ["utils","Directions"];
 utils.Hitbox = function(x,y,w,h) {
 	this.offsetX = x;
 	this.offsetY = y;
@@ -8352,5 +8527,10 @@ openfl.ui.Keyboard.DOM_VK_EXECUTE = 43;
 openfl.ui.Keyboard.DOM_VK_SLEEP = 95;
 openfl.utils.Endian.BIG_ENDIAN = "bigEndian";
 openfl.utils.Endian.LITTLE_ENDIAN = "littleEndian";
+overworld.Overworld.tileWidth = 10;
+utils.Directions.UP = 0;
+utils.Directions.DOWN = 1;
+utils.Directions.LEFT = 2;
+utils.Directions.RIGHT = 3;
 ApplicationMain.main();
 })(typeof window != "undefined" ? window : exports);
