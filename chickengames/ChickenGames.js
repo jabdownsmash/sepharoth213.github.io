@@ -1017,10 +1017,10 @@ openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.
 });
 var haxel = {};
 haxel.Core = function() {
-	openfl.display.Sprite.call(this);
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
-	haxel.Core.instance = this;
 	this.stage.quality = "low";
+	openfl.display.Sprite.call(this);
+	haxel.Core.instance = this;
 	haxel.KeyboardInput.init();
 	haxel.MouseInput.init();
 	haxel.Time.init();
