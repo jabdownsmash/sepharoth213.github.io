@@ -1051,10 +1051,15 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 });
 var Main = function() {
 	haxel.Core.call(this);
-	RunnerGame.init();
+	Main.gameInitFunctions = [chickenhunt.ChickenHunt.init,runnergame.RunnerGame.init];
+	Main.loadRandomGame();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
+Main.gameInitFunctions = null;
+Main.loadRandomGame = function() {
+	Main.gameInitFunctions[Std["int"](Math.random() * Main.gameInitFunctions.length)]();
+};
 Main.__super__ = haxel.Core;
 Main.prototype = $extend(haxel.Core.prototype,{
 	__class__: Main
@@ -1069,32 +1074,6 @@ DocumentClass.__name__ = ["DocumentClass"];
 DocumentClass.__super__ = Main;
 DocumentClass.prototype = $extend(Main.prototype,{
 	__class__: DocumentClass
-});
-var Chicken = function(mapX,mapY,hbox,spriteString) {
-	this.onGround = false;
-	this.ySpeed = 0;
-	this.jumpStrength = 7.4;
-	openfl.display.Sprite.call(this);
-	this.hitbox = hbox;
-	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
-	this.addChild(this.sprite);
-	this.set_x(mapX);
-	this.set_y(mapY);
-};
-$hxClasses["Chicken"] = Chicken;
-Chicken.__name__ = ["Chicken"];
-Chicken.__super__ = openfl.display.Sprite;
-Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
-	kill: function() {
-		haxe.Log.trace("kek",{ fileName : "Chicken.hx", lineNumber : 34, className : "Chicken", methodName : "kill"});
-	}
-	,jump: function() {
-		if(this.onGround) {
-			this.ySpeed = -this.jumpStrength;
-			this.onGround = false;
-		} else this.ySpeed = this.jumpStrength;
-	}
-	,__class__: Chicken
 });
 openfl.AssetLibrary = function() {
 };
@@ -1473,26 +1452,6 @@ NMEPreloader.prototype = $extend(openfl.display.Sprite.prototype,{
 	}
 	,__class__: NMEPreloader
 });
-var Platform = function(mapX,mapY,hbox,spriteString) {
-	this.passThrough = true;
-	this.speed = 2;
-	openfl.display.Sprite.call(this);
-	this.hitbox = hbox;
-	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
-	this.addChild(this.sprite);
-	this.set_x(mapX);
-	this.set_y(mapY);
-};
-$hxClasses["Platform"] = Platform;
-Platform.__name__ = ["Platform"];
-Platform.__super__ = openfl.display.Sprite;
-Platform.prototype = $extend(openfl.display.Sprite.prototype,{
-	update: function() {
-		var _g = this;
-		_g.set_x(_g.get_x() - this.speed);
-	}
-	,__class__: Platform
-});
 var Reflect = function() { };
 $hxClasses["Reflect"] = Reflect;
 Reflect.__name__ = ["Reflect"];
@@ -1529,89 +1488,6 @@ Reflect.deleteField = function(o,field) {
 	if(!Object.prototype.hasOwnProperty.call(o,field)) return false;
 	delete(o[field]);
 	return true;
-};
-var RunnerGame = function() { };
-$hxClasses["RunnerGame"] = RunnerGame;
-RunnerGame.__name__ = ["RunnerGame"];
-RunnerGame.background = null;
-RunnerGame.platforms = null;
-RunnerGame.player = null;
-RunnerGame.speed = null;
-RunnerGame.score = null;
-RunnerGame.init = function() {
-	RunnerGame.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
-	haxel.Core.viewport.addChild(RunnerGame.background);
-	RunnerGame.speed = RunnerGame.startSpeed;
-	RunnerGame.platforms = new Array();
-	RunnerGame.spawnPlatform(10,100);
-	RunnerGame.spawnPlatform(50,100);
-	RunnerGame.spawnPlatform(100,100);
-	RunnerGame.spawnPlatform(170,100);
-	RunnerGame.player = new Chicken(10,10,new utils.Hitbox(7,6,5,16),"assets/chicken.png");
-	haxel.Core.viewport.addChild(RunnerGame.player);
-	RunnerGame.score = new openfl.text.TextField();
-	RunnerGame.updateScore();
-	haxel.Core.viewport.addChild(RunnerGame.score);
-	haxel.Time.callbackFunction = RunnerGame.update;
-	RunnerGame.score.set_width(200);
-};
-RunnerGame.spawnPlatform = function(x,y) {
-	var newPlat = new Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
-	RunnerGame.platforms.push(newPlat);
-	haxel.Core.viewport.addChildAt(newPlat,1);
-};
-RunnerGame.updateScore = function() {
-	var scoreNum = (RunnerGame.speed - 5 + RunnerGame.fruit * 10) * 10 | 0;
-	if(scoreNum > RunnerGame.highScore) RunnerGame.highScore = scoreNum;
-	RunnerGame.score.set_text("Score: " + scoreNum + " High Score: " + Std.string(RunnerGame.highScore));
-};
-RunnerGame.unload = function() {
-	haxel.Core.viewport.removeChild(RunnerGame.background);
-	haxel.Core.viewport.removeChild(RunnerGame.player);
-	haxel.Core.viewport.removeChild(RunnerGame.score);
-	var _g = 0;
-	var _g1 = RunnerGame.platforms;
-	while(_g < _g1.length) {
-		var platform = _g1[_g];
-		++_g;
-		haxel.Core.viewport.removeChild(platform);
-	}
-};
-RunnerGame.update = function(deltaTime) {
-	RunnerGame.updateScore();
-	RunnerGame.speed += RunnerGame.acceleration;
-	if(haxel.MouseInput.mousePressed) RunnerGame.player.jump();
-	if(Math.random() > .8) RunnerGame.spawnPlatform(200,40 + Math.pow(Math.random(),.5) * 100);
-	var verticalCheckPlatforms = new Array();
-	var _g = 0;
-	var _g1 = RunnerGame.platforms;
-	while(_g < _g1.length) {
-		var platform = _g1[_g];
-		++_g;
-		var _g2 = platform;
-		_g2.set_x(_g2.get_x() - RunnerGame.speed);
-		if(platform.get_x() < -200) {
-			HxOverrides.remove(RunnerGame.platforms,platform);
-			haxel.Core.viewport.removeChild(platform);
-		} else if(RunnerGame.player.ySpeed > 0 && !RunnerGame.player.hitbox.check(RunnerGame.player.get_x(),RunnerGame.player.get_y(),platform.hitbox,platform.get_x(),platform.get_y())) verticalCheckPlatforms.push(platform);
-	}
-	var _g3 = RunnerGame.player;
-	_g3.set_y(_g3.get_y() + RunnerGame.player.ySpeed);
-	RunnerGame.player.ySpeed += RunnerGame.gravity;
-	var _g4 = 0;
-	while(_g4 < verticalCheckPlatforms.length) {
-		var platform1 = verticalCheckPlatforms[_g4];
-		++_g4;
-		if(RunnerGame.player.hitbox.check(RunnerGame.player.get_x(),RunnerGame.player.get_y(),platform1.hitbox,platform1.get_x(),platform1.get_y())) {
-			RunnerGame.player.set_y(platform1.get_y() - RunnerGame.player.hitbox.height - RunnerGame.player.hitbox.offsetY - RunnerGame.gravity / 2);
-			RunnerGame.player.ySpeed = 0;
-		}
-		if(RunnerGame.player.hitbox.check(RunnerGame.player.get_x(),RunnerGame.player.get_y() + 1,platform1.hitbox,platform1.get_x(),platform1.get_y())) RunnerGame.player.onGround = true;
-	}
-	if(RunnerGame.player.get_y() > 150) {
-		RunnerGame.unload();
-		RunnerGame.init();
-	}
 };
 var Std = function() { };
 $hxClasses["Std"] = Std;
@@ -1741,6 +1617,209 @@ Type.getEnumConstructs = function(e) {
 	var a = e.__constructs__;
 	return a.slice();
 };
+var chickenhunt = {};
+chickenhunt.Attack = function(mapX,mapY,hbox,spriteString) {
+	this.startScale = 6;
+	this.scaleRate = -1;
+	openfl.display.Sprite.call(this);
+	this.hitbox = hbox;
+	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	this.addChild(this.sprite);
+	var _g = this.sprite;
+	_g.set_x(_g.get_x() - this.sprite.get_width() / 2);
+	var _g1 = this.sprite;
+	_g1.set_y(_g1.get_y() - this.sprite.get_height() / 2);
+	this.set_scaleX(this.startScale);
+	this.set_scaleY(this.startScale);
+	this.set_x(mapX);
+	this.set_y(mapY);
+};
+$hxClasses["chickenhunt.Attack"] = chickenhunt.Attack;
+chickenhunt.Attack.__name__ = ["chickenhunt","Attack"];
+chickenhunt.Attack.__super__ = openfl.display.Sprite;
+chickenhunt.Attack.prototype = $extend(openfl.display.Sprite.prototype,{
+	update: function() {
+		var _g = this;
+		_g.set_scaleX(_g.get_scaleX() + this.scaleRate);
+		var _g1 = this;
+		_g1.set_scaleY(_g1.get_scaleY() + this.scaleRate);
+		if(this.get_scaleX() < 1) {
+			var hitChicken = false;
+			var _g2 = 0;
+			var _g11 = chickenhunt.ChickenHunt.chickens;
+			while(_g2 < _g11.length) {
+				var chicken = _g11[_g2];
+				++_g2;
+				if(this.hitbox.check(this.get_x(),this.get_y(),chicken.hitbox,chicken.get_x(),chicken.get_y())) {
+					chickenhunt.ChickenHunt.removeChicken(chicken,true);
+					hitChicken = true;
+				}
+			}
+			if(!hitChicken) chickenhunt.ChickenHunt.comboBreak();
+			chickenhunt.ChickenHunt.removeAttack(this);
+		}
+	}
+	,__class__: chickenhunt.Attack
+});
+chickenhunt.Chicken = function(mapX,mapY,hbox,spriteString) {
+	openfl.display.Sprite.call(this);
+	this.hitbox = hbox;
+	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	this.addChild(this.sprite);
+	this.set_x(mapX);
+	this.set_y(mapY);
+};
+$hxClasses["chickenhunt.Chicken"] = chickenhunt.Chicken;
+chickenhunt.Chicken.__name__ = ["chickenhunt","Chicken"];
+chickenhunt.Chicken.__super__ = openfl.display.Sprite;
+chickenhunt.Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
+	__class__: chickenhunt.Chicken
+});
+chickenhunt.ChickenHunt = function() { };
+$hxClasses["chickenhunt.ChickenHunt"] = chickenhunt.ChickenHunt;
+chickenhunt.ChickenHunt.__name__ = ["chickenhunt","ChickenHunt"];
+chickenhunt.ChickenHunt.background = null;
+chickenhunt.ChickenHunt.platforms = null;
+chickenhunt.ChickenHunt.chickens = null;
+chickenhunt.ChickenHunt.attacks = null;
+chickenhunt.ChickenHunt.score = null;
+chickenhunt.ChickenHunt.score2 = null;
+chickenhunt.ChickenHunt.comboLength = null;
+chickenhunt.ChickenHunt.scoreNum = null;
+chickenhunt.ChickenHunt.init = function() {
+	chickenhunt.ChickenHunt.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
+	chickenhunt.ChickenHunt.scoreNum = 0;
+	chickenhunt.ChickenHunt.comboLength = 0;
+	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.background);
+	chickenhunt.ChickenHunt.platforms = new Array();
+	chickenhunt.ChickenHunt.spawnPlatform(0,20);
+	chickenhunt.ChickenHunt.spawnPlatform(0,50);
+	chickenhunt.ChickenHunt.spawnPlatform(0,80);
+	chickenhunt.ChickenHunt.spawnPlatform(0,110);
+	chickenhunt.ChickenHunt.chickens = new Array();
+	chickenhunt.ChickenHunt.attacks = new Array();
+	chickenhunt.ChickenHunt.score = new openfl.text.TextField();
+	chickenhunt.ChickenHunt.score.set_width(200);
+	chickenhunt.ChickenHunt.score.set_height(15);
+	chickenhunt.ChickenHunt.score2 = new openfl.text.TextField();
+	chickenhunt.ChickenHunt.score2.set_width(200);
+	chickenhunt.ChickenHunt.score2.set_y(chickenhunt.ChickenHunt.score.get_height());
+	chickenhunt.ChickenHunt.updateScore();
+	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.score);
+	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.score2);
+	haxel.Time.callbackFunction = chickenhunt.ChickenHunt.update;
+};
+chickenhunt.ChickenHunt.spawnPlatform = function(x,y) {
+	var newPlat = new chickenhunt.Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
+	chickenhunt.ChickenHunt.platforms.push(newPlat);
+	haxel.Core.viewport.addChildAt(newPlat,1);
+};
+chickenhunt.ChickenHunt.attack = function() {
+	var newAttack = new chickenhunt.Attack(haxel.MouseInput.get_mouseX() / 4,haxel.MouseInput.get_mouseY() / 4,new utils.Hitbox(-5,-5,10,10),"assets/attack.png");
+	chickenhunt.ChickenHunt.attacks.push(newAttack);
+	haxel.Core.viewport.addChild(newAttack);
+};
+chickenhunt.ChickenHunt.updateScore = function() {
+	if(chickenhunt.ChickenHunt.scoreNum > chickenhunt.ChickenHunt.highScore) chickenhunt.ChickenHunt.highScore = chickenhunt.ChickenHunt.scoreNum;
+	if(chickenhunt.ChickenHunt.comboLength > chickenhunt.ChickenHunt.maxCombo) chickenhunt.ChickenHunt.maxCombo = chickenhunt.ChickenHunt.comboLength;
+	chickenhunt.ChickenHunt.score.set_text("Score: " + chickenhunt.ChickenHunt.scoreNum + " High Score: " + Std.string(chickenhunt.ChickenHunt.highScore));
+	chickenhunt.ChickenHunt.score2.set_text("Combo: " + chickenhunt.ChickenHunt.comboLength + " Max Combo: " + chickenhunt.ChickenHunt.maxCombo);
+};
+chickenhunt.ChickenHunt.unload = function() {
+	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.background);
+	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.score);
+	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.score2);
+	var _g = 0;
+	var _g1 = chickenhunt.ChickenHunt.platforms;
+	while(_g < _g1.length) {
+		var platform = _g1[_g];
+		++_g;
+		haxel.Core.viewport.removeChild(platform);
+	}
+	var _g2 = 0;
+	var _g11 = chickenhunt.ChickenHunt.chickens;
+	while(_g2 < _g11.length) {
+		var chicken = _g11[_g2];
+		++_g2;
+		haxel.Core.viewport.removeChild(chicken);
+	}
+	var _g3 = 0;
+	var _g12 = chickenhunt.ChickenHunt.attacks;
+	while(_g3 < _g12.length) {
+		var attack = _g12[_g3];
+		++_g3;
+		haxel.Core.viewport.removeChild(attack);
+	}
+};
+chickenhunt.ChickenHunt.removeChicken = function(chicken,score) {
+	if(score == null) score = false;
+	HxOverrides.remove(chickenhunt.ChickenHunt.chickens,chicken);
+	haxel.Core.viewport.removeChild(chicken);
+	if(score) {
+		chickenhunt.ChickenHunt.comboLength += 1;
+		chickenhunt.ChickenHunt.scoreNum += Std["int"](Math.min((chickenhunt.ChickenHunt.comboLength / 10 | 0) + 1,(chickenhunt.ChickenHunt.chickenSpeed | 0) + 3));
+	}
+};
+chickenhunt.ChickenHunt.comboBreak = function() {
+	chickenhunt.ChickenHunt.comboLength = 0;
+};
+chickenhunt.ChickenHunt.removeAttack = function(attack) {
+	HxOverrides.remove(chickenhunt.ChickenHunt.attacks,attack);
+	haxel.Core.viewport.removeChild(attack);
+};
+chickenhunt.ChickenHunt.update = function(deltaTime) {
+	chickenhunt.ChickenHunt.chickenSpeed += chickenhunt.ChickenHunt.acceleration;
+	var _g = 0;
+	var _g1 = chickenhunt.ChickenHunt.chickens;
+	while(_g < _g1.length) {
+		var chicken = _g1[_g];
+		++_g;
+		var _g2 = chicken;
+		_g2.set_x(_g2.get_x() + chickenhunt.ChickenHunt.chickenSpeed);
+		if(chicken.get_x() > 200) {
+			chickenhunt.ChickenHunt.unload();
+			Main.loadRandomGame();
+		}
+	}
+	if(chickenhunt.ChickenHunt.spawnCounter++ > chickenhunt.ChickenHunt.spawnRate - 2 * (chickenhunt.ChickenHunt.chickenSpeed | 0)) {
+		var spawnIndex = Std["int"](Math.random() * chickenhunt.ChickenHunt.platforms.length);
+		chickenhunt.ChickenHunt.platforms[spawnIndex].spawn();
+		chickenhunt.ChickenHunt.spawnCounter -= chickenhunt.ChickenHunt.spawnCounter;
+	}
+	var _g3 = 0;
+	var _g11 = chickenhunt.ChickenHunt.attacks;
+	while(_g3 < _g11.length) {
+		var attack = _g11[_g3];
+		++_g3;
+		attack.update();
+	}
+	if(chickenhunt.ChickenHunt.attacks.length < 3 && haxel.MouseInput.mousePressed) chickenhunt.ChickenHunt.attack();
+	chickenhunt.ChickenHunt.updateScore();
+};
+chickenhunt.Platform = function(mapX,mapY,hbox,spriteString) {
+	this.passThrough = true;
+	this.speed = 2;
+	openfl.display.Sprite.call(this);
+	this.hitbox = hbox;
+	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	this.addChild(this.sprite);
+	this.set_scaleX(4);
+	this.set_scaleY(2);
+	this.sprite.set_y(11);
+	this.set_x(mapX);
+	this.set_y(mapY);
+};
+$hxClasses["chickenhunt.Platform"] = chickenhunt.Platform;
+chickenhunt.Platform.__name__ = ["chickenhunt","Platform"];
+chickenhunt.Platform.__super__ = openfl.display.Sprite;
+chickenhunt.Platform.prototype = $extend(openfl.display.Sprite.prototype,{
+	spawn: function() {
+		var chicken = new chickenhunt.Chicken(-50,this.get_y(),new utils.Hitbox(6,6,15,16),"assets/chicken.png");
+		chickenhunt.ChickenHunt.chickens.push(chicken);
+		haxel.Core.viewport.addChild(chicken);
+	}
+	,__class__: chickenhunt.Platform
+});
 var haxe = {};
 haxe.StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
 haxe.StackItem.CFunction = ["CFunction",0];
@@ -8354,6 +8433,137 @@ openfl.utils.ByteArray.prototype = {
 openfl.utils.Endian = function() { };
 $hxClasses["openfl.utils.Endian"] = openfl.utils.Endian;
 openfl.utils.Endian.__name__ = ["openfl","utils","Endian"];
+var runnergame = {};
+runnergame.Chicken = function(mapX,mapY,hbox,spriteString) {
+	this.onGround = false;
+	this.ySpeed = 0;
+	this.jumpStrength = 7.4;
+	openfl.display.Sprite.call(this);
+	this.hitbox = hbox;
+	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	this.addChild(this.sprite);
+	this.set_x(mapX);
+	this.set_y(mapY);
+};
+$hxClasses["runnergame.Chicken"] = runnergame.Chicken;
+runnergame.Chicken.__name__ = ["runnergame","Chicken"];
+runnergame.Chicken.__super__ = openfl.display.Sprite;
+runnergame.Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
+	kill: function() {
+		haxe.Log.trace("kek",{ fileName : "Chicken.hx", lineNumber : 34, className : "runnergame.Chicken", methodName : "kill"});
+	}
+	,jump: function() {
+		if(this.onGround) {
+			this.ySpeed = -this.jumpStrength;
+			this.onGround = false;
+		} else this.ySpeed = this.jumpStrength;
+	}
+	,__class__: runnergame.Chicken
+});
+runnergame.Platform = function(mapX,mapY,hbox,spriteString) {
+	this.passThrough = true;
+	this.speed = 2;
+	openfl.display.Sprite.call(this);
+	this.hitbox = hbox;
+	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
+	this.addChild(this.sprite);
+	this.set_x(mapX);
+	this.set_y(mapY);
+};
+$hxClasses["runnergame.Platform"] = runnergame.Platform;
+runnergame.Platform.__name__ = ["runnergame","Platform"];
+runnergame.Platform.__super__ = openfl.display.Sprite;
+runnergame.Platform.prototype = $extend(openfl.display.Sprite.prototype,{
+	update: function() {
+		var _g = this;
+		_g.set_x(_g.get_x() - this.speed);
+	}
+	,__class__: runnergame.Platform
+});
+runnergame.RunnerGame = function() { };
+$hxClasses["runnergame.RunnerGame"] = runnergame.RunnerGame;
+runnergame.RunnerGame.__name__ = ["runnergame","RunnerGame"];
+runnergame.RunnerGame.background = null;
+runnergame.RunnerGame.platforms = null;
+runnergame.RunnerGame.player = null;
+runnergame.RunnerGame.speed = null;
+runnergame.RunnerGame.score = null;
+runnergame.RunnerGame.init = function() {
+	runnergame.RunnerGame.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
+	haxel.Core.viewport.addChild(runnergame.RunnerGame.background);
+	runnergame.RunnerGame.speed = runnergame.RunnerGame.startSpeed;
+	runnergame.RunnerGame.platforms = new Array();
+	runnergame.RunnerGame.spawnPlatform(10,100);
+	runnergame.RunnerGame.spawnPlatform(50,100);
+	runnergame.RunnerGame.spawnPlatform(100,100);
+	runnergame.RunnerGame.spawnPlatform(170,100);
+	runnergame.RunnerGame.player = new runnergame.Chicken(10,10,new utils.Hitbox(7,6,5,16),"assets/chicken.png");
+	haxel.Core.viewport.addChild(runnergame.RunnerGame.player);
+	runnergame.RunnerGame.score = new openfl.text.TextField();
+	runnergame.RunnerGame.updateScore();
+	haxel.Core.viewport.addChild(runnergame.RunnerGame.score);
+	haxel.Time.callbackFunction = runnergame.RunnerGame.update;
+	runnergame.RunnerGame.score.set_width(200);
+};
+runnergame.RunnerGame.spawnPlatform = function(x,y) {
+	var newPlat = new runnergame.Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
+	runnergame.RunnerGame.platforms.push(newPlat);
+	haxel.Core.viewport.addChildAt(newPlat,1);
+};
+runnergame.RunnerGame.updateScore = function() {
+	var scoreNum = (runnergame.RunnerGame.speed - 5 + runnergame.RunnerGame.fruit * 10) * 10 | 0;
+	if(scoreNum > runnergame.RunnerGame.highScore) runnergame.RunnerGame.highScore = scoreNum;
+	runnergame.RunnerGame.score.set_text("Score: " + scoreNum + " High Score: " + Std.string(runnergame.RunnerGame.highScore));
+};
+runnergame.RunnerGame.unload = function() {
+	haxel.Core.viewport.removeChild(runnergame.RunnerGame.background);
+	haxel.Core.viewport.removeChild(runnergame.RunnerGame.player);
+	haxel.Core.viewport.removeChild(runnergame.RunnerGame.score);
+	var _g = 0;
+	var _g1 = runnergame.RunnerGame.platforms;
+	while(_g < _g1.length) {
+		var platform = _g1[_g];
+		++_g;
+		haxel.Core.viewport.removeChild(platform);
+	}
+};
+runnergame.RunnerGame.update = function(deltaTime) {
+	runnergame.RunnerGame.updateScore();
+	runnergame.RunnerGame.speed += runnergame.RunnerGame.acceleration;
+	if(haxel.MouseInput.mousePressed) runnergame.RunnerGame.player.jump();
+	if(Math.random() > .8) runnergame.RunnerGame.spawnPlatform(200,40 + Math.pow(Math.random(),.5) * 100);
+	var verticalCheckPlatforms = new Array();
+	var _g = 0;
+	var _g1 = runnergame.RunnerGame.platforms;
+	while(_g < _g1.length) {
+		var platform = _g1[_g];
+		++_g;
+		var _g2 = platform;
+		_g2.set_x(_g2.get_x() - runnergame.RunnerGame.speed);
+		if(platform.get_x() < -200) {
+			HxOverrides.remove(runnergame.RunnerGame.platforms,platform);
+			haxel.Core.viewport.removeChild(platform);
+		} else if(runnergame.RunnerGame.player.ySpeed > 0 && !runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y(),platform.hitbox,platform.get_x(),platform.get_y())) verticalCheckPlatforms.push(platform);
+	}
+	var _g3 = runnergame.RunnerGame.player;
+	_g3.set_y(_g3.get_y() + runnergame.RunnerGame.player.ySpeed);
+	runnergame.RunnerGame.player.ySpeed += runnergame.RunnerGame.gravity;
+	var _g4 = 0;
+	while(_g4 < verticalCheckPlatforms.length) {
+		var platform1 = verticalCheckPlatforms[_g4];
+		++_g4;
+		if(runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y(),platform1.hitbox,platform1.get_x(),platform1.get_y())) {
+			runnergame.RunnerGame.player.set_y(platform1.get_y() - runnergame.RunnerGame.player.hitbox.height - runnergame.RunnerGame.player.hitbox.offsetY - runnergame.RunnerGame.gravity / 2);
+			runnergame.RunnerGame.player.ySpeed = 0;
+		}
+		if(runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y() + 3,platform1.hitbox,platform1.get_x(),platform1.get_y())) runnergame.RunnerGame.player.onGround = true;
+		if(runnergame.RunnerGame.player.ySpeed > 2) runnergame.RunnerGame.player.onGround = false;
+	}
+	if(runnergame.RunnerGame.player.get_y() > 150) {
+		runnergame.RunnerGame.unload();
+		Main.loadRandomGame();
+	}
+};
 var utils = {};
 utils.Hitbox = function(offX,offY,w,h) {
 	this.offsetX = offX;
@@ -8410,11 +8620,14 @@ ApplicationMain.total = 0;
 openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
-RunnerGame.gravity = .4;
-RunnerGame.startSpeed = 5;
-RunnerGame.acceleration = .01;
-RunnerGame.fruit = 0;
-RunnerGame.highScore = 0;
+chickenhunt.ChickenHunt.chickenSpeed = 1;
+chickenhunt.ChickenHunt.acceleration = .001;
+chickenhunt.ChickenHunt.health = 0;
+chickenhunt.ChickenHunt.highScore = 0;
+chickenhunt.ChickenHunt.spawnCounter = 0;
+chickenhunt.ChickenHunt.spawnRate = 20;
+chickenhunt.ChickenHunt.maxCombo = 0;
+chickenhunt.ChickenHunt.hiScore = 0;
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
@@ -8881,5 +9094,10 @@ openfl.ui.Keyboard.DOM_VK_EXECUTE = 43;
 openfl.ui.Keyboard.DOM_VK_SLEEP = 95;
 openfl.utils.Endian.BIG_ENDIAN = "bigEndian";
 openfl.utils.Endian.LITTLE_ENDIAN = "littleEndian";
+runnergame.RunnerGame.gravity = .4;
+runnergame.RunnerGame.startSpeed = 5;
+runnergame.RunnerGame.acceleration = .01;
+runnergame.RunnerGame.fruit = 0;
+runnergame.RunnerGame.highScore = 0;
 ApplicationMain.main();
 })(typeof window != "undefined" ? window : exports);
