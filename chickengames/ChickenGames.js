@@ -1028,6 +1028,7 @@ haxel.Core = function() {
 	haxel.Core.viewportBitmapData = new openfl.display.BitmapData(200,150);
 	haxel.Core.screenBitmapData = new openfl.display.BitmapData(800,600);
 	this.addChild(new openfl.display.Bitmap(haxel.Core.screenBitmapData));
+	while(this.stage.stageWidth < haxel.Core.screenScale * 200) haxel.Core.screenScale -= 1;
 };
 $hxClasses["haxel.Core"] = haxel.Core;
 haxel.Core.__name__ = ["haxel","Core"];
@@ -1041,7 +1042,7 @@ haxel.Core.updateFrame = function() {
 };
 haxel.Core.updatePostFrame = function() {
 	haxel.Core.viewportBitmapData.draw(haxel.Core.viewport);
-	haxel.Core.screenBitmapData.draw(haxel.Core.viewportBitmapData,haxel.Utils.generateTransformMatrix(0,0,0,0,4,4));
+	haxel.Core.screenBitmapData.draw(haxel.Core.viewportBitmapData,haxel.Utils.generateTransformMatrix(0,0,0,0,haxel.Core.screenScale,haxel.Core.screenScale));
 };
 haxel.Core.__super__ = openfl.display.Sprite;
 haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
@@ -1716,7 +1717,7 @@ chickenhunt.ChickenHunt.spawnPlatform = function(x,y) {
 	haxel.Core.viewport.addChildAt(newPlat,1);
 };
 chickenhunt.ChickenHunt.attack = function() {
-	var newAttack = new chickenhunt.Attack(haxel.MouseInput.get_mouseX() / 4,haxel.MouseInput.get_mouseY() / 4,new utils.Hitbox(-5,-5,10,10),"assets/attack.png");
+	var newAttack = new chickenhunt.Attack(haxel.MouseInput.get_mouseX() / haxel.Core.screenScale,haxel.MouseInput.get_mouseY() / haxel.Core.screenScale,new utils.Hitbox(-5,-5,10,10),"assets/attack.png");
 	chickenhunt.ChickenHunt.attacks.push(newAttack);
 	haxel.Core.viewport.addChild(newAttack);
 };
@@ -8621,6 +8622,7 @@ ApplicationMain.total = 0;
 openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
+haxel.Core.screenScale = 4;
 chickenhunt.ChickenHunt.chickenSpeed = 1;
 chickenhunt.ChickenHunt.acceleration = .001;
 chickenhunt.ChickenHunt.health = 0;
