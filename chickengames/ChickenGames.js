@@ -26,19 +26,19 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	var sounds = [];
 	var id;
 	var image = new Image();
-	id = "assets/floor.png";
+	id = "assets/platform.png";
 	ApplicationMain.images.set(id,image);
 	image.onload = ApplicationMain.image_onLoad;
 	image.src = id;
 	ApplicationMain.total++;
 	var image1 = new Image();
-	id = "assets/elvisbullet.png";
+	id = "assets/floor.png";
 	ApplicationMain.images.set(id,image1);
 	image1.onload = ApplicationMain.image_onLoad;
 	image1.src = id;
 	ApplicationMain.total++;
 	var image2 = new Image();
-	id = "assets/wall.png";
+	id = "assets/squirrelwithacorn.png";
 	ApplicationMain.images.set(id,image2);
 	image2.onload = ApplicationMain.image_onLoad;
 	image2.src = id;
@@ -50,46 +50,76 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	image3.src = id;
 	ApplicationMain.total++;
 	var image4 = new Image();
-	id = "assets/resultsbg.png";
+	id = "assets/chicken.png";
 	ApplicationMain.images.set(id,image4);
 	image4.onload = ApplicationMain.image_onLoad;
 	image4.src = id;
 	ApplicationMain.total++;
 	var image5 = new Image();
-	id = "assets/attack.png";
+	id = "assets/winged.png";
 	ApplicationMain.images.set(id,image5);
 	image5.onload = ApplicationMain.image_onLoad;
 	image5.src = id;
 	ApplicationMain.total++;
 	var image6 = new Image();
-	id = "assets/chicken.png";
+	id = "assets/chickenmaster2.png";
 	ApplicationMain.images.set(id,image6);
 	image6.onload = ApplicationMain.image_onLoad;
 	image6.src = id;
 	ApplicationMain.total++;
 	var image7 = new Image();
-	id = "assets/chickenmaster2.png";
+	id = "assets/resultsbg.png";
 	ApplicationMain.images.set(id,image7);
 	image7.onload = ApplicationMain.image_onLoad;
 	image7.src = id;
 	ApplicationMain.total++;
 	var image8 = new Image();
-	id = "assets/platform.png";
+	id = "assets/squirrelattempt.png";
 	ApplicationMain.images.set(id,image8);
 	image8.onload = ApplicationMain.image_onLoad;
 	image8.src = id;
 	ApplicationMain.total++;
 	var image9 = new Image();
-	id = "assets/elvis.png";
+	id = "assets/squirrelwithpeanutbutter.png";
 	ApplicationMain.images.set(id,image9);
 	image9.onload = ApplicationMain.image_onLoad;
 	image9.src = id;
 	ApplicationMain.total++;
 	var image10 = new Image();
-	id = "assets/winged.png";
+	id = "assets/elvisbullet.png";
 	ApplicationMain.images.set(id,image10);
 	image10.onload = ApplicationMain.image_onLoad;
 	image10.src = id;
+	ApplicationMain.total++;
+	var image11 = new Image();
+	id = "assets/acorn.png";
+	ApplicationMain.images.set(id,image11);
+	image11.onload = ApplicationMain.image_onLoad;
+	image11.src = id;
+	ApplicationMain.total++;
+	var image12 = new Image();
+	id = "assets/wall.png";
+	ApplicationMain.images.set(id,image12);
+	image12.onload = ApplicationMain.image_onLoad;
+	image12.src = id;
+	ApplicationMain.total++;
+	var image13 = new Image();
+	id = "assets/skippypeanutbutter.png";
+	ApplicationMain.images.set(id,image13);
+	image13.onload = ApplicationMain.image_onLoad;
+	image13.src = id;
+	ApplicationMain.total++;
+	var image14 = new Image();
+	id = "assets/attack.png";
+	ApplicationMain.images.set(id,image14);
+	image14.onload = ApplicationMain.image_onLoad;
+	image14.src = id;
+	ApplicationMain.total++;
+	var image15 = new Image();
+	id = "assets/elvis.png";
+	ApplicationMain.images.set(id,image15);
+	image15.onload = ApplicationMain.image_onLoad;
+	image15.src = id;
 	ApplicationMain.total++;
 	if(ApplicationMain.total == 0) ApplicationMain.start(); else {
 		var $it0 = ApplicationMain.urlLoaders.keys();
@@ -144,8 +174,8 @@ ApplicationMain.preloader_onComplete = function(event) {
 	if(hasMain) Reflect.callMethod(Main,Reflect.field(Main,"main"),[]); else {
 		var instance = Type.createInstance(DocumentClass,[]);
 		if(js.Boot.__instanceof(instance,openfl.display.DisplayObject)) openfl.Lib.current.addChild(instance); else {
-			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 301, className : "ApplicationMain", methodName : "preloader_onComplete"});
-			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 302, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 356, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 357, className : "ApplicationMain", methodName : "preloader_onComplete"});
 		}
 	}
 };
@@ -372,6 +402,8 @@ openfl.display.DisplayObject.prototype = $extend(openfl.events.EventDispatcher.p
 	,__renderCanvas: function(renderSession) {
 	}
 	,__renderDOM: function(renderSession) {
+	}
+	,__renderGL: function(renderSession) {
 	}
 	,__renderMask: function(renderSession) {
 	}
@@ -876,6 +908,17 @@ openfl.display.DisplayObjectContainer.prototype = $extend(openfl.display.Interac
 		}
 		this.__removedChildren = [];
 	}
+	,__renderGL: function(renderSession) {
+		if(!this.__renderable || this.__worldAlpha <= 0) return;
+		var _g = 0;
+		var _g1 = this.__children;
+		while(_g < _g1.length) {
+			var child = _g1[_g];
+			++_g;
+			child.__renderGL(renderSession);
+		}
+		this.__removedChildren = [];
+	}
 	,__renderMask: function(renderSession) {
 		var bounds = new openfl.geom.Rectangle();
 		this.__getTransform();
@@ -935,10 +978,10 @@ openfl.display.Sprite.__super__ = openfl.display.DisplayObjectContainer;
 openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.prototype,{
 	startDrag: function(lockCenter,bounds) {
 		if(lockCenter == null) lockCenter = false;
-		openfl.Lib.notImplemented("Sprite.startDrag");
+		if(this.stage != null) this.stage.__startDrag(this,lockCenter,bounds);
 	}
 	,stopDrag: function() {
-		openfl.Lib.notImplemented("Sprite.stopDrag");
+		if(this.stage != null) this.stage.__stopDrag(this);
 	}
 	,__getBounds: function(rect,matrix) {
 		openfl.display.DisplayObjectContainer.prototype.__getBounds.call(this,rect,matrix);
@@ -1024,11 +1067,21 @@ haxel.Core = function() {
 	haxel.KeyboardInput.init();
 	haxel.MouseInput.init();
 	haxel.Time.init();
+	haxel.Core.screenScale = Std["int"](Math.min(this.stage.stageWidth,this.stage.stageHeight) / haxel.Core.gameWidth);
+	haxel.Core.screenXOffset = this.stage.stageWidth / 2 - haxel.Core.gameWidth * haxel.Core.screenScale / 2;
+	haxel.Core.screenYOffset = 0;
 	haxel.Core.viewport = new openfl.display.Sprite();
-	haxel.Core.viewportBitmapData = new openfl.display.BitmapData(200,150);
-	haxel.Core.screenBitmapData = new openfl.display.BitmapData(800,600);
-	this.addChild(new openfl.display.Bitmap(haxel.Core.screenBitmapData));
-	while(this.stage.stageWidth < haxel.Core.screenScale * 200) haxel.Core.screenScale -= 1;
+	haxel.Core.viewport.set_scaleX(haxel.Core.screenScale);
+	haxel.Core.viewport.set_scaleY(haxel.Core.screenScale);
+	haxel.Core.viewport.set_x(haxel.Core.screenXOffset);
+	haxel.Core.viewport.set_y(haxel.Core.screenYOffset);
+	this.addChild(haxel.Core.viewport);
+	haxel.Core.gameFrame = new openfl.display.Sprite();
+	haxel.Core.gameFrame.get_graphics().beginFill(1118481);
+	haxel.Core.gameFrame.get_graphics().drawRect(0,0,haxel.Core.screenXOffset,this.stage.stageHeight);
+	haxel.Core.gameFrame.get_graphics().drawRect(haxel.Core.screenXOffset + haxel.Core.gameWidth * haxel.Core.screenScale,0,haxel.Core.screenXOffset,this.stage.stageHeight);
+	haxel.Core.gameFrame.get_graphics().endFill();
+	this.addChild(haxel.Core.gameFrame);
 };
 $hxClasses["haxel.Core"] = haxel.Core;
 haxel.Core.__name__ = ["haxel","Core"];
@@ -1036,6 +1089,7 @@ haxel.Core.instance = null;
 haxel.Core.viewport = null;
 haxel.Core.viewportBitmapData = null;
 haxel.Core.screenBitmapData = null;
+haxel.Core.gameFrame = null;
 haxel.Core.updateFrame = function() {
 	haxel.KeyboardInput.update();
 	haxel.MouseInput.update();
@@ -1053,7 +1107,7 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 });
 var Main = function() {
 	haxel.Core.call(this);
-	Main.gameInitFunctions = [chickenhunt.ChickenHunt.init,runnergame.RunnerGame.init];
+	Main.gameInitFunctions = [fallgame.FallGame.init];
 	Main.loadRandomGame();
 };
 $hxClasses["Main"] = Main;
@@ -1151,37 +1205,52 @@ var DefaultAssetLibrary = function() {
 	this.className = new haxe.ds.StringMap();
 	openfl.AssetLibrary.call(this);
 	var id;
+	id = "assets/platform.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/floor.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/elvisbullet.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/wall.png";
+	id = "assets/squirrelwithacorn.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/bg.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/resultsbg.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/attack.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/chicken.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/winged.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/chickenmaster2.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/platform.png";
+	id = "assets/resultsbg.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/squirrelattempt.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/squirrelwithpeanutbutter.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/elvisbullet.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/acorn.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/wall.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/skippypeanutbutter.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/attack.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 	id = "assets/elvis.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/winged.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
 };
@@ -1619,208 +1688,171 @@ Type.getEnumConstructs = function(e) {
 	var a = e.__constructs__;
 	return a.slice();
 };
-var chickenhunt = {};
-chickenhunt.Attack = function(mapX,mapY,hbox,spriteString) {
-	this.startScale = 6;
-	this.scaleRate = -1;
+var fallgame = {};
+fallgame.Chicken = function(mapX,mapY,hbox,spriteString) {
+	this.onGround = false;
+	this.ySpeed = 0;
+	this.jumpStrength = 7.4;
 	openfl.display.Sprite.call(this);
 	this.hitbox = hbox;
 	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
 	this.addChild(this.sprite);
-	var _g = this.sprite;
-	_g.set_x(_g.get_x() - this.sprite.get_width() / 2);
-	var _g1 = this.sprite;
-	_g1.set_y(_g1.get_y() - this.sprite.get_height() / 2);
-	this.set_scaleX(this.startScale);
-	this.set_scaleY(this.startScale);
 	this.set_x(mapX);
 	this.set_y(mapY);
 };
-$hxClasses["chickenhunt.Attack"] = chickenhunt.Attack;
-chickenhunt.Attack.__name__ = ["chickenhunt","Attack"];
-chickenhunt.Attack.__super__ = openfl.display.Sprite;
-chickenhunt.Attack.prototype = $extend(openfl.display.Sprite.prototype,{
-	update: function() {
-		var _g = this;
-		_g.set_scaleX(_g.get_scaleX() + this.scaleRate);
-		var _g1 = this;
-		_g1.set_scaleY(_g1.get_scaleY() + this.scaleRate);
-		if(this.get_scaleX() < 1) {
-			var hitChicken = false;
-			var _g2 = 0;
-			var _g11 = chickenhunt.ChickenHunt.chickens;
-			while(_g2 < _g11.length) {
-				var chicken = _g11[_g2];
-				++_g2;
-				if(this.hitbox.check(this.get_x(),this.get_y(),chicken.hitbox,chicken.get_x(),chicken.get_y())) {
-					chickenhunt.ChickenHunt.removeChicken(chicken,true);
-					hitChicken = true;
-				}
-			}
-			if(!hitChicken) chickenhunt.ChickenHunt.comboBreak();
-			chickenhunt.ChickenHunt.removeAttack(this);
+$hxClasses["fallgame.Chicken"] = fallgame.Chicken;
+fallgame.Chicken.__name__ = ["fallgame","Chicken"];
+fallgame.Chicken.__super__ = openfl.display.Sprite;
+fallgame.Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
+	kill: function() {
+		haxe.Log.trace("kek",{ fileName : "Chicken.hx", lineNumber : 34, className : "fallgame.Chicken", methodName : "kill"});
+	}
+	,jump: function() {
+		if(this.onGround) {
+			this.ySpeed = -this.jumpStrength;
+			this.onGround = false;
+		} else this.ySpeed = this.jumpStrength;
+	}
+	,__class__: fallgame.Chicken
+});
+fallgame.FallGame = function() { };
+$hxClasses["fallgame.FallGame"] = fallgame.FallGame;
+fallgame.FallGame.__name__ = ["fallgame","FallGame"];
+fallgame.FallGame.background = null;
+fallgame.FallGame.platforms = null;
+fallgame.FallGame.fruits = null;
+fallgame.FallGame.player = null;
+fallgame.FallGame.speed = null;
+fallgame.FallGame.scoreBackground = null;
+fallgame.FallGame.score = null;
+fallgame.FallGame.platformLayer = null;
+fallgame.FallGame.init = function() {
+	fallgame.FallGame.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
+	fallgame.FallGame.background.set_y(15);
+	haxel.Core.viewport.addChild(fallgame.FallGame.background);
+	fallgame.FallGame.speed = fallgame.FallGame.startSpeed;
+	fallgame.FallGame.platforms = new Array();
+	fallgame.FallGame.fruits = new Array();
+	fallgame.FallGame.platformLayer = new openfl.display.Sprite();
+	haxel.Core.viewport.addChild(fallgame.FallGame.platformLayer);
+	fallgame.FallGame.spawnPlatform(10,100);
+	fallgame.FallGame.spawnPlatform(100,140);
+	fallgame.FallGame.spawnPlatform(170,750);
+	fallgame.FallGame.player = new fallgame.Chicken(10,10,new utils.Hitbox(7,6,5,16),"assets/chicken.png");
+	haxel.Core.viewport.addChild(fallgame.FallGame.player);
+	fallgame.FallGame.scoreBackground = new openfl.display.Sprite();
+	fallgame.FallGame.scoreBackground.get_graphics().beginFill(14540253);
+	fallgame.FallGame.scoreBackground.get_graphics().drawRect(0,0,haxel.Core.gameWidth,20);
+	fallgame.FallGame.scoreBackground.get_graphics().endFill();
+	haxel.Core.viewport.addChild(fallgame.FallGame.scoreBackground);
+	fallgame.FallGame.score = new openfl.text.TextField();
+	fallgame.FallGame.updateScore();
+	haxel.Core.viewport.addChild(fallgame.FallGame.score);
+	haxel.Time.callbackFunction = fallgame.FallGame.update;
+	fallgame.FallGame.score.set_width(haxel.Core.gameWidth);
+};
+fallgame.FallGame.spawnPlatform = function(x,y) {
+	var newPlat = new fallgame.Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
+	fallgame.FallGame.platforms.push(newPlat);
+	fallgame.FallGame.platformLayer.addChild(newPlat);
+	return newPlat;
+};
+fallgame.FallGame.spawnFruit = function(x,y) {
+	var newFruit = new fallgame.Platform(x,y,new utils.Hitbox(0,0,15,20),"assets/skippypeanutbutter.png");
+	fallgame.FallGame.fruits.push(newFruit);
+	fallgame.FallGame.platformLayer.addChild(newFruit);
+};
+fallgame.FallGame.updateScore = function() {
+	var scoreNum = (fallgame.FallGame.speed - fallgame.FallGame.startSpeed) * 100 + fallgame.FallGame.fruitScore * 5 | 0;
+	if(scoreNum > fallgame.FallGame.highScore) fallgame.FallGame.highScore = scoreNum;
+	fallgame.FallGame.score.set_text("Score: " + scoreNum + " High Score: " + Std.string(fallgame.FallGame.highScore));
+};
+fallgame.FallGame.unload = function() {
+	haxel.Core.viewport.removeChild(fallgame.FallGame.background);
+	haxel.Core.viewport.removeChild(fallgame.FallGame.player);
+	haxel.Core.viewport.removeChild(fallgame.FallGame.score);
+	haxel.Core.viewport.removeChild(fallgame.FallGame.scoreBackground);
+	haxel.Core.viewport.removeChild(fallgame.FallGame.platformLayer);
+};
+fallgame.FallGame.update = function(deltaTime) {
+	fallgame.FallGame.updateScore();
+	fallgame.FallGame.speed += fallgame.FallGame.acceleration;
+	if(haxel.MouseInput.mouseDown) {
+		if(haxel.MouseInput.get_mouseX() > haxel.Core.gameWidth / 2) {
+			var _g = fallgame.FallGame.player;
+			_g.set_x(_g.get_x() + (4 + fallgame.FallGame.speed / fallgame.FallGame.startSpeed));
+		} else {
+			var _g1 = fallgame.FallGame.player;
+			_g1.set_x(_g1.get_x() - (4 + fallgame.FallGame.speed / fallgame.FallGame.startSpeed));
 		}
 	}
-	,__class__: chickenhunt.Attack
-});
-chickenhunt.Chicken = function(mapX,mapY,hbox,spriteString) {
-	openfl.display.Sprite.call(this);
-	this.hitbox = hbox;
-	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
-	this.addChild(this.sprite);
-	this.set_x(mapX);
-	this.set_y(mapY);
-};
-$hxClasses["chickenhunt.Chicken"] = chickenhunt.Chicken;
-chickenhunt.Chicken.__name__ = ["chickenhunt","Chicken"];
-chickenhunt.Chicken.__super__ = openfl.display.Sprite;
-chickenhunt.Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
-	__class__: chickenhunt.Chicken
-});
-chickenhunt.ChickenHunt = function() { };
-$hxClasses["chickenhunt.ChickenHunt"] = chickenhunt.ChickenHunt;
-chickenhunt.ChickenHunt.__name__ = ["chickenhunt","ChickenHunt"];
-chickenhunt.ChickenHunt.background = null;
-chickenhunt.ChickenHunt.platforms = null;
-chickenhunt.ChickenHunt.chickens = null;
-chickenhunt.ChickenHunt.attacks = null;
-chickenhunt.ChickenHunt.score = null;
-chickenhunt.ChickenHunt.score2 = null;
-chickenhunt.ChickenHunt.comboLength = null;
-chickenhunt.ChickenHunt.scoreNum = null;
-chickenhunt.ChickenHunt.init = function() {
-	chickenhunt.ChickenHunt.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
-	chickenhunt.ChickenHunt.scoreNum = 0;
-	chickenhunt.ChickenHunt.comboLength = 0;
-	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.background);
-	chickenhunt.ChickenHunt.platforms = new Array();
-	chickenhunt.ChickenHunt.spawnPlatform(0,20);
-	chickenhunt.ChickenHunt.spawnPlatform(0,50);
-	chickenhunt.ChickenHunt.spawnPlatform(0,80);
-	chickenhunt.ChickenHunt.spawnPlatform(0,110);
-	chickenhunt.ChickenHunt.chickens = new Array();
-	chickenhunt.ChickenHunt.attacks = new Array();
-	chickenhunt.ChickenHunt.score = new openfl.text.TextField();
-	chickenhunt.ChickenHunt.score.set_width(200);
-	chickenhunt.ChickenHunt.score.set_height(15);
-	chickenhunt.ChickenHunt.score2 = new openfl.text.TextField();
-	chickenhunt.ChickenHunt.score2.set_width(200);
-	chickenhunt.ChickenHunt.score2.set_y(chickenhunt.ChickenHunt.score.get_height());
-	chickenhunt.ChickenHunt.updateScore();
-	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.score);
-	haxel.Core.viewport.addChild(chickenhunt.ChickenHunt.score2);
-	haxel.Time.callbackFunction = chickenhunt.ChickenHunt.update;
-};
-chickenhunt.ChickenHunt.spawnPlatform = function(x,y) {
-	var newPlat = new chickenhunt.Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
-	chickenhunt.ChickenHunt.platforms.push(newPlat);
-	haxel.Core.viewport.addChildAt(newPlat,1);
-};
-chickenhunt.ChickenHunt.attack = function() {
-	var newAttack = new chickenhunt.Attack(haxel.MouseInput.get_mouseX() / haxel.Core.screenScale,haxel.MouseInput.get_mouseY() / haxel.Core.screenScale,new utils.Hitbox(-5,-5,10,10),"assets/attack.png");
-	chickenhunt.ChickenHunt.attacks.push(newAttack);
-	haxel.Core.viewport.addChild(newAttack);
-};
-chickenhunt.ChickenHunt.updateScore = function() {
-	if(chickenhunt.ChickenHunt.scoreNum > chickenhunt.ChickenHunt.highScore) chickenhunt.ChickenHunt.highScore = chickenhunt.ChickenHunt.scoreNum;
-	if(chickenhunt.ChickenHunt.comboLength > chickenhunt.ChickenHunt.maxCombo) chickenhunt.ChickenHunt.maxCombo = chickenhunt.ChickenHunt.comboLength;
-	chickenhunt.ChickenHunt.score.set_text("Score: " + chickenhunt.ChickenHunt.scoreNum + " High Score: " + Std.string(chickenhunt.ChickenHunt.highScore));
-	chickenhunt.ChickenHunt.score2.set_text("Combo: " + chickenhunt.ChickenHunt.comboLength + " Max Combo: " + chickenhunt.ChickenHunt.maxCombo);
-};
-chickenhunt.ChickenHunt.unload = function() {
-	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.background);
-	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.score);
-	haxel.Core.viewport.removeChild(chickenhunt.ChickenHunt.score2);
-	var _g = 0;
-	var _g1 = chickenhunt.ChickenHunt.platforms;
-	while(_g < _g1.length) {
-		var platform = _g1[_g];
-		++_g;
-		haxel.Core.viewport.removeChild(platform);
+	if(Math.random() > .8) {
+		var newPlat = fallgame.FallGame.spawnPlatform(Math.random() * (haxel.Core.gameWidth - 25) - 12,haxel.Core.gameHeight + 20);
+		if(Math.random() > .95) fallgame.FallGame.spawnFruit(newPlat.get_x() + newPlat.get_width() / 2 - 7,newPlat.get_y() - 20);
 	}
+	var verticalCheckPlatforms = new Array();
 	var _g2 = 0;
-	var _g11 = chickenhunt.ChickenHunt.chickens;
+	var _g11 = fallgame.FallGame.platforms;
 	while(_g2 < _g11.length) {
-		var chicken = _g11[_g2];
+		var platform = _g11[_g2];
 		++_g2;
-		haxel.Core.viewport.removeChild(chicken);
+		if(fallgame.FallGame.player.ySpeed > -fallgame.FallGame.speed && !fallgame.FallGame.player.hitbox.check(fallgame.FallGame.player.get_x(),fallgame.FallGame.player.get_y(),platform.hitbox,platform.get_x(),platform.get_y())) verticalCheckPlatforms.push(platform); else if(platform.get_y() < -50) {
+			HxOverrides.remove(fallgame.FallGame.platforms,platform);
+			fallgame.FallGame.platformLayer.removeChild(platform);
+		}
+		var _g21 = platform;
+		_g21.set_y(_g21.get_y() - fallgame.FallGame.speed);
 	}
 	var _g3 = 0;
-	var _g12 = chickenhunt.ChickenHunt.attacks;
+	var _g12 = fallgame.FallGame.fruits;
 	while(_g3 < _g12.length) {
-		var attack = _g12[_g3];
+		var fruit = _g12[_g3];
 		++_g3;
-		haxel.Core.viewport.removeChild(attack);
-	}
-};
-chickenhunt.ChickenHunt.removeChicken = function(chicken,score) {
-	if(score == null) score = false;
-	HxOverrides.remove(chickenhunt.ChickenHunt.chickens,chicken);
-	haxel.Core.viewport.removeChild(chicken);
-	if(score) {
-		chickenhunt.ChickenHunt.comboLength += 1;
-		chickenhunt.ChickenHunt.scoreNum += Std["int"](Math.min((chickenhunt.ChickenHunt.comboLength / 10 | 0) + 1,(chickenhunt.ChickenHunt.chickenSpeed | 0) + 3));
-	}
-};
-chickenhunt.ChickenHunt.comboBreak = function() {
-	chickenhunt.ChickenHunt.comboLength = 0;
-};
-chickenhunt.ChickenHunt.removeAttack = function(attack) {
-	HxOverrides.remove(chickenhunt.ChickenHunt.attacks,attack);
-	haxel.Core.viewport.removeChild(attack);
-};
-chickenhunt.ChickenHunt.update = function(deltaTime) {
-	chickenhunt.ChickenHunt.chickenSpeed += chickenhunt.ChickenHunt.acceleration;
-	var _g = 0;
-	var _g1 = chickenhunt.ChickenHunt.chickens;
-	while(_g < _g1.length) {
-		var chicken = _g1[_g];
-		++_g;
-		var _g2 = chicken;
-		_g2.set_x(_g2.get_x() + chickenhunt.ChickenHunt.chickenSpeed);
-		if(chicken.get_x() > 200) {
-			chickenhunt.ChickenHunt.unload();
-			Main.loadRandomGame();
+		var _g22 = fruit;
+		_g22.set_y(_g22.get_y() - fallgame.FallGame.speed);
+		if(fallgame.FallGame.player.hitbox.check(fallgame.FallGame.player.get_x(),fallgame.FallGame.player.get_y(),fruit.hitbox,fruit.get_x(),fruit.get_y())) {
+			HxOverrides.remove(fallgame.FallGame.fruits,fruit);
+			fallgame.FallGame.platformLayer.removeChild(fruit);
+			fallgame.FallGame.fruitScore += 1;
+		} else if(fruit.get_y() < -50) {
+			HxOverrides.remove(fallgame.FallGame.fruits,fruit);
+			fallgame.FallGame.platformLayer.removeChild(fruit);
 		}
 	}
-	if(chickenhunt.ChickenHunt.spawnCounter++ > chickenhunt.ChickenHunt.spawnRate - 2 * (chickenhunt.ChickenHunt.chickenSpeed | 0)) {
-		var spawnIndex = Std["int"](Math.random() * chickenhunt.ChickenHunt.platforms.length);
-		chickenhunt.ChickenHunt.platforms[spawnIndex].spawn();
-		chickenhunt.ChickenHunt.spawnCounter -= chickenhunt.ChickenHunt.spawnCounter;
+	var _g4 = fallgame.FallGame.player;
+	_g4.set_y(_g4.get_y() + fallgame.FallGame.player.ySpeed);
+	fallgame.FallGame.player.ySpeed += fallgame.FallGame.gravity;
+	var _g5 = 0;
+	while(_g5 < verticalCheckPlatforms.length) {
+		var platform1 = verticalCheckPlatforms[_g5];
+		++_g5;
+		if(fallgame.FallGame.player.hitbox.check(fallgame.FallGame.player.get_x(),fallgame.FallGame.player.get_y(),platform1.hitbox,platform1.get_x(),platform1.get_y())) {
+			fallgame.FallGame.player.set_y(platform1.get_y() - fallgame.FallGame.player.hitbox.height - fallgame.FallGame.player.hitbox.offsetY - fallgame.FallGame.gravity / 2 - 1);
+			fallgame.FallGame.player.ySpeed = -fallgame.FallGame.speed;
+		}
 	}
-	var _g3 = 0;
-	var _g11 = chickenhunt.ChickenHunt.attacks;
-	while(_g3 < _g11.length) {
-		var attack = _g11[_g3];
-		++_g3;
-		attack.update();
+	if(fallgame.FallGame.player.get_y() < 0) {
+		fallgame.FallGame.unload();
+		Main.loadRandomGame();
 	}
-	if(chickenhunt.ChickenHunt.attacks.length < 3 && haxel.MouseInput.mousePressed) chickenhunt.ChickenHunt.attack();
-	chickenhunt.ChickenHunt.updateScore();
+	if(fallgame.FallGame.player.get_y() > haxel.Core.gameHeight - 10) fallgame.FallGame.player.ySpeed = -fallgame.FallGame.speed;
+	if(fallgame.FallGame.player.get_x() < 0) fallgame.FallGame.player.set_x(0);
+	if(fallgame.FallGame.player.get_x() > haxel.Core.gameWidth - fallgame.FallGame.player.get_width()) fallgame.FallGame.player.set_x(haxel.Core.gameWidth - fallgame.FallGame.player.get_width());
 };
-chickenhunt.Platform = function(mapX,mapY,hbox,spriteString) {
+fallgame.Platform = function(mapX,mapY,hbox,spriteString) {
 	this.passThrough = true;
-	this.speed = 2;
 	openfl.display.Sprite.call(this);
 	this.hitbox = hbox;
 	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
 	this.addChild(this.sprite);
-	this.set_scaleX(4);
-	this.set_scaleY(2);
-	this.sprite.set_y(11);
 	this.set_x(mapX);
 	this.set_y(mapY);
 };
-$hxClasses["chickenhunt.Platform"] = chickenhunt.Platform;
-chickenhunt.Platform.__name__ = ["chickenhunt","Platform"];
-chickenhunt.Platform.__super__ = openfl.display.Sprite;
-chickenhunt.Platform.prototype = $extend(openfl.display.Sprite.prototype,{
-	spawn: function() {
-		var chicken = new chickenhunt.Chicken(-50,this.get_y(),new utils.Hitbox(6,6,15,16),"assets/chicken.png");
-		chickenhunt.ChickenHunt.chickens.push(chicken);
-		haxel.Core.viewport.addChild(chicken);
-	}
-	,__class__: chickenhunt.Platform
+$hxClasses["fallgame.Platform"] = fallgame.Platform;
+fallgame.Platform.__name__ = ["fallgame","Platform"];
+fallgame.Platform.__super__ = openfl.display.Sprite;
+fallgame.Platform.prototype = $extend(openfl.display.Sprite.prototype,{
+	__class__: fallgame.Platform
 });
 var haxe = {};
 haxe.StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
@@ -2668,10 +2700,10 @@ haxel.MouseInput.get_mouseWheelDelta = function() {
 	return 0;
 };
 haxel.MouseInput.get_mouseX = function() {
-	return haxel.Core.instance.get_mouseX();
+	return (haxel.Core.instance.get_mouseX() - haxel.Core.screenXOffset) / haxel.Core.screenScale;
 };
 haxel.MouseInput.get_mouseY = function() {
-	return haxel.Core.instance.get_mouseY();
+	return (haxel.Core.instance.get_mouseY() - haxel.Core.screenYOffset) / haxel.Core.screenScale;
 };
 haxel.MouseInput.init = function() {
 	if(!haxel.MouseInput._initialized) {
@@ -3512,6 +3544,68 @@ openfl.Lib.preventDefaultTouchMove = function() {
 openfl.Lib.trace = function(arg) {
 	haxe.Log.trace(arg,{ fileName : "Lib.hx", lineNumber : 134, className : "openfl.Lib", methodName : "trace"});
 };
+openfl.Memory = function() { };
+$hxClasses["openfl.Memory"] = openfl.Memory;
+openfl.Memory.__name__ = ["openfl","Memory"];
+openfl.Memory.gcRef = null;
+openfl.Memory.len = null;
+openfl.Memory._setPositionTemporarily = function(position,action) {
+	var oldPosition = openfl.Memory.gcRef.position;
+	openfl.Memory.gcRef.position = position;
+	var value = action();
+	openfl.Memory.gcRef.position = oldPosition;
+	return value;
+};
+openfl.Memory.getByte = function(addr) {
+	return openfl.Memory.gcRef.__get(addr);
+};
+openfl.Memory.getDouble = function(addr) {
+	return openfl.Memory._setPositionTemporarily(addr,function() {
+		return openfl.Memory.gcRef.readDouble();
+	});
+};
+openfl.Memory.getFloat = function(addr) {
+	return openfl.Memory._setPositionTemporarily(addr,function() {
+		return openfl.Memory.gcRef.readFloat();
+	});
+};
+openfl.Memory.getI32 = function(addr) {
+	return openfl.Memory._setPositionTemporarily(addr,function() {
+		return openfl.Memory.gcRef.readInt();
+	});
+};
+openfl.Memory.getUI16 = function(addr) {
+	return openfl.Memory._setPositionTemporarily(addr,function() {
+		return openfl.Memory.gcRef.readUnsignedShort();
+	});
+};
+openfl.Memory.select = function(inBytes) {
+	openfl.Memory.gcRef = inBytes;
+	if(inBytes != null) openfl.Memory.len = inBytes.length; else openfl.Memory.len = 0;
+};
+openfl.Memory.setByte = function(addr,v) {
+	openfl.Memory.gcRef.__set(addr,v);
+};
+openfl.Memory.setDouble = function(addr,v) {
+	openfl.Memory._setPositionTemporarily(addr,function() {
+		openfl.Memory.gcRef.writeDouble(v);
+	});
+};
+openfl.Memory.setFloat = function(addr,v) {
+	openfl.Memory._setPositionTemporarily(addr,function() {
+		openfl.Memory.gcRef.writeFloat(v);
+	});
+};
+openfl.Memory.setI16 = function(addr,v) {
+	openfl.Memory._setPositionTemporarily(addr,function() {
+		openfl.Memory.gcRef.writeUnsignedShort(v);
+	});
+};
+openfl.Memory.setI32 = function(addr,v) {
+	openfl.Memory._setPositionTemporarily(addr,function() {
+		openfl.Memory.gcRef.writeInt(v);
+	});
+};
 openfl._Vector = {};
 openfl._Vector.Vector_Impl_ = function() { };
 $hxClasses["openfl._Vector.Vector_Impl_"] = openfl._Vector.Vector_Impl_;
@@ -4035,6 +4129,9 @@ openfl.display.BitmapData.__base64Encode = function(bytes) {
 	if(openfl.display.BitmapData.__base64Encoder == null) openfl.display.BitmapData.__base64Encoder = new haxe.crypto.BaseCode(haxe.io.Bytes.ofString(openfl.display.BitmapData.__base64Chars));
 	return openfl.display.BitmapData.__base64Encoder.encodeBytes(haxe.io.Bytes.ofData(bytes.byteView)).toString() + extension;
 };
+openfl.display.BitmapData.__flipPixel = function(pixel) {
+	return (pixel & 255) << 24 | (pixel >> 8 & 255) << 16 | (pixel >> 16 & 255) << 8 | pixel >> 24 & 255;
+};
 openfl.display.BitmapData.__isJPG = function(bytes) {
 	bytes.position = 0;
 	return bytes.readByte() == 255 && bytes.readByte() == 216;
@@ -4050,6 +4147,25 @@ openfl.display.BitmapData.__isGIF = function(bytes) {
 		return (b == 7 || b == 9) && bytes.readByte() == 97;
 	}
 	return false;
+};
+openfl.display.BitmapData.__ucompare = function(n1,n2) {
+	var tmp1;
+	var tmp2;
+	tmp1 = n1 >> 24 & 255;
+	tmp2 = n2 >> 24 & 255;
+	if(tmp1 != tmp2) if(tmp1 > tmp2) return 1; else return -1; else {
+		tmp1 = n1 >> 16 & 255;
+		tmp2 = n2 >> 16 & 255;
+		if(tmp1 != tmp2) if(tmp1 > tmp2) return 1; else return -1; else {
+			tmp1 = n1 >> 8 & 255;
+			tmp2 = n2 >> 8 & 255;
+			if(tmp1 != tmp2) if(tmp1 > tmp2) return 1; else return -1; else {
+				tmp1 = n1 & 255;
+				tmp2 = n2 & 255;
+				if(tmp1 != tmp2) if(tmp1 > tmp2) return 1; else return -1; else return 0;
+			}
+		}
+	}
 };
 openfl.display.BitmapData.prototype = {
 	applyFilter: function(sourceBitmapData,sourceRect,destPoint,filter) {
@@ -4129,7 +4245,7 @@ openfl.display.BitmapData.prototype = {
 	}
 	,copyPixels: function(sourceBitmapData,sourceRect,destPoint,alphaBitmapData,alphaPoint,mergeAlpha) {
 		if(mergeAlpha == null) mergeAlpha = false;
-		if(!this.__valid) return;
+		if(!this.__valid || sourceBitmapData == null) return;
 		if(sourceRect.x + sourceRect.width > sourceBitmapData.width) sourceRect.width = sourceBitmapData.width - sourceRect.x;
 		if(sourceRect.y + sourceRect.height > sourceBitmapData.height) sourceRect.height = sourceBitmapData.height - sourceRect.y;
 		if(sourceRect.width <= 0 || sourceRect.height <= 0) return;
@@ -4291,23 +4407,60 @@ openfl.display.BitmapData.prototype = {
 		return byteArray;
 	}
 	,getVector: function(rect) {
-		openfl.Lib.notImplemented("BitmapData.getVector");
-		var value = [];
-		var vectorData = new openfl.VectorData();
-		vectorData.length = value.length;
-		vectorData.fixed = true;
-		var vec;
-		var this1;
-		this1 = new Array(value.length);
-		vec = this1;
+		var pixels = this.getPixels(rect);
+		var result = openfl._Vector.Vector_Impl_._new();
 		var _g1 = 0;
-		var _g = value.length;
+		var _g = pixels.length / 4 | 0;
 		while(_g1 < _g) {
 			var i = _g1++;
-			vec[i] = value[i];
+			var x = pixels.readUnsignedInt();
+			if(!result.fixed) {
+				result.length++;
+				if(result.data.length < result.length) {
+					var data;
+					var this1;
+					this1 = new Array(result.data.length + 10);
+					data = this1;
+					haxe.ds._Vector.Vector_Impl_.blit(result.data,0,data,0,result.data.length);
+					result.data = data;
+				}
+				result.data[result.length - 1] = x;
+			}
+			result.length;
 		}
-		vectorData.data = vec;
-		return vectorData;
+		return result;
+	}
+	,histogram: function(hRect) {
+		var rect;
+		if(hRect != null) rect = hRect; else rect = new openfl.geom.Rectangle(0,0,this.width,this.height);
+		var pixels = this.getPixels(rect);
+		var result;
+		var _g = [];
+		var _g1 = 0;
+		while(_g1 < 4) {
+			var i = _g1++;
+			_g.push((function($this) {
+				var $r;
+				var _g2 = [];
+				{
+					var _g3 = 0;
+					while(_g3 < 256) {
+						var j = _g3++;
+						_g2.push(0);
+					}
+				}
+				$r = _g2;
+				return $r;
+			}(this)));
+		}
+		result = _g;
+		var _g21 = 0;
+		var _g11 = pixels.length;
+		while(_g21 < _g11) {
+			var i1 = _g21++;
+			++result[i1 % 4][pixels.readUnsignedByte()];
+		}
+		return result;
 	}
 	,hitTest: function(firstPoint,firstAlphaThreshold,secondObject,secondBitmapDataPoint,secondAlphaThreshold) {
 		if(secondAlphaThreshold == null) secondAlphaThreshold = 1;
@@ -4325,6 +4478,39 @@ openfl.display.BitmapData.prototype = {
 		if(!this.__valid) return;
 		openfl.Lib.notImplemented("BitmapData.noise");
 	}
+	,paletteMap: function(sourceBitmapData,sourceRect,destPoint,redArray,greenArray,blueArray,alphaArray) {
+		var memory = new openfl.utils.ByteArray();
+		var sw = sourceRect.width | 0;
+		var sh = sourceRect.height | 0;
+		memory.set_length(sw * sh * 4);
+		memory = this.getPixels(sourceRect);
+		memory.position = 0;
+		openfl.Memory.select(memory);
+		var position;
+		var pixelValue;
+		var r;
+		var g;
+		var b;
+		var color;
+		var _g1 = 0;
+		var _g = sh * sw;
+		while(_g1 < _g) {
+			var i = _g1++;
+			position = i * 4;
+			pixelValue = openfl.Memory._setPositionTemporarily(position,function() {
+				return openfl.Memory.gcRef.readInt();
+			});
+			r = pixelValue >> 8 & 255;
+			g = pixelValue >> 16 & 255;
+			b = pixelValue >> 24 & 255;
+			color = openfl.display.BitmapData.__flipPixel(-16777216 | redArray[r] | greenArray[g] | blueArray[b]);
+			openfl.Memory.setI32(position,color);
+		}
+		memory.position = 0;
+		var destRect = new openfl.geom.Rectangle(destPoint.x,destPoint.y,sw,sh);
+		this.setPixels(destRect,memory);
+		openfl.Memory.select(null);
+	}
 	,perlinNoise: function(baseX,baseY,numOctaves,randomSeed,stitch,fractalNoise,channelOptions,grayScale,offsets) {
 		if(grayScale == null) grayScale = false;
 		if(channelOptions == null) channelOptions = 7;
@@ -4333,8 +4519,17 @@ openfl.display.BitmapData.prototype = {
 	,scroll: function(x,y) {
 		openfl.Lib.notImplemented("BitmapData.scroll");
 	}
-	,setVector: function(rect,pixels) {
-		openfl.Lib.notImplemented("BitmapData.setVector");
+	,setVector: function(rect,inputVector) {
+		var byteArray = new openfl.utils.ByteArray();
+		byteArray.set_length(inputVector.length * 4);
+		var _g = 0;
+		while(_g < inputVector.length) {
+			var color = inputVector.data[_g];
+			++_g;
+			byteArray.writeUnsignedInt(color);
+		}
+		byteArray.position = 0;
+		this.setPixels(rect,byteArray);
 	}
 	,setPixel: function(x,y,color) {
 		if(!this.__valid || x < 0 || y < 0 || x >= this.width || y >= this.height) return;
@@ -4386,8 +4581,115 @@ openfl.display.BitmapData.prototype = {
 		if(copySource == null) copySource = false;
 		if(mask == null) mask = -1;
 		if(color == null) color = 0;
-		openfl.Lib.notImplemented("BitmapData.threshold");
-		return 0;
+		if(sourceBitmapData == this && sourceRect.equals(this.rect) && destPoint.x == 0 && destPoint.y == 0) {
+			var hits = 0;
+			threshold = (threshold & 255) << 24 | (threshold >> 8 & 255) << 16 | (threshold >> 16 & 255) << 8 | threshold >> 24 & 255;
+			color = (color & 255) << 24 | (color >> 8 & 255) << 16 | (color >> 16 & 255) << 8 | color >> 24 & 255;
+			var memory = new openfl.utils.ByteArray();
+			memory.set_length(this.width * this.height * 4);
+			memory = this.getPixels(this.rect);
+			memory.position = 0;
+			openfl.Memory.select(memory);
+			var thresholdMask = threshold & mask;
+			var width_yy;
+			var position;
+			var pixelMask;
+			var pixelValue;
+			var i;
+			var test;
+			var _g1 = 0;
+			var _g = this.height;
+			while(_g1 < _g) {
+				var yy = _g1++;
+				width_yy = this.width * yy;
+				var _g3 = 0;
+				var _g2 = this.width;
+				while(_g3 < _g2) {
+					var xx = _g3++;
+					position = (width_yy + xx) * 4;
+					pixelValue = openfl.Memory._setPositionTemporarily(position,function() {
+						return openfl.Memory.gcRef.readInt();
+					});
+					pixelMask = pixelValue & mask;
+					i = openfl.display.BitmapData.__ucompare(pixelMask,thresholdMask);
+					test = false;
+					if(operation == "==") test = i == 0; else if(operation == "<") test = i == -1; else if(operation == ">") test = i == 1; else if(operation == "!=") test = i != 0; else if(operation == "<=") test = i == 0 || i == -1; else if(operation == ">=") test = i == 0 || i == 1;
+					if(test) {
+						openfl.Memory.setI32(position,color);
+						hits++;
+					}
+				}
+			}
+			memory.position = 0;
+			this.setPixels(this.rect,memory);
+			openfl.Memory.select(null);
+			return hits;
+		} else {
+			var sx = sourceRect.x | 0;
+			var sy = sourceRect.y | 0;
+			var sw = sourceBitmapData.width | 0;
+			var sh = sourceBitmapData.height | 0;
+			var dx = destPoint.x | 0;
+			var dy = destPoint.y | 0;
+			var bw = this.width - sw - dx;
+			var bh = this.height - sh - dy;
+			var dw;
+			if(bw < 0) dw = sw + (this.width - sw - dx); else dw = sw;
+			var dh;
+			if(bw < 0) dh = sh + (this.height - sh - dy); else dh = sh;
+			var hits1 = 0;
+			threshold = (threshold & 255) << 24 | (threshold >> 8 & 255) << 16 | (threshold >> 16 & 255) << 8 | threshold >> 24 & 255;
+			color = (color & 255) << 24 | (color >> 8 & 255) << 16 | (color >> 16 & 255) << 8 | color >> 24 & 255;
+			var canvasMemory = sw * sh * 4;
+			var sourceMemory = 0;
+			if(copySource) sourceMemory = sw * sh * 4;
+			var totalMemory = canvasMemory + sourceMemory;
+			var memory1 = new openfl.utils.ByteArray();
+			if(memory1.allocated < totalMemory) memory1.___resizeBuffer(memory1.allocated = Std["int"](Math.max(totalMemory,memory1.allocated * 2))); else if(memory1.allocated > totalMemory) memory1.___resizeBuffer(memory1.allocated = totalMemory);
+			memory1.length = totalMemory;
+			totalMemory;
+			memory1.position = 0;
+			var bitmapData = sourceBitmapData.clone();
+			var pixels = bitmapData.getPixels(sourceRect);
+			memory1.writeBytes(pixels);
+			memory1.position = canvasMemory;
+			if(copySource) memory1.writeBytes(pixels);
+			memory1.position = 0;
+			openfl.Memory.select(memory1);
+			var thresholdMask1 = threshold & mask;
+			var position1;
+			var pixelMask1;
+			var pixelValue1;
+			var i1;
+			var test1;
+			var _g4 = 0;
+			while(_g4 < dh) {
+				var yy1 = _g4++;
+				var _g11 = 0;
+				while(_g11 < dw) {
+					var xx1 = _g11++;
+					position1 = (xx1 + sx + (yy1 + sy) * sw) * 4;
+					pixelValue1 = openfl.Memory._setPositionTemporarily(position1,function() {
+						return openfl.Memory.gcRef.readInt();
+					});
+					pixelMask1 = pixelValue1 & mask;
+					i1 = openfl.display.BitmapData.__ucompare(pixelMask1,thresholdMask1);
+					test1 = false;
+					if(operation == "==") test1 = i1 == 0; else if(operation == "<") test1 = i1 == -1; else if(operation == ">") test1 = i1 == 1; else if(operation == "!=") test1 = i1 != 0; else if(operation == "<=") test1 = i1 == 0 || i1 == -1; else if(operation == ">=") test1 = i1 == 0 || i1 == 1;
+					if(test1) {
+						openfl.Memory.setI32(position1,color);
+						hits1++;
+					} else if(copySource) openfl.Memory.setI32(position1,openfl.Memory._setPositionTemporarily(canvasMemory + position1,function() {
+						return openfl.Memory.gcRef.readInt();
+					}));
+				}
+			}
+			memory1.position = 0;
+			bitmapData.setPixels(sourceRect,memory1);
+			this.copyPixels(bitmapData,bitmapData.rect,destPoint);
+			openfl.Memory.select(null);
+			return hits1;
+		}
 	}
 	,unlock: function(changeRect) {
 	}
@@ -4659,12 +4961,13 @@ openfl.display.Graphics.prototype = {
 	,drawRoundRectComplex: function(x,y,width,height,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius) {
 		openfl.Lib.notImplemented("Graphics.drawRoundRectComplex");
 	}
-	,drawTiles: function(sheet,tileData,smooth,flags) {
+	,drawTiles: function(sheet,tileData,smooth,flags,count) {
+		if(count == null) count = -1;
 		if(flags == null) flags = 0;
 		if(smooth == null) smooth = false;
 		this.__inflateBounds(0,0);
 		this.__inflateBounds(openfl.Lib.current.stage.stageWidth,openfl.Lib.current.stage.stageHeight);
-		this.__commands.push(openfl.display.DrawCommand.DrawTiles(sheet,tileData,smooth,flags));
+		this.__commands.push(openfl.display.DrawCommand.DrawTiles(sheet,tileData,smooth,flags,count));
 		this.__dirty = true;
 		this.__visible = true;
 	}
@@ -4708,9 +5011,25 @@ openfl.display.Graphics.prototype = {
 			this.__inPath = true;
 		}
 	}
+	,__beginPatternFill: function(bitmapFill,bitmapRepeat) {
+		if(this.__setFill || bitmapFill == null) return;
+		if(this.__pattern == null) {
+			if(bitmapFill.__sourceImage != null) this.__pattern = this.__context.createPattern(bitmapFill.__sourceImage,bitmapRepeat?"repeat":"no-repeat"); else this.__pattern = this.__context.createPattern(bitmapFill.__sourceCanvas,bitmapRepeat?"repeat":"no-repeat");
+		}
+		this.__context.fillStyle = this.__pattern;
+		this.__setFill = true;
+	}
 	,__closePath: function(closeFill) {
 		if(this.__inPath) {
-			if(this.__hasFill) this.__context.fill();
+			if(this.__hasFill) {
+				this.__context.translate(-this.__bounds.x,-this.__bounds.y);
+				if(this.__pendingMatrix != null) {
+					this.__context.transform(this.__pendingMatrix.a,this.__pendingMatrix.b,this.__pendingMatrix.c,this.__pendingMatrix.d,this.__pendingMatrix.tx,this.__pendingMatrix.ty);
+					this.__context.fill();
+					this.__context.transform(this.__inversePendingMatrix.a,this.__inversePendingMatrix.b,this.__inversePendingMatrix.c,this.__inversePendingMatrix.d,this.__inversePendingMatrix.tx,this.__inversePendingMatrix.ty);
+				} else this.__context.fill();
+				this.__context.translate(this.__bounds.x,this.__bounds.y);
+			}
 			this.__context.closePath();
 			if(this.__hasStroke) this.__context.stroke();
 		}
@@ -4718,6 +5037,8 @@ openfl.display.Graphics.prototype = {
 		if(closeFill) {
 			this.__hasFill = false;
 			this.__hasStroke = false;
+			this.__pendingMatrix = null;
+			this.__inversePendingMatrix = null;
 		}
 	}
 	,__getBounds: function(rect,matrix) {
@@ -4766,10 +5087,7 @@ openfl.display.Graphics.prototype = {
 				var offsetX = this.__bounds.x;
 				var offsetY = this.__bounds.y;
 				var bitmapFill = null;
-				var bitmapMatrix = null;
 				var bitmapRepeat = false;
-				var pattern = null;
-				var setFill = false;
 				var _g = 0;
 				var _g1 = this.__commands;
 				while(_g < _g1.length) {
@@ -4785,11 +5103,18 @@ openfl.display.Graphics.prototype = {
 						if(bitmap != bitmapFill || repeat != bitmapRepeat) {
 							bitmapFill = bitmap;
 							bitmapRepeat = repeat;
-							pattern = null;
-							setFill = false;
+							this.__pattern = null;
+							this.__setFill = false;
 							bitmap.__syncImageData();
 						}
-						bitmapMatrix = matrix;
+						if(matrix != null) {
+							this.__pendingMatrix = matrix;
+							this.__inversePendingMatrix = new openfl.geom.Matrix(matrix.a,matrix.b,matrix.c,matrix.d,matrix.tx,matrix.ty);
+							this.__inversePendingMatrix.invert();
+						} else {
+							this.__pendingMatrix = null;
+							this.__inversePendingMatrix = null;
+						}
 						this.__hasFill = true;
 						break;
 					case 1:
@@ -4803,7 +5128,7 @@ openfl.display.Graphics.prototype = {
 							this.__context.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
 						}
 						bitmapFill = null;
-						setFill = true;
+						this.__setFill = true;
 						this.__hasFill = true;
 						break;
 					case 2:
@@ -4811,6 +5136,7 @@ openfl.display.Graphics.prototype = {
 						var x = command[4];
 						var cy = command[3];
 						var cx = command[2];
+						this.__beginPatternFill(bitmapFill,bitmapRepeat);
 						this.__beginPath();
 						this.__context.quadraticCurveTo(cx - offsetX,cy - offsetY,x - offsetX,y - offsetY);
 						this.__positionX = x;
@@ -4820,30 +5146,16 @@ openfl.display.Graphics.prototype = {
 						var radius = command[4];
 						var y1 = command[3];
 						var x1 = command[2];
-						if(!setFill && bitmapFill != null) {
-							if(pattern == null) {
-								if(bitmapFill.__sourceImage != null) pattern = this.__context.createPattern(bitmapFill.__sourceImage,bitmapRepeat?"repeat":"no-repeat"); else pattern = this.__context.createPattern(bitmapFill.__sourceCanvas,bitmapRepeat?"repeat":"no-repeat");
-							}
-							this.__context.fillStyle = pattern;
-							setFill = true;
-						}
-						this.__closePath(false);
+						this.__beginPatternFill(bitmapFill,bitmapRepeat);
 						this.__beginPath();
+						this.__context.moveTo(x1 - offsetX + radius,y1 - offsetY);
 						this.__context.arc(x1 - offsetX,y1 - offsetY,radius,0,Math.PI * 2,true);
-						this.__closePath(false);
 						break;
 					case 4:
 						var height = command[5];
 						var width = command[4];
 						var y2 = command[3];
 						var x2 = command[2];
-						if(!setFill && bitmapFill != null) {
-							if(pattern == null) {
-								if(bitmapFill.__sourceImage != null) pattern = this.__context.createPattern(bitmapFill.__sourceImage,bitmapRepeat?"repeat":"no-repeat"); else pattern = this.__context.createPattern(bitmapFill.__sourceCanvas,bitmapRepeat?"repeat":"no-repeat");
-							}
-							this.__context.fillStyle = pattern;
-							setFill = true;
-						}
 						x2 -= offsetX;
 						y2 -= offsetY;
 						var kappa = .5522848;
@@ -4853,44 +5165,54 @@ openfl.display.Graphics.prototype = {
 						var ye = y2 + height;
 						var xm = x2 + width / 2;
 						var ym = y2 + height / 2;
-						this.__closePath(false);
+						this.__beginPatternFill(bitmapFill,bitmapRepeat);
 						this.__beginPath();
 						this.__context.moveTo(x2,ym);
 						this.__context.bezierCurveTo(x2,ym - oy,xm - ox,y2,xm,y2);
 						this.__context.bezierCurveTo(xm + ox,y2,xe,ym - oy,xe,ym);
 						this.__context.bezierCurveTo(xe,ym + oy,xm + ox,ye,xm,ye);
 						this.__context.bezierCurveTo(xm - ox,ye,x2,ym + oy,x2,ym);
-						this.__closePath(false);
 						break;
 					case 5:
 						var height1 = command[5];
 						var width1 = command[4];
 						var y3 = command[3];
 						var x3 = command[2];
-						if(bitmapFill != null && width1 <= bitmapFill.width && height1 <= bitmapFill.height) {
-							this.__closePath(false);
-							var dx = x3;
-							var dy = y3;
-							if(bitmapMatrix != null) {
-								dx -= bitmapMatrix.tx;
-								dy -= bitmapMatrix.ty;
-							}
-							if(bitmapFill.__sourceImage != null) this.__context.drawImage(bitmapFill.__sourceImage,dx,dy,width1,height1,x3,y3,width1,height1); else this.__context.drawImage(bitmapFill.__sourceCanvas,dx,dy,width1,height1,x3,y3,width1,height1);
-						} else {
-							this.__closePath(false);
-							this.__beginPath();
-							if(!setFill && bitmapFill != null) {
-								if(pattern == null) {
-									if(bitmapFill.__sourceImage != null) pattern = this.__context.createPattern(bitmapFill.__sourceImage,bitmapRepeat?"repeat":"no-repeat"); else pattern = this.__context.createPattern(bitmapFill.__sourceCanvas,bitmapRepeat?"repeat":"no-repeat");
+						var optimizationUsed = false;
+						if(bitmapFill != null) {
+							var st = 0;
+							var sr = 0;
+							var sb = 0;
+							var sl = 0;
+							var canOptimizeMatrix = true;
+							if(this.__pendingMatrix != null) {
+								if(this.__pendingMatrix.b != 0 || this.__pendingMatrix.c != 0) canOptimizeMatrix = false; else {
+									var stl = this.__inversePendingMatrix.transformPoint(new openfl.geom.Point(x3,y3));
+									var sbr = this.__inversePendingMatrix.transformPoint(new openfl.geom.Point(x3 + width1,y3 + height1));
+									st = stl.y;
+									sl = stl.x;
+									sb = sbr.y;
+									sr = sbr.x;
 								}
-								this.__context.fillStyle = pattern;
-								setFill = true;
+							} else {
+								st = y3;
+								sl = x3;
+								sb = y3 + height1;
+								sr = x3 + width1;
 							}
+							if(canOptimizeMatrix && st >= 0 && sl >= 0 && sr <= bitmapFill.width && sb <= bitmapFill.height) {
+								optimizationUsed = true;
+								if(bitmapFill.__sourceImage != null) this.__context.drawImage(bitmapFill.__sourceImage,sl,st,sr - sl,sb - st,x3,y3,width1,height1); else this.__context.drawImage(bitmapFill.__sourceCanvas,sl,st,sr - sl,sb - st,x3,y3,width1,height1);
+							}
+						}
+						if(!optimizationUsed) {
+							this.__beginPatternFill(bitmapFill,bitmapRepeat);
+							this.__beginPath();
 							this.__context.rect(x3 - offsetX,y3 - offsetY,width1,height1);
-							this.__closePath(false);
 						}
 						break;
 					case 6:
+						var count = command[6];
 						var flags = command[5];
 						var smooth1 = command[4];
 						var tileData = command[3];
@@ -4932,6 +5254,7 @@ openfl.display.Graphics.prototype = {
 							numValues++;
 						}
 						var totalCount = tileData.length;
+						if(count >= 0 && totalCount > count) totalCount = count;
 						var itemCount = totalCount / numValues | 0;
 						var index = 0;
 						var rect = null;
@@ -4986,6 +5309,7 @@ openfl.display.Graphics.prototype = {
 					case 9:
 						var y4 = command[3];
 						var x4 = command[2];
+						this.__beginPatternFill(bitmapFill,bitmapRepeat);
 						this.__beginPath();
 						this.__context.lineTo(x4 - offsetX,y4 - offsetY);
 						this.__positionX = x4;
@@ -5089,7 +5413,7 @@ openfl.display.DrawCommand.CurveTo = function(cx,cy,x,y) { var $x = ["CurveTo",2
 openfl.display.DrawCommand.DrawCircle = function(x,y,radius) { var $x = ["DrawCircle",3,x,y,radius]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
 openfl.display.DrawCommand.DrawEllipse = function(x,y,width,height) { var $x = ["DrawEllipse",4,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
 openfl.display.DrawCommand.DrawRect = function(x,y,width,height) { var $x = ["DrawRect",5,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
-openfl.display.DrawCommand.DrawTiles = function(sheet,tileData,smooth,flags) { var $x = ["DrawTiles",6,sheet,tileData,smooth,flags]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.DrawTiles = function(sheet,tileData,smooth,flags,count) { var $x = ["DrawTiles",6,sheet,tileData,smooth,flags,count]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
 openfl.display.DrawCommand.EndFill = ["EndFill",7];
 openfl.display.DrawCommand.EndFill.toString = $estr;
 openfl.display.DrawCommand.EndFill.__enum__ = openfl.display.DrawCommand;
@@ -5387,14 +5711,7 @@ openfl.display.Stage = function(width,height,element,color) {
 	this.set_name(null);
 	this.__mouseX = 0;
 	this.__mouseY = 0;
-	if(js.Boot.__instanceof(this.__element,HTMLCanvasElement)) this.__canvas = this.__element; else this.__canvas = window.document.createElement("canvas");
-	if(this.__transparent) this.__context = this.__canvas.getContext("2d"); else {
-		this.__canvas.setAttribute("moz-opaque","true");
-		this.__context = this.__canvas.getContext ("2d", { alpha: false });
-	}
-	var style = this.__canvas.style;
-	style.setProperty("-webkit-transform","translateZ(0)",null);
-	style.setProperty("transform","translateZ(0)",null);
+	if(!this.__initializeGL()) this.__initializeCanvas();
 	this.__originalWidth = width;
 	this.__originalHeight = height;
 	if(width == 0 && height == 0) {
@@ -5435,30 +5752,6 @@ openfl.display.Stage = function(width,height,element,color) {
 	this.stageFocusRect = true;
 	this.__clearBeforeRender = true;
 	this.__stack = [];
-	this.__renderSession = new openfl.display.RenderSession();
-	this.__renderSession.context = this.__context;
-	this.__renderSession.roundPixels = true;
-	if(this.__div != null) {
-		this.__renderSession.element = this.__div;
-		var prefix = (function () {
-			  var styles = window.getComputedStyle(document.documentElement, ''),
-			    pre = (Array.prototype.slice
-			      .call(styles)
-			      .join('') 
-			      .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
-			    )[1],
-			    dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
-			  return {
-			    dom: dom,
-			    lowercase: pre,
-			    css: '-' + pre + '-',
-			    js: pre[0].toUpperCase() + pre.substr(1)
-			  };
-			})();
-		this.__renderSession.vendorPrefix = prefix.lowercase;
-		if(prefix.lowercase == "webkit") this.__renderSession.transformProperty = "-webkit-transform"; else this.__renderSession.transformProperty = "transform";
-		if(prefix.lowercase == "webkit") this.__renderSession.transformOriginProperty = "-webkit-transform-origin"; else this.__renderSession.transformOriginProperty = "transform-origin";
-	}
 	var keyEvents = ["keydown","keyup"];
 	var touchEvents = ["touchstart","touchmove","touchend"];
 	var mouseEvents = ["mousedown","mousemove","mouseup","dblclick","mousewheel"];
@@ -5504,6 +5797,18 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 	,localToGlobal: function(pos) {
 		return pos;
 	}
+	,__drag: function(mouse) {
+		var parent = this.__dragObject.parent;
+		if(parent != null) mouse = parent.globalToLocal(mouse);
+		var x = mouse.x + this.__dragOffsetX;
+		var y = mouse.y + this.__dragOffsetY;
+		if(this.__dragBounds != null) {
+			if(x < this.__dragBounds.x) x = this.__dragBounds.x; else if(x > this.__dragBounds.get_right()) x = this.__dragBounds.get_right();
+			if(y < this.__dragBounds.y) y = this.__dragBounds.y; else if(y > this.__dragBounds.get_bottom()) y = this.__dragBounds.get_bottom();
+		}
+		this.__dragObject.set_x(x);
+		this.__dragObject.set_y(y);
+	}
 	,__fireEvent: function(event,stack) {
 		var length = stack.length;
 		if(length == 0) {
@@ -5536,6 +5841,63 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 	,__getInteractive: function(stack) {
 		stack.push(this);
 	}
+	,__initializeCanvas: function() {
+		if(js.Boot.__instanceof(this.__element,HTMLCanvasElement)) this.__canvas = this.__element; else this.__canvas = window.document.createElement("canvas");
+		if(this.__transparent) this.__context = this.__canvas.getContext("2d"); else {
+			this.__canvas.setAttribute("moz-opaque","true");
+			this.__context = this.__canvas.getContext ("2d", { alpha: false });
+		}
+		var style = this.__canvas.style;
+		style.setProperty("-webkit-transform","translateZ(0)",null);
+		style.setProperty("transform","translateZ(0)",null);
+		this.__renderSession = new openfl.display.RenderSession();
+		this.__renderSession.context = this.__context;
+		this.__renderSession.roundPixels = true;
+	}
+	,__initializeDOM: function() {
+		this.__div = window.document.createElement("div");
+		var style = this.__div.style;
+		if(!this.__transparent) style.backgroundColor = this.__colorString;
+		style.setProperty("-webkit-transform","translate3D(0,0,0)",null);
+		style.setProperty("transform","translate3D(0,0,0)",null);
+		style.position = "relative";
+		style.overflow = "hidden";
+		style.setProperty("-webkit-user-select","none",null);
+		style.setProperty("-moz-user-select","none",null);
+		style.setProperty("-ms-user-select","none",null);
+		style.setProperty("-o-user-select","none",null);
+		window.document.addEventListener("dragstart",function(e) {
+			if(e.target.nodeName.toLowerCase() == "img") {
+				e.preventDefault();
+				return false;
+			}
+			return true;
+		},false);
+		this.__renderSession = new openfl.display.RenderSession();
+		this.__renderSession.element = this.__div;
+		this.__renderSession.roundPixels = true;
+		var prefix = (function () {
+		  var styles = window.getComputedStyle(document.documentElement, ''),
+			pre = (Array.prototype.slice
+			  .call(styles)
+			  .join('') 
+			  .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+			)[1],
+			dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+		  return {
+			dom: dom,
+			lowercase: pre,
+			css: '-' + pre + '-',
+			js: pre[0].toUpperCase() + pre.substr(1)
+		  };
+		})();
+		this.__renderSession.vendorPrefix = prefix.lowercase;
+		if(prefix.lowercase == "webkit") this.__renderSession.transformProperty = "-webkit-transform"; else this.__renderSession.transformProperty = "transform";
+		if(prefix.lowercase == "webkit") this.__renderSession.transformOriginProperty = "-webkit-transform-origin"; else this.__renderSession.transformOriginProperty = "transform-origin";
+	}
+	,__initializeGL: function() {
+		return false;
+	}
 	,__render: function() {
 		this.__broadcast(new openfl.events.Event(openfl.events.Event.ENTER_FRAME),true);
 		if(this.__invalidated) {
@@ -5554,13 +5916,23 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 				this.stageWidth = this.__canvas.width;
 				this.stageHeight = this.__canvas.height;
 			}
-			this.__context.setTransform(1,0,0,1,0,0);
-			this.__context.globalAlpha = 1;
-			if(!this.__transparent && this.__clearBeforeRender) {
-				this.__context.fillStyle = this.__colorString;
-				this.__context.fillRect(0,0,this.stageWidth,this.stageHeight);
-			} else if(this.__transparent && this.__clearBeforeRender) this.__context.clearRect(0,0,this.stageWidth,this.stageHeight);
-			this.__renderCanvas(this.__renderSession);
+			if(this.__gl != null) {
+				if(!this.__glContextLost) {
+					this.__gl.viewport(0,0,this.stageWidth,this.stageHeight);
+					this.__gl.bindFramebuffer(36160,null);
+					if(this.__transparent) this.__gl.clearColor(0,0,0,0); else this.__gl.clearColor(this.__colorSplit[0],this.__colorSplit[1],this.__colorSplit[2],1);
+					this.__gl.clear(16384);
+					this.__renderGL(this.__renderSession);
+				}
+			} else {
+				this.__context.setTransform(1,0,0,1,0,0);
+				this.__context.globalAlpha = 1;
+				if(!this.__transparent && this.__clearBeforeRender) {
+					this.__context.fillStyle = this.__colorString;
+					this.__context.fillRect(0,0,this.stageWidth,this.stageHeight);
+				} else if(this.__transparent && this.__clearBeforeRender) this.__context.clearRect(0,0,this.stageWidth,this.stageHeight);
+				this.__renderCanvas(this.__renderSession);
+			}
 		} else {
 			this.__renderSession.z = 1;
 			this.__renderDOM(this.__renderSession);
@@ -5568,7 +5940,7 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 		window.requestAnimationFrame($bind(this,this.__render));
 	}
 	,__resize: function() {
-		if(this.__element != null && this.__div == null) {
+		if(this.__element != null && (this.__div == null || this.__div != null && this.__fullscreen)) {
 			if(this.__fullscreen) {
 				this.stageWidth = this.__element.clientWidth;
 				this.stageHeight = this.__element.clientHeight;
@@ -5620,6 +5992,26 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 			if(value) element.style.cursor = "none"; else element.style.cursor = this.__cursor;
 		}
 	}
+	,__startDrag: function(sprite,lockCenter,bounds) {
+		if(bounds == null) this.__dragBounds = null; else this.__dragBounds = bounds.clone();
+		this.__dragObject = sprite;
+		if(this.__dragObject != null) {
+			if(lockCenter) {
+				this.__dragOffsetX = -this.__dragObject.get_width() / 2;
+				this.__dragOffsetY = -this.__dragObject.get_height() / 2;
+			} else {
+				var mouse = new openfl.geom.Point(this.get_mouseX(),this.get_mouseY());
+				var parent = this.__dragObject.parent;
+				if(parent != null) mouse = parent.globalToLocal(mouse);
+				this.__dragOffsetX = this.__dragObject.get_x() - mouse.x;
+				this.__dragOffsetY = this.__dragObject.get_y() - mouse.y;
+			}
+		}
+	}
+	,__stopDrag: function(sprite) {
+		this.__dragBounds = null;
+		this.__dragObject = null;
+	}
 	,__update: function(transformOnly,updateChildren) {
 		if(transformOnly) {
 			if(openfl.display.DisplayObject.__worldTransformDirty > 0) {
@@ -5643,6 +6035,12 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 	}
 	,get_mouseY: function() {
 		return this.__mouseY;
+	}
+	,canvas_onContextLost: function(event) {
+		this.__glContextLost = true;
+	}
+	,canvas_onContextRestored: function(event) {
+		this.__glContextLost = false;
 	}
 	,element_onFocus: function(event) {
 	}
@@ -5692,6 +6090,7 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 			this.__fireEvent(touchEvent1,[this]);
 			this.__fireEvent(mouseEvent1,[this]);
 		}
+		if(type == "touchMove" && this.__dragObject != null) this.__drag(point);
 	}
 	,element_onMouse: function(event) {
 		var rect;
@@ -5736,6 +6135,7 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 			this.__fireEvent(openfl.events.MouseEvent.__create(type,event,new openfl.geom.Point(this.get_mouseX(),this.get_mouseY()),this),[this]);
 			if(type == openfl.events.MouseEvent.MOUSE_UP) this.__fireEvent(openfl.events.MouseEvent.__create(openfl.events.MouseEvent.CLICK,event,new openfl.geom.Point(this.get_mouseX(),this.get_mouseY()),this),[this]);
 		}
+		if(this.__dragObject != null) this.__drag(new openfl.geom.Point(this.get_mouseX(),this.get_mouseY()));
 	}
 	,window_onKey: function(event) {
 		var keyCode;
@@ -5769,6 +6169,10 @@ openfl.display.Stage.prototype = $extend(openfl.display.Sprite.prototype,{
 		return this.__color;
 	}
 	,set_color: function(value) {
+		var r = (value & 16711680) >>> 16;
+		var g = (value & 65280) >>> 8;
+		var b = value & 255;
+		this.__colorSplit = [r / 255,g / 255,b / 255];
 		this.__colorString = "#" + StringTools.hex(value,6);
 		return this.__color = value;
 	}
@@ -5931,10 +6335,11 @@ openfl.display.Tilesheet.prototype = {
 		this.__tileUVs.push(new openfl.geom.Rectangle(rectangle.get_left() / this.__bitmap.width,rectangle.get_top() / this.__bitmap.height,rectangle.get_right() / this.__bitmap.width,rectangle.get_bottom() / this.__bitmap.height));
 		return this.__tileRects.length - 1;
 	}
-	,drawTiles: function(graphics,tileData,smooth,flags) {
+	,drawTiles: function(graphics,tileData,smooth,flags,count) {
+		if(count == null) count = -1;
 		if(flags == null) flags = 0;
 		if(smooth == null) smooth = false;
-		graphics.drawTiles(this,tileData,smooth,flags);
+		graphics.drawTiles(this,tileData,smooth,flags,count);
 	}
 	,getTileCenter: function(index) {
 		return this.__centerPoints[index];
@@ -7709,19 +8114,27 @@ openfl.text.TextField.prototype = $extend(openfl.display.InteractiveObject.proto
 		this.__context.font = this.__getFont(format);
 		this.__context.textBaseline = "top";
 		this.__context.fillStyle = "#" + StringTools.hex(format.color,6);
-		var _g = format.align;
-		switch(_g[1]) {
-		case 3:
-			this.__context.textAlign = "center";
-			this.__context.fillText(text,this.__width / 2,2,this.__width - 4);
-			break;
-		case 1:
-			this.__context.textAlign = "end";
-			this.__context.fillText(text,this.__width - 2,2,this.__width - 4);
-			break;
-		default:
-			this.__context.textAlign = "start";
-			this.__context.fillText(text,2 + offsetX,2,this.__width - 4);
+		var lines = text.split("\n");
+		var yOffset = 0;
+		var _g = 0;
+		while(_g < lines.length) {
+			var line = lines[_g];
+			++_g;
+			var _g1 = format.align;
+			switch(_g1[1]) {
+			case 3:
+				this.__context.textAlign = "center";
+				this.__context.fillText(line,this.__width / 2,2 + yOffset,this.__width - 4);
+				break;
+			case 1:
+				this.__context.textAlign = "end";
+				this.__context.fillText(line,this.__width - 2,2 + yOffset,this.__width - 4);
+				break;
+			default:
+				this.__context.textAlign = "start";
+				this.__context.fillText(line,2 + offsetX,2 + yOffset,this.__width - 4);
+			}
+			yOffset += this.get_textHeight();
 		}
 	}
 	,set_autoSize: function(value) {
@@ -8177,7 +8590,7 @@ openfl.utils.ByteArray.prototype = {
 		if(length == null) length = 0;
 		if(offset == null) offset = 0;
 		if(offset < 0 || length < 0) throw new openfl.errors.IOError("Read error - Out of bounds");
-		if(length == 0) length = this.length;
+		if(length == 0) length = this.length - this.position;
 		var lengthToEnsure = offset + length;
 		if(bytes.length < lengthToEnsure) {
 			if(bytes.allocated < lengthToEnsure) bytes.___resizeBuffer(bytes.allocated = Std["int"](Math.max(lengthToEnsure,bytes.allocated * 2))); else if(bytes.allocated > lengthToEnsure) bytes.___resizeBuffer(bytes.allocated = lengthToEnsure);
@@ -8217,6 +8630,9 @@ openfl.utils.ByteArray.prototype = {
 		var $int = this.data.getInt32(this.position,this.littleEndian);
 		this.position += 4;
 		return $int;
+	}
+	,readMultiByte: function(length,charSet) {
+		return this.readUTFBytes(length);
 	}
 	,readShort: function() {
 		var $short = this.data.getInt16(this.position,this.littleEndian);
@@ -8435,137 +8851,6 @@ openfl.utils.ByteArray.prototype = {
 openfl.utils.Endian = function() { };
 $hxClasses["openfl.utils.Endian"] = openfl.utils.Endian;
 openfl.utils.Endian.__name__ = ["openfl","utils","Endian"];
-var runnergame = {};
-runnergame.Chicken = function(mapX,mapY,hbox,spriteString) {
-	this.onGround = false;
-	this.ySpeed = 0;
-	this.jumpStrength = 7.4;
-	openfl.display.Sprite.call(this);
-	this.hitbox = hbox;
-	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
-	this.addChild(this.sprite);
-	this.set_x(mapX);
-	this.set_y(mapY);
-};
-$hxClasses["runnergame.Chicken"] = runnergame.Chicken;
-runnergame.Chicken.__name__ = ["runnergame","Chicken"];
-runnergame.Chicken.__super__ = openfl.display.Sprite;
-runnergame.Chicken.prototype = $extend(openfl.display.Sprite.prototype,{
-	kill: function() {
-		haxe.Log.trace("kek",{ fileName : "Chicken.hx", lineNumber : 34, className : "runnergame.Chicken", methodName : "kill"});
-	}
-	,jump: function() {
-		if(this.onGround) {
-			this.ySpeed = -this.jumpStrength;
-			this.onGround = false;
-		} else this.ySpeed = this.jumpStrength;
-	}
-	,__class__: runnergame.Chicken
-});
-runnergame.Platform = function(mapX,mapY,hbox,spriteString) {
-	this.passThrough = true;
-	this.speed = 2;
-	openfl.display.Sprite.call(this);
-	this.hitbox = hbox;
-	this.sprite = new openfl.display.Bitmap(openfl.Assets.getBitmapData(spriteString));
-	this.addChild(this.sprite);
-	this.set_x(mapX);
-	this.set_y(mapY);
-};
-$hxClasses["runnergame.Platform"] = runnergame.Platform;
-runnergame.Platform.__name__ = ["runnergame","Platform"];
-runnergame.Platform.__super__ = openfl.display.Sprite;
-runnergame.Platform.prototype = $extend(openfl.display.Sprite.prototype,{
-	update: function() {
-		var _g = this;
-		_g.set_x(_g.get_x() - this.speed);
-	}
-	,__class__: runnergame.Platform
-});
-runnergame.RunnerGame = function() { };
-$hxClasses["runnergame.RunnerGame"] = runnergame.RunnerGame;
-runnergame.RunnerGame.__name__ = ["runnergame","RunnerGame"];
-runnergame.RunnerGame.background = null;
-runnergame.RunnerGame.platforms = null;
-runnergame.RunnerGame.player = null;
-runnergame.RunnerGame.speed = null;
-runnergame.RunnerGame.score = null;
-runnergame.RunnerGame.init = function() {
-	runnergame.RunnerGame.background = new openfl.display.Bitmap(openfl.Assets.getBitmapData("assets/bg.png"));
-	haxel.Core.viewport.addChild(runnergame.RunnerGame.background);
-	runnergame.RunnerGame.speed = runnergame.RunnerGame.startSpeed;
-	runnergame.RunnerGame.platforms = new Array();
-	runnergame.RunnerGame.spawnPlatform(10,100);
-	runnergame.RunnerGame.spawnPlatform(50,100);
-	runnergame.RunnerGame.spawnPlatform(100,100);
-	runnergame.RunnerGame.spawnPlatform(170,100);
-	runnergame.RunnerGame.player = new runnergame.Chicken(10,10,new utils.Hitbox(7,6,5,16),"assets/chicken.png");
-	haxel.Core.viewport.addChild(runnergame.RunnerGame.player);
-	runnergame.RunnerGame.score = new openfl.text.TextField();
-	runnergame.RunnerGame.updateScore();
-	haxel.Core.viewport.addChild(runnergame.RunnerGame.score);
-	haxel.Time.callbackFunction = runnergame.RunnerGame.update;
-	runnergame.RunnerGame.score.set_width(200);
-};
-runnergame.RunnerGame.spawnPlatform = function(x,y) {
-	var newPlat = new runnergame.Platform(x,y,new utils.Hitbox(0,0,50,10),"assets/platform.png");
-	runnergame.RunnerGame.platforms.push(newPlat);
-	haxel.Core.viewport.addChildAt(newPlat,1);
-};
-runnergame.RunnerGame.updateScore = function() {
-	var scoreNum = (runnergame.RunnerGame.speed - 5 + runnergame.RunnerGame.fruit * 10) * 10 | 0;
-	if(scoreNum > runnergame.RunnerGame.highScore) runnergame.RunnerGame.highScore = scoreNum;
-	runnergame.RunnerGame.score.set_text("Score: " + scoreNum + " High Score: " + Std.string(runnergame.RunnerGame.highScore));
-};
-runnergame.RunnerGame.unload = function() {
-	haxel.Core.viewport.removeChild(runnergame.RunnerGame.background);
-	haxel.Core.viewport.removeChild(runnergame.RunnerGame.player);
-	haxel.Core.viewport.removeChild(runnergame.RunnerGame.score);
-	var _g = 0;
-	var _g1 = runnergame.RunnerGame.platforms;
-	while(_g < _g1.length) {
-		var platform = _g1[_g];
-		++_g;
-		haxel.Core.viewport.removeChild(platform);
-	}
-};
-runnergame.RunnerGame.update = function(deltaTime) {
-	runnergame.RunnerGame.updateScore();
-	runnergame.RunnerGame.speed += runnergame.RunnerGame.acceleration;
-	if(haxel.MouseInput.mousePressed) runnergame.RunnerGame.player.jump();
-	if(Math.random() > .8) runnergame.RunnerGame.spawnPlatform(200,40 + Math.pow(Math.random(),.5) * 100);
-	var verticalCheckPlatforms = new Array();
-	var _g = 0;
-	var _g1 = runnergame.RunnerGame.platforms;
-	while(_g < _g1.length) {
-		var platform = _g1[_g];
-		++_g;
-		var _g2 = platform;
-		_g2.set_x(_g2.get_x() - runnergame.RunnerGame.speed);
-		if(platform.get_x() < -200) {
-			HxOverrides.remove(runnergame.RunnerGame.platforms,platform);
-			haxel.Core.viewport.removeChild(platform);
-		} else if(runnergame.RunnerGame.player.ySpeed > 0 && !runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y(),platform.hitbox,platform.get_x(),platform.get_y())) verticalCheckPlatforms.push(platform);
-	}
-	var _g3 = runnergame.RunnerGame.player;
-	_g3.set_y(_g3.get_y() + runnergame.RunnerGame.player.ySpeed);
-	runnergame.RunnerGame.player.ySpeed += runnergame.RunnerGame.gravity;
-	var _g4 = 0;
-	while(_g4 < verticalCheckPlatforms.length) {
-		var platform1 = verticalCheckPlatforms[_g4];
-		++_g4;
-		if(runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y(),platform1.hitbox,platform1.get_x(),platform1.get_y())) {
-			runnergame.RunnerGame.player.set_y(platform1.get_y() - runnergame.RunnerGame.player.hitbox.height - runnergame.RunnerGame.player.hitbox.offsetY - runnergame.RunnerGame.gravity / 2);
-			runnergame.RunnerGame.player.ySpeed = 0;
-		}
-		if(runnergame.RunnerGame.player.hitbox.check(runnergame.RunnerGame.player.get_x(),runnergame.RunnerGame.player.get_y() + 3,platform1.hitbox,platform1.get_x(),platform1.get_y())) runnergame.RunnerGame.player.onGround = true;
-		if(runnergame.RunnerGame.player.ySpeed > 2) runnergame.RunnerGame.player.onGround = false;
-	}
-	if(runnergame.RunnerGame.player.get_y() > 150) {
-		runnergame.RunnerGame.unload();
-		Main.loadRandomGame();
-	}
-};
 var utils = {};
 utils.Hitbox = function(offX,offY,w,h) {
 	this.offsetX = offX;
@@ -8623,14 +8908,15 @@ openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
 haxel.Core.screenScale = 4;
-chickenhunt.ChickenHunt.chickenSpeed = 1;
-chickenhunt.ChickenHunt.acceleration = .001;
-chickenhunt.ChickenHunt.health = 0;
-chickenhunt.ChickenHunt.highScore = 0;
-chickenhunt.ChickenHunt.spawnCounter = 0;
-chickenhunt.ChickenHunt.spawnRate = 20;
-chickenhunt.ChickenHunt.maxCombo = 0;
-chickenhunt.ChickenHunt.hiScore = 0;
+haxel.Core.screenXOffset = 0;
+haxel.Core.screenYOffset = 0;
+haxel.Core.gameWidth = 150;
+haxel.Core.gameHeight = 200;
+fallgame.FallGame.gravity = .4;
+fallgame.FallGame.startSpeed = 2;
+fallgame.FallGame.acceleration = .001;
+fallgame.FallGame.fruitScore = 0;
+fallgame.FallGame.highScore = 0;
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
@@ -9097,10 +9383,5 @@ openfl.ui.Keyboard.DOM_VK_EXECUTE = 43;
 openfl.ui.Keyboard.DOM_VK_SLEEP = 95;
 openfl.utils.Endian.BIG_ENDIAN = "bigEndian";
 openfl.utils.Endian.LITTLE_ENDIAN = "littleEndian";
-runnergame.RunnerGame.gravity = .4;
-runnergame.RunnerGame.startSpeed = 5;
-runnergame.RunnerGame.acceleration = .01;
-runnergame.RunnerGame.fruit = 0;
-runnergame.RunnerGame.highScore = 0;
 ApplicationMain.main();
 })(typeof window != "undefined" ? window : exports);
