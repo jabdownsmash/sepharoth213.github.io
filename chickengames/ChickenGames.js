@@ -1067,9 +1067,15 @@ haxel.Core = function() {
 	haxel.KeyboardInput.init();
 	haxel.MouseInput.init();
 	haxel.Time.init();
-	haxel.Core.screenScale = Std["int"](Math.min(this.stage.stageWidth,this.stage.stageHeight) / haxel.Core.gameWidth);
-	haxel.Core.screenXOffset = this.stage.stageWidth / 2 - haxel.Core.gameWidth * haxel.Core.screenScale / 2;
-	haxel.Core.screenYOffset = 0;
+	if(this.stage.stageHeight > this.stage.stageWidth) {
+		haxel.Core.screenScale = this.stage.stageWidth / haxel.Core.gameWidth;
+		haxel.Core.screenXOffset = 0;
+		haxel.Core.screenYOffset = 0;
+	} else {
+		haxel.Core.screenScale = this.stage.stageHeight / haxel.Core.gameHeight;
+		haxel.Core.screenXOffset = this.stage.stageWidth / 2 - haxel.Core.gameWidth * haxel.Core.screenScale / 2;
+		haxel.Core.screenYOffset = 0;
+	}
 	haxel.Core.viewport = new openfl.display.Sprite();
 	haxel.Core.viewport.set_scaleX(haxel.Core.screenScale);
 	haxel.Core.viewport.set_scaleY(haxel.Core.screenScale);
