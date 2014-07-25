@@ -1,6 +1,6 @@
 (function ($hx_exports) { "use strict";
 $hx_exports.openfl = $hx_exports.openfl || {};
-var $hxClasses = {};
+var $hxClasses = {},$estr = function() { return js.Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
@@ -1098,6 +1098,7 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 	,__class__: haxel.Core
 });
 var Main = function() {
+	this.hiscore = 0;
 	this.columnY = 525;
 	haxel.Core.call(this);
 	this.init();
@@ -1129,6 +1130,15 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		this.obstacles = new Array();
 		this.spawnedObjects = 0;
 		this.currentBeat = 0;
+		var myFormat = new openfl.text.TextFormat();
+		myFormat.size = 20;
+		myFormat.color = 16777181;
+		this.score = 0;
+		this.scoreText = new openfl.text.TextField();
+		this.scoreText.set_text("Score: " + this.score);
+		this.scoreText.set_defaultTextFormat(myFormat);
+		this.scoreText.set_width(400);
+		this.addChild(this.scoreText);
 	}
 	,spawnObject: function() {
 		var newObject = new SongObject(14487825,50,50,-20,Std["int"](Math.random() * SongObject.maxColumns),20);
@@ -1147,6 +1157,9 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		}
 	}
 	,update: function(deltaTime) {
+		this.scoreText.set_text("Score: " + (this.score / 100 | 0) + " Hi: " + (this.hiscore / 100 | 0));
+		this.score += deltaTime;
+		if(this.score > this.hiscore) this.hiscore = this.score;
 		this.player.update();
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
 		if(haxel.KeyboardInput.pressed(39)) this.player.currentColumn += 1;
@@ -1426,6 +1439,18 @@ DefaultAssetLibrary.prototype = $extend(openfl.AssetLibrary.prototype,{
 	}
 	,__class__: DefaultAssetLibrary
 });
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+$hxClasses["EReg"] = EReg;
+EReg.__name__ = ["EReg"];
+EReg.prototype = {
+	replace: function(s,by) {
+		return s.replace(this.r,by);
+	}
+	,__class__: EReg
+};
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
@@ -1773,11 +1798,12 @@ Type.getEnumConstructs = function(e) {
 var haxe = {};
 haxe.StackItem = $hxClasses["haxe.StackItem"] = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
 haxe.StackItem.CFunction = ["CFunction",0];
+haxe.StackItem.CFunction.toString = $estr;
 haxe.StackItem.CFunction.__enum__ = haxe.StackItem;
-haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; return $x; };
-haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; return $x; };
-haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; return $x; };
-haxe.StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe.StackItem; return $x; };
+haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
+haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
+haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
+haxe.StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
 haxe.CallStack = function() { };
 $hxClasses["haxe.CallStack"] = haxe.CallStack;
 haxe.CallStack.__name__ = ["haxe","CallStack"];
@@ -2334,12 +2360,15 @@ haxe.io.Eof.prototype = {
 };
 haxe.io.Error = $hxClasses["haxe.io.Error"] = { __ename__ : true, __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] };
 haxe.io.Error.Blocked = ["Blocked",0];
+haxe.io.Error.Blocked.toString = $estr;
 haxe.io.Error.Blocked.__enum__ = haxe.io.Error;
 haxe.io.Error.Overflow = ["Overflow",1];
+haxe.io.Error.Overflow.toString = $estr;
 haxe.io.Error.Overflow.__enum__ = haxe.io.Error;
 haxe.io.Error.OutsideBounds = ["OutsideBounds",2];
+haxe.io.Error.OutsideBounds.toString = $estr;
 haxe.io.Error.OutsideBounds.__enum__ = haxe.io.Error;
-haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; return $x; };
+haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; $x.toString = $estr; return $x; };
 haxe.io.Path = function(path) {
 	var c1 = path.lastIndexOf("/");
 	var c2 = path.lastIndexOf("\\");
@@ -3367,20 +3396,28 @@ openfl.AssetData.prototype = {
 };
 openfl.AssetType = $hxClasses["openfl.AssetType"] = { __ename__ : true, __constructs__ : ["BINARY","FONT","IMAGE","MOVIE_CLIP","MUSIC","SOUND","TEMPLATE","TEXT"] };
 openfl.AssetType.BINARY = ["BINARY",0];
+openfl.AssetType.BINARY.toString = $estr;
 openfl.AssetType.BINARY.__enum__ = openfl.AssetType;
 openfl.AssetType.FONT = ["FONT",1];
+openfl.AssetType.FONT.toString = $estr;
 openfl.AssetType.FONT.__enum__ = openfl.AssetType;
 openfl.AssetType.IMAGE = ["IMAGE",2];
+openfl.AssetType.IMAGE.toString = $estr;
 openfl.AssetType.IMAGE.__enum__ = openfl.AssetType;
 openfl.AssetType.MOVIE_CLIP = ["MOVIE_CLIP",3];
+openfl.AssetType.MOVIE_CLIP.toString = $estr;
 openfl.AssetType.MOVIE_CLIP.__enum__ = openfl.AssetType;
 openfl.AssetType.MUSIC = ["MUSIC",4];
+openfl.AssetType.MUSIC.toString = $estr;
 openfl.AssetType.MUSIC.__enum__ = openfl.AssetType;
 openfl.AssetType.SOUND = ["SOUND",5];
+openfl.AssetType.SOUND.toString = $estr;
 openfl.AssetType.SOUND.__enum__ = openfl.AssetType;
 openfl.AssetType.TEMPLATE = ["TEMPLATE",6];
+openfl.AssetType.TEMPLATE.toString = $estr;
 openfl.AssetType.TEMPLATE.__enum__ = openfl.AssetType;
 openfl.AssetType.TEXT = ["TEXT",7];
+openfl.AssetType.TEXT.toString = $estr;
 openfl.AssetType.TEXT.__enum__ = openfl.AssetType;
 openfl.Lib = function() { };
 $hxClasses["openfl.Lib"] = openfl.Lib;
@@ -4719,32 +4756,46 @@ $hxClasses["openfl.display.BitmapDataChannel"] = openfl.display.BitmapDataChanne
 openfl.display.BitmapDataChannel.__name__ = ["openfl","display","BitmapDataChannel"];
 openfl.display.BlendMode = $hxClasses["openfl.display.BlendMode"] = { __ename__ : true, __constructs__ : ["ADD","ALPHA","DARKEN","DIFFERENCE","ERASE","HARDLIGHT","INVERT","LAYER","LIGHTEN","MULTIPLY","NORMAL","OVERLAY","SCREEN","SUBTRACT"] };
 openfl.display.BlendMode.ADD = ["ADD",0];
+openfl.display.BlendMode.ADD.toString = $estr;
 openfl.display.BlendMode.ADD.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.ALPHA = ["ALPHA",1];
+openfl.display.BlendMode.ALPHA.toString = $estr;
 openfl.display.BlendMode.ALPHA.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.DARKEN = ["DARKEN",2];
+openfl.display.BlendMode.DARKEN.toString = $estr;
 openfl.display.BlendMode.DARKEN.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.DIFFERENCE = ["DIFFERENCE",3];
+openfl.display.BlendMode.DIFFERENCE.toString = $estr;
 openfl.display.BlendMode.DIFFERENCE.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.ERASE = ["ERASE",4];
+openfl.display.BlendMode.ERASE.toString = $estr;
 openfl.display.BlendMode.ERASE.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.HARDLIGHT = ["HARDLIGHT",5];
+openfl.display.BlendMode.HARDLIGHT.toString = $estr;
 openfl.display.BlendMode.HARDLIGHT.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.INVERT = ["INVERT",6];
+openfl.display.BlendMode.INVERT.toString = $estr;
 openfl.display.BlendMode.INVERT.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.LAYER = ["LAYER",7];
+openfl.display.BlendMode.LAYER.toString = $estr;
 openfl.display.BlendMode.LAYER.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.LIGHTEN = ["LIGHTEN",8];
+openfl.display.BlendMode.LIGHTEN.toString = $estr;
 openfl.display.BlendMode.LIGHTEN.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.MULTIPLY = ["MULTIPLY",9];
+openfl.display.BlendMode.MULTIPLY.toString = $estr;
 openfl.display.BlendMode.MULTIPLY.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.NORMAL = ["NORMAL",10];
+openfl.display.BlendMode.NORMAL.toString = $estr;
 openfl.display.BlendMode.NORMAL.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.OVERLAY = ["OVERLAY",11];
+openfl.display.BlendMode.OVERLAY.toString = $estr;
 openfl.display.BlendMode.OVERLAY.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.SCREEN = ["SCREEN",12];
+openfl.display.BlendMode.SCREEN.toString = $estr;
 openfl.display.BlendMode.SCREEN.__enum__ = openfl.display.BlendMode;
 openfl.display.BlendMode.SUBTRACT = ["SUBTRACT",13];
+openfl.display.BlendMode.SUBTRACT.toString = $estr;
 openfl.display.BlendMode.SUBTRACT.__enum__ = openfl.display.BlendMode;
 openfl.display._CapsStyle = {};
 openfl.display._CapsStyle.CapsStyle_Impl_ = function() { };
@@ -4769,8 +4820,10 @@ openfl.display.FrameLabel.prototype = $extend(openfl.events.EventDispatcher.prot
 });
 openfl.display.GradientType = $hxClasses["openfl.display.GradientType"] = { __ename__ : true, __constructs__ : ["RADIAL","LINEAR"] };
 openfl.display.GradientType.RADIAL = ["RADIAL",0];
+openfl.display.GradientType.RADIAL.toString = $estr;
 openfl.display.GradientType.RADIAL.__enum__ = openfl.display.GradientType;
 openfl.display.GradientType.LINEAR = ["LINEAR",1];
+openfl.display.GradientType.LINEAR.toString = $estr;
 openfl.display.GradientType.LINEAR.__enum__ = openfl.display.GradientType;
 openfl.display.Graphics = function() {
 	this.__commands = new Array();
@@ -5295,22 +5348,25 @@ openfl.display.Graphics.prototype = {
 	,__class__: openfl.display.Graphics
 };
 openfl.display.DrawCommand = $hxClasses["openfl.display.DrawCommand"] = { __ename__ : true, __constructs__ : ["BeginBitmapFill","BeginFill","CurveTo","DrawCircle","DrawEllipse","DrawRect","DrawTiles","EndFill","LineStyle","LineTo","MoveTo"] };
-openfl.display.DrawCommand.BeginBitmapFill = function(bitmap,matrix,repeat,smooth) { var $x = ["BeginBitmapFill",0,bitmap,matrix,repeat,smooth]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.BeginFill = function(rgb,alpha) { var $x = ["BeginFill",1,rgb,alpha]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.CurveTo = function(cx,cy,x,y) { var $x = ["CurveTo",2,cx,cy,x,y]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.DrawCircle = function(x,y,radius) { var $x = ["DrawCircle",3,x,y,radius]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.DrawEllipse = function(x,y,width,height) { var $x = ["DrawEllipse",4,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.DrawRect = function(x,y,width,height) { var $x = ["DrawRect",5,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.DrawTiles = function(sheet,tileData,smooth,flags,count) { var $x = ["DrawTiles",6,sheet,tileData,smooth,flags,count]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
+openfl.display.DrawCommand.BeginBitmapFill = function(bitmap,matrix,repeat,smooth) { var $x = ["BeginBitmapFill",0,bitmap,matrix,repeat,smooth]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.BeginFill = function(rgb,alpha) { var $x = ["BeginFill",1,rgb,alpha]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.CurveTo = function(cx,cy,x,y) { var $x = ["CurveTo",2,cx,cy,x,y]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.DrawCircle = function(x,y,radius) { var $x = ["DrawCircle",3,x,y,radius]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.DrawEllipse = function(x,y,width,height) { var $x = ["DrawEllipse",4,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.DrawRect = function(x,y,width,height) { var $x = ["DrawRect",5,x,y,width,height]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.DrawTiles = function(sheet,tileData,smooth,flags,count) { var $x = ["DrawTiles",6,sheet,tileData,smooth,flags,count]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
 openfl.display.DrawCommand.EndFill = ["EndFill",7];
+openfl.display.DrawCommand.EndFill.toString = $estr;
 openfl.display.DrawCommand.EndFill.__enum__ = openfl.display.DrawCommand;
-openfl.display.DrawCommand.LineStyle = function(thickness,color,alpha,pixelHinting,scaleMode,caps,joints,miterLimit) { var $x = ["LineStyle",8,thickness,color,alpha,pixelHinting,scaleMode,caps,joints,miterLimit]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.LineTo = function(x,y) { var $x = ["LineTo",9,x,y]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
-openfl.display.DrawCommand.MoveTo = function(x,y) { var $x = ["MoveTo",10,x,y]; $x.__enum__ = openfl.display.DrawCommand; return $x; };
+openfl.display.DrawCommand.LineStyle = function(thickness,color,alpha,pixelHinting,scaleMode,caps,joints,miterLimit) { var $x = ["LineStyle",8,thickness,color,alpha,pixelHinting,scaleMode,caps,joints,miterLimit]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.LineTo = function(x,y) { var $x = ["LineTo",9,x,y]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
+openfl.display.DrawCommand.MoveTo = function(x,y) { var $x = ["MoveTo",10,x,y]; $x.__enum__ = openfl.display.DrawCommand; $x.toString = $estr; return $x; };
 openfl.display.GraphicsPathWinding = $hxClasses["openfl.display.GraphicsPathWinding"] = { __ename__ : true, __constructs__ : ["EVEN_ODD","NON_ZERO"] };
 openfl.display.GraphicsPathWinding.EVEN_ODD = ["EVEN_ODD",0];
+openfl.display.GraphicsPathWinding.EVEN_ODD.toString = $estr;
 openfl.display.GraphicsPathWinding.EVEN_ODD.__enum__ = openfl.display.GraphicsPathWinding;
 openfl.display.GraphicsPathWinding.NON_ZERO = ["NON_ZERO",1];
+openfl.display.GraphicsPathWinding.NON_ZERO.toString = $estr;
 openfl.display.GraphicsPathWinding.NON_ZERO.__enum__ = openfl.display.GraphicsPathWinding;
 openfl.display.IGraphicsData = function() { };
 $hxClasses["openfl.display.IGraphicsData"] = openfl.display.IGraphicsData;
@@ -5320,21 +5376,29 @@ openfl.display.IGraphicsData.prototype = {
 };
 openfl.display.GraphicsDataType = $hxClasses["openfl.display.GraphicsDataType"] = { __ename__ : true, __constructs__ : ["STROKE","SOLID","GRADIENT","PATH","BITMAP","END"] };
 openfl.display.GraphicsDataType.STROKE = ["STROKE",0];
+openfl.display.GraphicsDataType.STROKE.toString = $estr;
 openfl.display.GraphicsDataType.STROKE.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.GraphicsDataType.SOLID = ["SOLID",1];
+openfl.display.GraphicsDataType.SOLID.toString = $estr;
 openfl.display.GraphicsDataType.SOLID.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.GraphicsDataType.GRADIENT = ["GRADIENT",2];
+openfl.display.GraphicsDataType.GRADIENT.toString = $estr;
 openfl.display.GraphicsDataType.GRADIENT.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.GraphicsDataType.PATH = ["PATH",3];
+openfl.display.GraphicsDataType.PATH.toString = $estr;
 openfl.display.GraphicsDataType.PATH.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.GraphicsDataType.BITMAP = ["BITMAP",4];
+openfl.display.GraphicsDataType.BITMAP.toString = $estr;
 openfl.display.GraphicsDataType.BITMAP.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.GraphicsDataType.END = ["END",5];
+openfl.display.GraphicsDataType.END.toString = $estr;
 openfl.display.GraphicsDataType.END.__enum__ = openfl.display.GraphicsDataType;
 openfl.display.InterpolationMethod = $hxClasses["openfl.display.InterpolationMethod"] = { __ename__ : true, __constructs__ : ["RGB","LINEAR_RGB"] };
 openfl.display.InterpolationMethod.RGB = ["RGB",0];
+openfl.display.InterpolationMethod.RGB.toString = $estr;
 openfl.display.InterpolationMethod.RGB.__enum__ = openfl.display.InterpolationMethod;
 openfl.display.InterpolationMethod.LINEAR_RGB = ["LINEAR_RGB",1];
+openfl.display.InterpolationMethod.LINEAR_RGB.toString = $estr;
 openfl.display.InterpolationMethod.LINEAR_RGB.__enum__ = openfl.display.InterpolationMethod;
 openfl.display._JointStyle = {};
 openfl.display._JointStyle.JointStyle_Impl_ = function() { };
@@ -5342,12 +5406,16 @@ $hxClasses["openfl.display._JointStyle.JointStyle_Impl_"] = openfl.display._Join
 openfl.display._JointStyle.JointStyle_Impl_.__name__ = ["openfl","display","_JointStyle","JointStyle_Impl_"];
 openfl.display.LineScaleMode = $hxClasses["openfl.display.LineScaleMode"] = { __ename__ : true, __constructs__ : ["HORIZONTAL","NONE","NORMAL","VERTICAL"] };
 openfl.display.LineScaleMode.HORIZONTAL = ["HORIZONTAL",0];
+openfl.display.LineScaleMode.HORIZONTAL.toString = $estr;
 openfl.display.LineScaleMode.HORIZONTAL.__enum__ = openfl.display.LineScaleMode;
 openfl.display.LineScaleMode.NONE = ["NONE",1];
+openfl.display.LineScaleMode.NONE.toString = $estr;
 openfl.display.LineScaleMode.NONE.__enum__ = openfl.display.LineScaleMode;
 openfl.display.LineScaleMode.NORMAL = ["NORMAL",2];
+openfl.display.LineScaleMode.NORMAL.toString = $estr;
 openfl.display.LineScaleMode.NORMAL.__enum__ = openfl.display.LineScaleMode;
 openfl.display.LineScaleMode.VERTICAL = ["VERTICAL",3];
+openfl.display.LineScaleMode.VERTICAL.toString = $estr;
 openfl.display.LineScaleMode.VERTICAL.__enum__ = openfl.display.LineScaleMode;
 openfl.display.Loader = function() {
 	openfl.display.Sprite.call(this);
@@ -5483,10 +5551,13 @@ openfl.display.MovieClip.prototype = $extend(openfl.display.Sprite.prototype,{
 });
 openfl.display.PixelSnapping = $hxClasses["openfl.display.PixelSnapping"] = { __ename__ : true, __constructs__ : ["NEVER","AUTO","ALWAYS"] };
 openfl.display.PixelSnapping.NEVER = ["NEVER",0];
+openfl.display.PixelSnapping.NEVER.toString = $estr;
 openfl.display.PixelSnapping.NEVER.__enum__ = openfl.display.PixelSnapping;
 openfl.display.PixelSnapping.AUTO = ["AUTO",1];
+openfl.display.PixelSnapping.AUTO.toString = $estr;
 openfl.display.PixelSnapping.AUTO.__enum__ = openfl.display.PixelSnapping;
 openfl.display.PixelSnapping.ALWAYS = ["ALWAYS",2];
+openfl.display.PixelSnapping.ALWAYS.toString = $estr;
 openfl.display.PixelSnapping.ALWAYS.__enum__ = openfl.display.PixelSnapping;
 openfl.display.Shape = function() {
 	openfl.display.DisplayObject.call(this);
@@ -5561,10 +5632,13 @@ openfl.display.Shape.prototype = $extend(openfl.display.DisplayObject.prototype,
 });
 openfl.display.SpreadMethod = $hxClasses["openfl.display.SpreadMethod"] = { __ename__ : true, __constructs__ : ["REPEAT","REFLECT","PAD"] };
 openfl.display.SpreadMethod.REPEAT = ["REPEAT",0];
+openfl.display.SpreadMethod.REPEAT.toString = $estr;
 openfl.display.SpreadMethod.REPEAT.__enum__ = openfl.display.SpreadMethod;
 openfl.display.SpreadMethod.REFLECT = ["REFLECT",1];
+openfl.display.SpreadMethod.REFLECT.toString = $estr;
 openfl.display.SpreadMethod.REFLECT.__enum__ = openfl.display.SpreadMethod;
 openfl.display.SpreadMethod.PAD = ["PAD",2];
+openfl.display.SpreadMethod.PAD.toString = $estr;
 openfl.display.SpreadMethod.PAD.__enum__ = openfl.display.SpreadMethod;
 openfl.display.Stage = function(width,height,element,color) {
 	this.__mouseY = 0;
@@ -6136,27 +6210,38 @@ openfl.display.MaskManager.prototype = {
 };
 openfl.display.StageAlign = $hxClasses["openfl.display.StageAlign"] = { __ename__ : true, __constructs__ : ["TOP_RIGHT","TOP_LEFT","TOP","RIGHT","LEFT","BOTTOM_RIGHT","BOTTOM_LEFT","BOTTOM"] };
 openfl.display.StageAlign.TOP_RIGHT = ["TOP_RIGHT",0];
+openfl.display.StageAlign.TOP_RIGHT.toString = $estr;
 openfl.display.StageAlign.TOP_RIGHT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.TOP_LEFT = ["TOP_LEFT",1];
+openfl.display.StageAlign.TOP_LEFT.toString = $estr;
 openfl.display.StageAlign.TOP_LEFT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.TOP = ["TOP",2];
+openfl.display.StageAlign.TOP.toString = $estr;
 openfl.display.StageAlign.TOP.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.RIGHT = ["RIGHT",3];
+openfl.display.StageAlign.RIGHT.toString = $estr;
 openfl.display.StageAlign.RIGHT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.LEFT = ["LEFT",4];
+openfl.display.StageAlign.LEFT.toString = $estr;
 openfl.display.StageAlign.LEFT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.BOTTOM_RIGHT = ["BOTTOM_RIGHT",5];
+openfl.display.StageAlign.BOTTOM_RIGHT.toString = $estr;
 openfl.display.StageAlign.BOTTOM_RIGHT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.BOTTOM_LEFT = ["BOTTOM_LEFT",6];
+openfl.display.StageAlign.BOTTOM_LEFT.toString = $estr;
 openfl.display.StageAlign.BOTTOM_LEFT.__enum__ = openfl.display.StageAlign;
 openfl.display.StageAlign.BOTTOM = ["BOTTOM",7];
+openfl.display.StageAlign.BOTTOM.toString = $estr;
 openfl.display.StageAlign.BOTTOM.__enum__ = openfl.display.StageAlign;
 openfl.display.StageDisplayState = $hxClasses["openfl.display.StageDisplayState"] = { __ename__ : true, __constructs__ : ["NORMAL","FULL_SCREEN","FULL_SCREEN_INTERACTIVE"] };
 openfl.display.StageDisplayState.NORMAL = ["NORMAL",0];
+openfl.display.StageDisplayState.NORMAL.toString = $estr;
 openfl.display.StageDisplayState.NORMAL.__enum__ = openfl.display.StageDisplayState;
 openfl.display.StageDisplayState.FULL_SCREEN = ["FULL_SCREEN",1];
+openfl.display.StageDisplayState.FULL_SCREEN.toString = $estr;
 openfl.display.StageDisplayState.FULL_SCREEN.__enum__ = openfl.display.StageDisplayState;
 openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE = ["FULL_SCREEN_INTERACTIVE",2];
+openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE.toString = $estr;
 openfl.display.StageDisplayState.FULL_SCREEN_INTERACTIVE.__enum__ = openfl.display.StageDisplayState;
 openfl.display._StageQuality = {};
 openfl.display._StageQuality.StageQuality_Impl_ = function() { };
@@ -6164,12 +6249,16 @@ $hxClasses["openfl.display._StageQuality.StageQuality_Impl_"] = openfl.display._
 openfl.display._StageQuality.StageQuality_Impl_.__name__ = ["openfl","display","_StageQuality","StageQuality_Impl_"];
 openfl.display.StageScaleMode = $hxClasses["openfl.display.StageScaleMode"] = { __ename__ : true, __constructs__ : ["SHOW_ALL","NO_SCALE","NO_BORDER","EXACT_FIT"] };
 openfl.display.StageScaleMode.SHOW_ALL = ["SHOW_ALL",0];
+openfl.display.StageScaleMode.SHOW_ALL.toString = $estr;
 openfl.display.StageScaleMode.SHOW_ALL.__enum__ = openfl.display.StageScaleMode;
 openfl.display.StageScaleMode.NO_SCALE = ["NO_SCALE",1];
+openfl.display.StageScaleMode.NO_SCALE.toString = $estr;
 openfl.display.StageScaleMode.NO_SCALE.__enum__ = openfl.display.StageScaleMode;
 openfl.display.StageScaleMode.NO_BORDER = ["NO_BORDER",2];
+openfl.display.StageScaleMode.NO_BORDER.toString = $estr;
 openfl.display.StageScaleMode.NO_BORDER.__enum__ = openfl.display.StageScaleMode;
 openfl.display.StageScaleMode.EXACT_FIT = ["EXACT_FIT",3];
+openfl.display.StageScaleMode.EXACT_FIT.toString = $estr;
 openfl.display.StageScaleMode.EXACT_FIT.__enum__ = openfl.display.StageScaleMode;
 openfl.display.Tilesheet = function(image) {
 	this.__bitmap = image;
@@ -6206,10 +6295,13 @@ openfl.display.Tilesheet.prototype = {
 };
 openfl.display.TriangleCulling = $hxClasses["openfl.display.TriangleCulling"] = { __ename__ : true, __constructs__ : ["NEGATIVE","NONE","POSITIVE"] };
 openfl.display.TriangleCulling.NEGATIVE = ["NEGATIVE",0];
+openfl.display.TriangleCulling.NEGATIVE.toString = $estr;
 openfl.display.TriangleCulling.NEGATIVE.__enum__ = openfl.display.TriangleCulling;
 openfl.display.TriangleCulling.NONE = ["NONE",1];
+openfl.display.TriangleCulling.NONE.toString = $estr;
 openfl.display.TriangleCulling.NONE.__enum__ = openfl.display.TriangleCulling;
 openfl.display.TriangleCulling.POSITIVE = ["POSITIVE",2];
+openfl.display.TriangleCulling.POSITIVE.toString = $estr;
 openfl.display.TriangleCulling.POSITIVE.__enum__ = openfl.display.TriangleCulling;
 openfl.errors = {};
 openfl.errors.Error = function(message,id) {
@@ -7505,10 +7597,13 @@ openfl.net.URLLoader.prototype = $extend(openfl.events.EventDispatcher.prototype
 });
 openfl.net.URLLoaderDataFormat = $hxClasses["openfl.net.URLLoaderDataFormat"] = { __ename__ : true, __constructs__ : ["BINARY","TEXT","VARIABLES"] };
 openfl.net.URLLoaderDataFormat.BINARY = ["BINARY",0];
+openfl.net.URLLoaderDataFormat.BINARY.toString = $estr;
 openfl.net.URLLoaderDataFormat.BINARY.__enum__ = openfl.net.URLLoaderDataFormat;
 openfl.net.URLLoaderDataFormat.TEXT = ["TEXT",1];
+openfl.net.URLLoaderDataFormat.TEXT.toString = $estr;
 openfl.net.URLLoaderDataFormat.TEXT.__enum__ = openfl.net.URLLoaderDataFormat;
 openfl.net.URLLoaderDataFormat.VARIABLES = ["VARIABLES",2];
+openfl.net.URLLoaderDataFormat.VARIABLES.toString = $estr;
 openfl.net.URLLoaderDataFormat.VARIABLES.__enum__ = openfl.net.URLLoaderDataFormat;
 openfl.net.URLRequest = function(inURL) {
 	if(inURL != null) this.url = inURL;
@@ -7617,6 +7712,10 @@ openfl.system.SecurityDomain.prototype = {
 	__class__: openfl.system.SecurityDomain
 };
 openfl.text = {};
+openfl.text._AntiAliasType = {};
+openfl.text._AntiAliasType.AntiAliasType_Impl_ = function() { };
+$hxClasses["openfl.text._AntiAliasType.AntiAliasType_Impl_"] = openfl.text._AntiAliasType.AntiAliasType_Impl_;
+openfl.text._AntiAliasType.AntiAliasType_Impl_.__name__ = ["openfl","text","_AntiAliasType","AntiAliasType_Impl_"];
 openfl.text.Font = function() {
 };
 $hxClasses["openfl.text.Font"] = openfl.text.Font;
@@ -7632,20 +7731,657 @@ openfl.text.Font.prototype = {
 };
 openfl.text.FontStyle = $hxClasses["openfl.text.FontStyle"] = { __ename__ : true, __constructs__ : ["REGULAR","ITALIC","BOLD_ITALIC","BOLD"] };
 openfl.text.FontStyle.REGULAR = ["REGULAR",0];
+openfl.text.FontStyle.REGULAR.toString = $estr;
 openfl.text.FontStyle.REGULAR.__enum__ = openfl.text.FontStyle;
 openfl.text.FontStyle.ITALIC = ["ITALIC",1];
+openfl.text.FontStyle.ITALIC.toString = $estr;
 openfl.text.FontStyle.ITALIC.__enum__ = openfl.text.FontStyle;
 openfl.text.FontStyle.BOLD_ITALIC = ["BOLD_ITALIC",2];
+openfl.text.FontStyle.BOLD_ITALIC.toString = $estr;
 openfl.text.FontStyle.BOLD_ITALIC.__enum__ = openfl.text.FontStyle;
 openfl.text.FontStyle.BOLD = ["BOLD",3];
+openfl.text.FontStyle.BOLD.toString = $estr;
 openfl.text.FontStyle.BOLD.__enum__ = openfl.text.FontStyle;
 openfl.text.FontType = $hxClasses["openfl.text.FontType"] = { __ename__ : true, __constructs__ : ["DEVICE","EMBEDDED","EMBEDDED_CFF"] };
 openfl.text.FontType.DEVICE = ["DEVICE",0];
+openfl.text.FontType.DEVICE.toString = $estr;
 openfl.text.FontType.DEVICE.__enum__ = openfl.text.FontType;
 openfl.text.FontType.EMBEDDED = ["EMBEDDED",1];
+openfl.text.FontType.EMBEDDED.toString = $estr;
 openfl.text.FontType.EMBEDDED.__enum__ = openfl.text.FontType;
 openfl.text.FontType.EMBEDDED_CFF = ["EMBEDDED_CFF",2];
+openfl.text.FontType.EMBEDDED_CFF.toString = $estr;
 openfl.text.FontType.EMBEDDED_CFF.__enum__ = openfl.text.FontType;
+openfl.text.GridFitType = $hxClasses["openfl.text.GridFitType"] = { __ename__ : true, __constructs__ : ["NONE","PIXEL","SUBPIXEL"] };
+openfl.text.GridFitType.NONE = ["NONE",0];
+openfl.text.GridFitType.NONE.toString = $estr;
+openfl.text.GridFitType.NONE.__enum__ = openfl.text.GridFitType;
+openfl.text.GridFitType.PIXEL = ["PIXEL",1];
+openfl.text.GridFitType.PIXEL.toString = $estr;
+openfl.text.GridFitType.PIXEL.__enum__ = openfl.text.GridFitType;
+openfl.text.GridFitType.SUBPIXEL = ["SUBPIXEL",2];
+openfl.text.GridFitType.SUBPIXEL.toString = $estr;
+openfl.text.GridFitType.SUBPIXEL.__enum__ = openfl.text.GridFitType;
+openfl.text.TextField = function() {
+	openfl.display.InteractiveObject.call(this);
+	this.__width = 100;
+	this.__height = 100;
+	this.__text = "";
+	this.set_type(openfl.text.TextFieldType.DYNAMIC);
+	this.set_autoSize(openfl.text.TextFieldAutoSize.NONE);
+	this.displayAsPassword = false;
+	this.embedFonts = false;
+	this.selectable = true;
+	this.set_borderColor(0);
+	this.set_border(false);
+	this.set_backgroundColor(16777215);
+	this.set_background(false);
+	this.gridFitType = openfl.text.GridFitType.PIXEL;
+	this.maxChars = 0;
+	this.multiline = false;
+	this.sharpness = 0;
+	this.scrollH = 0;
+	this.scrollV = 1;
+	this.set_wordWrap(false);
+	if(openfl.text.TextField.__defaultTextFormat == null) {
+		openfl.text.TextField.__defaultTextFormat = new openfl.text.TextFormat("Times New Roman",12,0,false,false,false,"","",openfl.text.TextFormatAlign.LEFT,0,0,0,0);
+		openfl.text.TextField.__defaultTextFormat.blockIndent = 0;
+		openfl.text.TextField.__defaultTextFormat.bullet = false;
+		openfl.text.TextField.__defaultTextFormat.letterSpacing = 0;
+		openfl.text.TextField.__defaultTextFormat.kerning = false;
+	}
+	this.__textFormat = openfl.text.TextField.__defaultTextFormat.clone();
+};
+$hxClasses["openfl.text.TextField"] = openfl.text.TextField;
+openfl.text.TextField.__name__ = ["openfl","text","TextField"];
+openfl.text.TextField.__defaultTextFormat = null;
+openfl.text.TextField.__super__ = openfl.display.InteractiveObject;
+openfl.text.TextField.prototype = $extend(openfl.display.InteractiveObject.prototype,{
+	appendText: function(text) {
+		var _g = this;
+		_g.set_text(_g.get_text() + text);
+	}
+	,getCharBoundaries: function(a) {
+		openfl.Lib.notImplemented("TextField.getCharBoundaries");
+		return null;
+	}
+	,getCharIndexAtPoint: function(x,y) {
+		openfl.Lib.notImplemented("TextField.getCharIndexAtPoint");
+		return 0;
+	}
+	,getLineIndexAtPoint: function(x,y) {
+		openfl.Lib.notImplemented("TextField.getLineIndexAtPoint");
+		return 0;
+	}
+	,getLineMetrics: function(lineIndex) {
+		openfl.Lib.notImplemented("TextField.getLineMetrics");
+		return null;
+	}
+	,getLineOffset: function(lineIndex) {
+		openfl.Lib.notImplemented("TextField.getLineOffset");
+		return 0;
+	}
+	,getLineText: function(lineIndex) {
+		openfl.Lib.notImplemented("TextField.getLineText");
+		return "";
+	}
+	,getTextFormat: function(beginIndex,endIndex) {
+		if(endIndex == null) endIndex = 0;
+		if(beginIndex == null) beginIndex = 0;
+		return this.__textFormat.clone();
+	}
+	,setSelection: function(beginIndex,endIndex) {
+		openfl.Lib.notImplemented("TextField.setSelection");
+	}
+	,setTextFormat: function(format,beginIndex,endIndex) {
+		if(endIndex == null) endIndex = 0;
+		if(beginIndex == null) beginIndex = 0;
+		if(format.font != null) this.__textFormat.font = format.font;
+		if(format.size != null) this.__textFormat.size = format.size;
+		if(format.color != null) this.__textFormat.color = format.color;
+		if(format.bold != null) this.__textFormat.bold = format.bold;
+		if(format.italic != null) this.__textFormat.italic = format.italic;
+		if(format.underline != null) this.__textFormat.underline = format.underline;
+		if(format.url != null) this.__textFormat.url = format.url;
+		if(format.target != null) this.__textFormat.target = format.target;
+		if(format.align != null) this.__textFormat.align = format.align;
+		if(format.leftMargin != null) this.__textFormat.leftMargin = format.leftMargin;
+		if(format.rightMargin != null) this.__textFormat.rightMargin = format.rightMargin;
+		if(format.indent != null) this.__textFormat.indent = format.indent;
+		if(format.leading != null) this.__textFormat.leading = format.leading;
+		if(format.blockIndent != null) this.__textFormat.blockIndent = format.blockIndent;
+		if(format.bullet != null) this.__textFormat.bullet = format.bullet;
+		if(format.kerning != null) this.__textFormat.kerning = format.kerning;
+		if(format.letterSpacing != null) this.__textFormat.letterSpacing = format.letterSpacing;
+		if(format.tabStops != null) this.__textFormat.tabStops = format.tabStops;
+		this.__dirty = true;
+	}
+	,__getBounds: function(rect,matrix) {
+		var bounds = new openfl.geom.Rectangle(0,0,this.__width,this.__height);
+		bounds.transform(this.__worldTransform);
+		rect.__expand(bounds.x,bounds.y,bounds.width,bounds.height);
+	}
+	,__getFont: function(format) {
+		var font;
+		if(format.italic) font = "italic "; else font = "normal ";
+		font += "normal ";
+		if(format.bold) font += "bold "; else font += "normal ";
+		font += format.size + "px";
+		font += "/" + (format.size + format.leading + 4) + "px ";
+		font += "'" + (function($this) {
+			var $r;
+			var _g = format.font;
+			$r = (function($this) {
+				var $r;
+				switch(_g) {
+				case "_sans":
+					$r = "sans-serif";
+					break;
+				case "_serif":
+					$r = "serif";
+					break;
+				case "_typewriter":
+					$r = "monospace";
+					break;
+				default:
+					$r = format.font;
+				}
+				return $r;
+			}($this));
+			return $r;
+		}(this));
+		font += "'";
+		return font;
+	}
+	,__hitTest: function(x,y,shapeFlag,stack,interactiveOnly) {
+		if(!this.get_visible() || interactiveOnly && !this.mouseEnabled) return false;
+		var point = this.globalToLocal(new openfl.geom.Point(x,y));
+		if(point.x > 0 && point.y > 0 && point.x <= this.__width && point.y <= this.__height) {
+			if(stack != null) stack.push(this);
+			return true;
+		}
+		return false;
+	}
+	,__measureText: function() {
+		if(this.__ranges == null) {
+			this.__context.font = this.__getFont(this.__textFormat);
+			return [this.__context.measureText(this.__text).width];
+		} else {
+			var measurements = [];
+			var _g = 0;
+			var _g1 = this.__ranges;
+			while(_g < _g1.length) {
+				var range = _g1[_g];
+				++_g;
+				this.__context.font = this.__getFont(range.format);
+				measurements.push(this.__context.measureText(this.get_text().substring(range.start,range.end)).width);
+			}
+			return measurements;
+		}
+	}
+	,__measureTextWithDOM: function() {
+		var div = this.__div;
+		if(this.__div == null) {
+			div = window.document.createElement("div");
+			div.innerHTML = this.__text;
+			div.style.setProperty("font",this.__getFont(this.__textFormat),null);
+			div.style.position = "absolute";
+			div.style.top = "110%";
+			window.document.body.appendChild(div);
+		}
+		this.__measuredWidth = div.clientWidth;
+		if(this.__div == null) div.style.width = Std.string(this.__width) + "px";
+		this.__measuredHeight = div.clientHeight;
+		if(this.__div == null) window.document.body.removeChild(div);
+	}
+	,__renderCanvas: function(renderSession) {
+		if(!this.__renderable || this.__worldAlpha <= 0) return;
+		if(this.__dirty) {
+			if((this.__text == null || this.__text == "") && !this.background && !this.border || (this.get_width() <= 0 || this.get_height() <= 0) && this.autoSize != openfl.text.TextFieldAutoSize.LEFT) {
+				this.__canvas = null;
+				this.__context = null;
+			} else {
+				if(this.__canvas == null) {
+					this.__canvas = window.document.createElement("canvas");
+					this.__context = this.__canvas.getContext("2d");
+				}
+				if(this.__text != null && this.__text != "") {
+					var measurements = this.__measureText();
+					var textWidth = 0.0;
+					var _g = 0;
+					while(_g < measurements.length) {
+						var measurement = measurements[_g];
+						++_g;
+						textWidth += measurement;
+					}
+					if(this.autoSize == openfl.text.TextFieldAutoSize.LEFT) this.__width = textWidth + 4;
+					this.__canvas.width = Math.ceil(this.__width);
+					this.__canvas.height = Math.ceil(this.__height);
+					if(this.border || this.background) {
+						this.__context.rect(0.5,0.5,this.__width - 1,this.__height - 1);
+						if(this.background) {
+							this.__context.fillStyle = "#" + StringTools.hex(this.backgroundColor,6);
+							this.__context.fill();
+						}
+						if(this.border) {
+							this.__context.lineWidth = 1;
+							this.__context.strokeStyle = "#" + StringTools.hex(this.borderColor,6);
+							this.__context.stroke();
+						}
+					}
+					if(this.__ranges == null) this.__renderText(this.get_text(),this.__textFormat,0); else {
+						var currentIndex = 0;
+						var range;
+						var offsetX = 0.0;
+						var _g1 = 0;
+						var _g2 = this.__ranges.length;
+						while(_g1 < _g2) {
+							var i = _g1++;
+							range = this.__ranges[i];
+							this.__renderText(this.get_text().substring(range.start,range.end),range.format,offsetX);
+							offsetX += measurements[i];
+						}
+					}
+				} else {
+					if(this.autoSize == openfl.text.TextFieldAutoSize.LEFT) this.__width = 4;
+					this.__canvas.width = Math.ceil(this.__width);
+					this.__canvas.height = Math.ceil(this.__height);
+					if(this.border || this.background) {
+						if(this.border) this.__context.rect(0.5,0.5,this.__width - 1,this.__height - 1); else this.__context.rect(0,0,this.__width,this.__height);
+						if(this.background) {
+							this.__context.fillStyle = "#" + StringTools.hex(this.backgroundColor,6);
+							this.__context.fill();
+						}
+						if(this.border) {
+							this.__context.lineWidth = 1;
+							this.__context.lineCap = "square";
+							this.__context.strokeStyle = "#" + StringTools.hex(this.borderColor,6);
+							this.__context.stroke();
+						}
+					}
+				}
+			}
+			this.__dirty = false;
+		}
+		if(this.__canvas != null) {
+			var context = renderSession.context;
+			context.globalAlpha = this.__worldAlpha;
+			var transform = this.__worldTransform;
+			if(renderSession.roundPixels) context.setTransform(transform.a,transform.b,transform.c,transform.d,transform.tx | 0,transform.ty | 0); else context.setTransform(transform.a,transform.b,transform.c,transform.d,transform.tx,transform.ty);
+			if(this.get_scrollRect() == null) context.drawImage(this.__canvas,0,0); else context.drawImage(this.__canvas,this.get_scrollRect().x,this.get_scrollRect().y,this.get_scrollRect().width,this.get_scrollRect().height,this.get_scrollRect().x,this.get_scrollRect().y,this.get_scrollRect().width,this.get_scrollRect().height);
+		}
+	}
+	,__renderDOM: function(renderSession) {
+		if(this.stage != null && this.__worldVisible && this.__renderable) {
+			if(this.__dirty || this.__div == null) {
+				if(this.__text != "" || this.background || this.border) {
+					if(this.__div == null) {
+						this.__div = window.document.createElement("div");
+						this.__initializeElement(this.__div,renderSession);
+						this.__style.setProperty("cursor","inherit",null);
+					}
+					this.__div.innerHTML = this.__text;
+					if(this.background) this.__style.setProperty("background-color","#" + StringTools.hex(this.backgroundColor,6),null); else this.__style.removeProperty("background-color");
+					if(this.border) this.__style.setProperty("border","solid 1px #" + StringTools.hex(this.borderColor,6),null); else this.__style.removeProperty("border");
+					this.__style.setProperty("font",this.__getFont(this.__textFormat),null);
+					this.__style.setProperty("color","#" + StringTools.hex(this.__textFormat.color,6),null);
+					if(this.autoSize != openfl.text.TextFieldAutoSize.NONE) this.__style.setProperty("width","auto",null); else this.__style.setProperty("width",this.__width + "px",null);
+					this.__style.setProperty("height",this.__height + "px",null);
+					var _g = this.__textFormat.align;
+					switch(_g[1]) {
+					case 3:
+						this.__style.setProperty("text-align","center",null);
+						break;
+					case 1:
+						this.__style.setProperty("text-align","right",null);
+						break;
+					default:
+						this.__style.setProperty("text-align","left",null);
+					}
+					this.__dirty = false;
+				} else if(this.__div != null) {
+					renderSession.element.removeChild(this.__div);
+					this.__div = null;
+				}
+			}
+			if(this.__div != null) this.__applyStyle(renderSession,true,true,false);
+		} else if(this.__div != null) {
+			renderSession.element.removeChild(this.__div);
+			this.__div = null;
+			this.__style = null;
+		}
+	}
+	,__renderText: function(text,format,offsetX) {
+		this.__context.font = this.__getFont(format);
+		this.__context.textBaseline = "top";
+		this.__context.fillStyle = "#" + StringTools.hex(format.color,6);
+		var lines = text.split("\n");
+		var yOffset = 0;
+		var _g = 0;
+		while(_g < lines.length) {
+			var line = lines[_g];
+			++_g;
+			var _g1 = format.align;
+			switch(_g1[1]) {
+			case 3:
+				this.__context.textAlign = "center";
+				this.__context.fillText(line,this.__width / 2,2 + yOffset,this.__width - 4);
+				break;
+			case 1:
+				this.__context.textAlign = "end";
+				this.__context.fillText(line,this.__width - 2,2 + yOffset,this.__width - 4);
+				break;
+			default:
+				this.__context.textAlign = "start";
+				this.__context.fillText(line,2 + offsetX,2 + yOffset,this.__width - 4);
+			}
+			yOffset += this.get_textHeight();
+		}
+	}
+	,set_autoSize: function(value) {
+		if(value != this.autoSize) this.__dirty = true;
+		return this.autoSize = value;
+	}
+	,set_background: function(value) {
+		if(value != this.background) this.__dirty = true;
+		return this.background = value;
+	}
+	,set_backgroundColor: function(value) {
+		if(value != this.backgroundColor) this.__dirty = true;
+		return this.backgroundColor = value;
+	}
+	,set_border: function(value) {
+		if(value != this.border) this.__dirty = true;
+		return this.border = value;
+	}
+	,set_borderColor: function(value) {
+		if(value != this.borderColor) this.__dirty = true;
+		return this.borderColor = value;
+	}
+	,get_bottomScrollV: function() {
+		return this.get_numLines();
+	}
+	,get_caretPos: function() {
+		return 0;
+	}
+	,get_defaultTextFormat: function() {
+		return this.__textFormat.clone();
+	}
+	,set_defaultTextFormat: function(value) {
+		this.__textFormat.__merge(value);
+		return value;
+	}
+	,get_height: function() {
+		return this.__height * this.get_scaleY();
+	}
+	,set_height: function(value) {
+		if(this.get_scaleY() != 1 || value != this.__height) {
+			if(!this.__transformDirty) {
+				this.__transformDirty = true;
+				openfl.display.DisplayObject.__worldTransformDirty++;
+			}
+			this.__dirty = true;
+		}
+		this.set_scaleY(1);
+		return this.__height = value;
+	}
+	,get_htmlText: function() {
+		return this.__text;
+	}
+	,set_htmlText: function(value) {
+		if(!this.__isHTML || this.__text != value) this.__dirty = true;
+		this.__ranges = null;
+		this.__isHTML = true;
+		if(this.__div == null) {
+			value = new EReg("<br>","g").replace(value,"\n");
+			value = new EReg("<br/>","g").replace(value,"\n");
+			var segments = value.split("<font");
+			if(segments.length == 1) {
+				value = new EReg("<.*?>","g").replace(value,"");
+				return this.__text = value;
+			} else {
+				value = "";
+				this.__ranges = [];
+				var _g = 0;
+				while(_g < segments.length) {
+					var segment = segments[_g];
+					++_g;
+					if(segment == "") continue;
+					var closeFontIndex = segment.indexOf("</font>");
+					if(closeFontIndex > -1) {
+						var start = segment.indexOf(">") + 1;
+						var end = closeFontIndex;
+						var format = this.__textFormat.clone();
+						var faceIndex = segment.indexOf("face=");
+						var colorIndex = segment.indexOf("color=");
+						var sizeIndex = segment.indexOf("size=");
+						if(faceIndex > -1 && faceIndex < start) {
+							var len = segment.indexOf("\"",faceIndex);
+							format.font = HxOverrides.substr(segment,faceIndex + 6,len);
+						}
+						if(colorIndex > -1 && colorIndex < start) format.color = Std.parseInt("0x" + HxOverrides.substr(segment,colorIndex + 8,6));
+						if(sizeIndex > -1 && sizeIndex < start) format.size = Std.parseInt((function($this) {
+							var $r;
+							var len1 = segment.indexOf("\"",sizeIndex);
+							$r = HxOverrides.substr(segment,sizeIndex + 6,len1);
+							return $r;
+						}(this)));
+						var sub = segment.substring(start,end);
+						sub = new EReg("<.*?>","g").replace(sub,"");
+						this.__ranges.push(new openfl.text.TextFormatRange(format,value.length,value.length + sub.length));
+						value += sub;
+						if(closeFontIndex + 7 < segment.length) {
+							sub = HxOverrides.substr(segment,closeFontIndex + 7,null);
+							this.__ranges.push(new openfl.text.TextFormatRange(this.__textFormat,value.length,value.length + sub.length));
+							value += sub;
+						}
+					} else {
+						this.__ranges.push(new openfl.text.TextFormatRange(this.__textFormat,value.length,value.length + segment.length));
+						value += segment;
+					}
+				}
+			}
+		}
+		return this.__text = value;
+	}
+	,get_maxScrollH: function() {
+		return 0;
+	}
+	,get_maxScrollV: function() {
+		return 1;
+	}
+	,get_numLines: function() {
+		if(this.get_text() != "" && this.get_text() != null) {
+			var count = this.get_text().split("\n").length;
+			if(this.__isHTML) count += this.get_text().split("<br>").length - 1;
+			return count;
+		}
+		return 1;
+	}
+	,get_text: function() {
+		if(this.__isHTML) {
+		}
+		return this.__text;
+	}
+	,set_text: function(value) {
+		if(this.__isHTML || this.__text != value) this.__dirty = true;
+		this.__ranges = null;
+		this.__isHTML = false;
+		return this.__text = value;
+	}
+	,get_textColor: function() {
+		return this.__textFormat.color;
+	}
+	,set_textColor: function(value) {
+		if(value != this.__textFormat.color) this.__dirty = true;
+		if(this.__ranges != null) {
+			var _g = 0;
+			var _g1 = this.__ranges;
+			while(_g < _g1.length) {
+				var range = _g1[_g];
+				++_g;
+				range.format.color = value;
+			}
+		}
+		return this.__textFormat.color = value;
+	}
+	,get_textWidth: function() {
+		if(this.__canvas != null) {
+			var sizes = this.__measureText();
+			var total = 0;
+			var _g = 0;
+			while(_g < sizes.length) {
+				var size = sizes[_g];
+				++_g;
+				total += size;
+			}
+			return total;
+		} else if(this.__div != null) return this.__div.clientWidth; else {
+			this.__measureTextWithDOM();
+			return this.__measuredWidth;
+		}
+	}
+	,get_textHeight: function() {
+		if(this.__canvas != null) return this.__textFormat.size * 1.185; else if(this.__div != null) return this.__div.clientHeight; else {
+			this.__measureTextWithDOM();
+			return this.__measuredHeight + this.__textFormat.size * 0.185;
+		}
+	}
+	,set_type: function(value) {
+		return this.type = value;
+	}
+	,get_width: function() {
+		if(this.autoSize == openfl.text.TextFieldAutoSize.LEFT) return (this.get_textWidth() + 4) * this.get_scaleX(); else return this.__width * this.get_scaleX();
+	}
+	,set_width: function(value) {
+		if(this.get_scaleX() != 1 || this.__width != value) {
+			if(!this.__transformDirty) {
+				this.__transformDirty = true;
+				openfl.display.DisplayObject.__worldTransformDirty++;
+			}
+			this.__dirty = true;
+		}
+		this.set_scaleX(1);
+		return this.__width = value;
+	}
+	,get_wordWrap: function() {
+		return this.wordWrap;
+	}
+	,set_wordWrap: function(value) {
+		return this.wordWrap = value;
+	}
+	,__class__: openfl.text.TextField
+});
+openfl.text.TextFormatRange = function(format,start,end) {
+	this.format = format;
+	this.start = start;
+	this.end = end;
+};
+$hxClasses["openfl.text.TextFormatRange"] = openfl.text.TextFormatRange;
+openfl.text.TextFormatRange.__name__ = ["openfl","text","TextFormatRange"];
+openfl.text.TextFormatRange.prototype = {
+	__class__: openfl.text.TextFormatRange
+};
+openfl.text.TextFieldAutoSize = $hxClasses["openfl.text.TextFieldAutoSize"] = { __ename__ : true, __constructs__ : ["CENTER","LEFT","NONE","RIGHT"] };
+openfl.text.TextFieldAutoSize.CENTER = ["CENTER",0];
+openfl.text.TextFieldAutoSize.CENTER.toString = $estr;
+openfl.text.TextFieldAutoSize.CENTER.__enum__ = openfl.text.TextFieldAutoSize;
+openfl.text.TextFieldAutoSize.LEFT = ["LEFT",1];
+openfl.text.TextFieldAutoSize.LEFT.toString = $estr;
+openfl.text.TextFieldAutoSize.LEFT.__enum__ = openfl.text.TextFieldAutoSize;
+openfl.text.TextFieldAutoSize.NONE = ["NONE",2];
+openfl.text.TextFieldAutoSize.NONE.toString = $estr;
+openfl.text.TextFieldAutoSize.NONE.__enum__ = openfl.text.TextFieldAutoSize;
+openfl.text.TextFieldAutoSize.RIGHT = ["RIGHT",3];
+openfl.text.TextFieldAutoSize.RIGHT.toString = $estr;
+openfl.text.TextFieldAutoSize.RIGHT.__enum__ = openfl.text.TextFieldAutoSize;
+openfl.text.TextFieldType = $hxClasses["openfl.text.TextFieldType"] = { __ename__ : true, __constructs__ : ["DYNAMIC","INPUT"] };
+openfl.text.TextFieldType.DYNAMIC = ["DYNAMIC",0];
+openfl.text.TextFieldType.DYNAMIC.toString = $estr;
+openfl.text.TextFieldType.DYNAMIC.__enum__ = openfl.text.TextFieldType;
+openfl.text.TextFieldType.INPUT = ["INPUT",1];
+openfl.text.TextFieldType.INPUT.toString = $estr;
+openfl.text.TextFieldType.INPUT.__enum__ = openfl.text.TextFieldType;
+openfl.text.TextFormat = function(font,size,color,bold,italic,underline,url,target,align,leftMargin,rightMargin,indent,leading) {
+	this.font = font;
+	this.size = size;
+	this.color = color;
+	this.bold = bold;
+	this.italic = italic;
+	this.underline = underline;
+	this.url = url;
+	this.target = target;
+	this.align = align;
+	this.leftMargin = leftMargin;
+	this.rightMargin = rightMargin;
+	this.indent = indent;
+	this.leading = leading;
+};
+$hxClasses["openfl.text.TextFormat"] = openfl.text.TextFormat;
+openfl.text.TextFormat.__name__ = ["openfl","text","TextFormat"];
+openfl.text.TextFormat.prototype = {
+	clone: function() {
+		var newFormat = new openfl.text.TextFormat(this.font,this.size,this.color,this.bold,this.italic,this.underline,this.url,this.target);
+		newFormat.align = this.align;
+		newFormat.leftMargin = this.leftMargin;
+		newFormat.rightMargin = this.rightMargin;
+		newFormat.indent = this.indent;
+		newFormat.leading = this.leading;
+		newFormat.blockIndent = this.blockIndent;
+		newFormat.bullet = this.bullet;
+		newFormat.kerning = this.kerning;
+		newFormat.letterSpacing = this.letterSpacing;
+		newFormat.tabStops = this.tabStops;
+		return newFormat;
+	}
+	,__merge: function(format) {
+		if(format.font != null) this.font = format.font;
+		if(format.size != null) this.size = format.size;
+		if(format.color != null) this.color = format.color;
+		if(format.bold != null) this.bold = format.bold;
+		if(format.italic != null) this.italic = format.italic;
+		if(format.underline != null) this.underline = format.underline;
+		if(format.url != null) this.url = format.url;
+		if(format.target != null) this.target = format.target;
+		if(format.align != null) this.align = format.align;
+		if(format.leftMargin != null) this.leftMargin = format.leftMargin;
+		if(format.rightMargin != null) this.rightMargin = format.rightMargin;
+		if(format.indent != null) this.indent = format.indent;
+		if(format.leading != null) this.leading = format.leading;
+		if(format.blockIndent != null) this.blockIndent = format.blockIndent;
+		if(format.bullet != null) this.bullet = format.bullet;
+		if(format.kerning != null) this.kerning = format.kerning;
+		if(format.letterSpacing != null) this.letterSpacing = format.letterSpacing;
+		if(format.tabStops != null) this.tabStops = format.tabStops;
+	}
+	,__class__: openfl.text.TextFormat
+};
+openfl.text.TextFormatAlign = $hxClasses["openfl.text.TextFormatAlign"] = { __ename__ : true, __constructs__ : ["LEFT","RIGHT","JUSTIFY","CENTER"] };
+openfl.text.TextFormatAlign.LEFT = ["LEFT",0];
+openfl.text.TextFormatAlign.LEFT.toString = $estr;
+openfl.text.TextFormatAlign.LEFT.__enum__ = openfl.text.TextFormatAlign;
+openfl.text.TextFormatAlign.RIGHT = ["RIGHT",1];
+openfl.text.TextFormatAlign.RIGHT.toString = $estr;
+openfl.text.TextFormatAlign.RIGHT.__enum__ = openfl.text.TextFormatAlign;
+openfl.text.TextFormatAlign.JUSTIFY = ["JUSTIFY",2];
+openfl.text.TextFormatAlign.JUSTIFY.toString = $estr;
+openfl.text.TextFormatAlign.JUSTIFY.__enum__ = openfl.text.TextFormatAlign;
+openfl.text.TextFormatAlign.CENTER = ["CENTER",3];
+openfl.text.TextFormatAlign.CENTER.toString = $estr;
+openfl.text.TextFormatAlign.CENTER.__enum__ = openfl.text.TextFormatAlign;
+openfl.text.TextLineMetrics = function(x,width,height,ascent,descent,leading) {
+	this.x = x;
+	this.width = width;
+	this.height = height;
+	this.ascent = ascent;
+	this.descent = descent;
+	this.leading = leading;
+};
+$hxClasses["openfl.text.TextLineMetrics"] = openfl.text.TextLineMetrics;
+openfl.text.TextLineMetrics.__name__ = ["openfl","text","TextLineMetrics"];
+openfl.text.TextLineMetrics.prototype = {
+	__class__: openfl.text.TextLineMetrics
+};
 openfl.ui = {};
 openfl.ui._KeyLocation = {};
 openfl.ui._KeyLocation.KeyLocation_Impl_ = function() { };
@@ -8343,6 +9079,8 @@ openfl.net.URLRequestMethod.POST = "POST";
 openfl.net.URLRequestMethod.PUT = "PUT";
 openfl.system.ApplicationDomain.currentDomain = new openfl.system.ApplicationDomain(null);
 openfl.system.SecurityDomain.currentDomain = new openfl.system.SecurityDomain();
+openfl.text._AntiAliasType.AntiAliasType_Impl_.ADVANCED = "advanced";
+openfl.text._AntiAliasType.AntiAliasType_Impl_.NORMAL = "normal";
 openfl.ui._KeyLocation.KeyLocation_Impl_.STANDARD = 0;
 openfl.ui._KeyLocation.KeyLocation_Impl_.LEFT = 1;
 openfl.ui._KeyLocation.KeyLocation_Impl_.RIGHT = 2;
