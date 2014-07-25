@@ -1150,6 +1150,9 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		this.player.update();
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
 		if(haxel.KeyboardInput.pressed(39)) this.player.currentColumn += 1;
+		if(haxel.MouseInput.mousePressed) {
+			if(haxel.MouseInput.get_mouseX() > 200) this.player.currentColumn += 1; else this.player.currentColumn -= 1;
+		}
 		this.currentBeat = this.soundChannel.get_position() / 1000 / 60 * 100 - 10;
 		if(this.currentBeat > this.spawnedObjects) this.spawnObject();
 		var _g = 0;
