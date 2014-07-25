@@ -55,6 +55,9 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	image4.onload = ApplicationMain.image_onLoad;
 	image4.src = id;
 	ApplicationMain.total++;
+	var sound = haxe.io.Path.withoutExtension("assets/hat.ogg");
+	if(!HxOverrides.remove(sounds,sound)) ApplicationMain.total++;
+	sounds.push(sound);
 	var image5 = new Image();
 	id = "assets/winged.png";
 	ApplicationMain.images.set(id,image5);
@@ -115,9 +118,9 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	image14.onload = ApplicationMain.image_onLoad;
 	image14.src = id;
 	ApplicationMain.total++;
-	var sound = haxe.io.Path.withoutExtension("assets/dickbutt.ogg");
-	if(!HxOverrides.remove(sounds,sound)) ApplicationMain.total++;
-	sounds.push(sound);
+	var sound1 = haxe.io.Path.withoutExtension("assets/dickbutt.ogg");
+	if(!HxOverrides.remove(sounds,sound1)) ApplicationMain.total++;
+	sounds.push(sound1);
 	var image15 = new Image();
 	id = "assets/elvis.png";
 	ApplicationMain.images.set(id,image15);
@@ -136,10 +139,10 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 		while(_g < sounds.length) {
 			var soundName = sounds[_g];
 			++_g;
-			var sound1 = new openfl.media.Sound();
-			sound1.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
-			sound1.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
-			sound1.load(new openfl.net.URLRequest(soundName + ".ogg"));
+			var sound2 = new openfl.media.Sound();
+			sound2.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
+			sound2.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
+			sound2.load(new openfl.net.URLRequest(soundName + ".ogg"));
 		}
 	}
 };
@@ -177,8 +180,8 @@ ApplicationMain.preloader_onComplete = function(event) {
 	if(hasMain) Reflect.callMethod(Main,Reflect.field(Main,"main"),[]); else {
 		var instance = Type.createInstance(DocumentClass,[]);
 		if(js.Boot.__instanceof(instance,openfl.display.DisplayObject)) openfl.Lib.current.addChild(instance); else {
-			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 364, className : "ApplicationMain", methodName : "preloader_onComplete"});
-			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 365, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 372, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 373, className : "ApplicationMain", methodName : "preloader_onComplete"});
 		}
 	}
 };
@@ -1125,9 +1128,11 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		this.addChild(background);
 		this.addChild(this.player);
 		this.song = openfl.Assets.getSound("assets/dickbutt.ogg");
+		this.hatSound = openfl.Assets.getSound("assets/hat.ogg");
 		this.soundChannel = this.song.play();
 		haxel.Time.callbackFunction = $bind(this,this.update);
 		this.obstacles = new Array();
+		this.collectables = new Array();
 		this.spawnedObjects = 0;
 		this.currentBeat = 0;
 		var myFormat = new openfl.text.TextFormat();
@@ -1144,7 +1149,11 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		var newObject = new SongObject(14487825,50,50,-20,Std["int"](Math.random() * SongObject.maxColumns),20);
 		this.obstacles.push(newObject);
 		this.addChild(newObject);
-		this.spawnedObjects += 1;
+	}
+	,spawnCollectable: function() {
+		var newObject = new SongObject(1118685,30,30,-40,Std["int"](Math.random() * SongObject.maxColumns),20);
+		this.collectables.push(newObject);
+		this.addChild(newObject);
 	}
 	,removeAll: function() {
 		this.removeChild(this.player);
@@ -1157,8 +1166,8 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		}
 	}
 	,update: function(deltaTime) {
-		this.scoreText.set_text("Score: " + (this.score / 100 | 0) + " Hi: " + (this.hiscore / 100 | 0));
-		this.score += deltaTime;
+		this.scoreText.set_text("Score: " + (this.score | 0) + " Hi: " + (this.hiscore | 0));
+		this.score += deltaTime / 100;
 		if(this.score > this.hiscore) this.hiscore = this.score;
 		this.player.update();
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
@@ -1167,7 +1176,11 @@ Main.prototype = $extend(haxel.Core.prototype,{
 			if(haxel.MouseInput.get_mouseX() > 200) this.player.currentColumn += 1; else this.player.currentColumn -= 1;
 		}
 		this.currentBeat = this.soundChannel.get_position() / 1000 / 60 * 100 - 10;
-		if(this.currentBeat > this.spawnedObjects) this.spawnObject();
+		if(this.currentBeat > this.spawnedObjects) {
+			this.spawnCollectable();
+			this.spawnObject();
+			this.spawnedObjects += 1;
+		}
 		var _g = 0;
 		var _g1 = this.obstacles;
 		while(_g < _g1.length) {
@@ -1179,6 +1192,26 @@ Main.prototype = $extend(haxel.Core.prototype,{
 				this.init();
 			}
 			obstacle.update();
+		}
+		var toRemove = new Array();
+		var _g2 = 0;
+		var _g11 = this.collectables;
+		while(_g2 < _g11.length) {
+			var collectable = _g11[_g2];
+			++_g2;
+			if(collectable.hitbox.check(collectable.get_x(),collectable.get_y(),this.player.hitbox,this.player.get_x(),this.player.get_y())) {
+				this.score += 100;
+				toRemove.push(collectable);
+				this.hatSound.play();
+			}
+			collectable.update();
+		}
+		var _g3 = 0;
+		while(_g3 < toRemove.length) {
+			var collectable1 = toRemove[_g3];
+			++_g3;
+			HxOverrides.remove(this.collectables,collectable1);
+			this.removeChild(collectable1);
 		}
 	}
 	,__class__: Main
@@ -1283,6 +1316,9 @@ var DefaultAssetLibrary = function() {
 	id = "assets/chicken.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "assets/hat.ogg";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.SOUND);
 	id = "assets/winged.png";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
