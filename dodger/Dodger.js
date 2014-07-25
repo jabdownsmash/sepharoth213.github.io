@@ -1100,25 +1100,61 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 var Main = function() {
 	this.columnY = 525;
 	haxel.Core.call(this);
-	var background = new openfl.display.Sprite();
-	background.get_graphics().beginFill(1118498);
-	background.get_graphics().drawRect(0,0,400,600);
-	background.get_graphics().endFill();
-	this.addChild(background);
-	this.player = new SongObject(14544605,30,30,this.columnY);
-	this.addChild(this.player);
-	this.song = openfl.Assets.getSound("assets/dickbutt.ogg");
-	this.song.play();
-	haxel.Time.callbackFunction = $bind(this,this.update);
+	this.init();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.__super__ = haxel.Core;
 Main.prototype = $extend(haxel.Core.prototype,{
-	update: function(deltaTime) {
+	init: function() {
+		var background = new openfl.display.Sprite();
+		background.get_graphics().beginFill(1118498);
+		background.get_graphics().drawRect(0,0,400,600);
+		background.get_graphics().endFill();
+		this.addChild(background);
+		this.player = new SongObject(14544605,30,30,this.columnY);
+		this.addChild(this.player);
+		this.song = openfl.Assets.getSound("assets/dickbutt.ogg");
+		this.soundChannel = this.song.play();
+		haxel.Time.callbackFunction = $bind(this,this.update);
+		this.obstacles = new Array();
+		this.spawnedObjects = 0;
+		this.currentBeat = 0;
+	}
+	,spawnObject: function() {
+		var newObject = new SongObject(14487825,50,50,-20,Std["int"](Math.random() * SongObject.maxColumns),20);
+		this.obstacles.push(newObject);
+		this.addChild(newObject);
+		this.spawnedObjects += 1;
+	}
+	,removeAll: function() {
+		this.removeChild(this.player);
+		var _g = 0;
+		var _g1 = this.obstacles;
+		while(_g < _g1.length) {
+			var obstacle = _g1[_g];
+			++_g;
+			this.removeChild(obstacle);
+		}
+	}
+	,update: function(deltaTime) {
 		this.player.update();
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
 		if(haxel.KeyboardInput.pressed(39)) this.player.currentColumn += 1;
+		this.currentBeat = this.soundChannel.get_position() / 1000 / 60 * 200 - 10;
+		if(this.currentBeat > this.spawnedObjects) this.spawnObject();
+		var _g = 0;
+		var _g1 = this.obstacles;
+		while(_g < _g1.length) {
+			var obstacle = _g1[_g];
+			++_g;
+			obstacle.update();
+			if(obstacle.hitbox.check(obstacle.get_x(),obstacle.get_y(),this.player.hitbox,this.player.get_x(),this.player.get_y())) {
+				this.removeAll();
+				this.soundChannel.stop();
+				this.init();
+			}
+		}
 	}
 	,__class__: Main
 });
@@ -1553,12 +1589,12 @@ Reflect.deleteField = function(o,field) {
 	delete(o[field]);
 	return true;
 };
-var SongObject = function(color,squareWidth,squareHeight,startY,startYVel) {
+var SongObject = function(color,squareWidth,squareHeight,startY,column,startYVel) {
 	if(startYVel == null) startYVel = 0;
-	this.maxColumns = 5;
+	if(column == null) column = 2;
 	this.columnStart = 50;
 	openfl.display.Sprite.call(this);
-	this.currentColumn = 2;
+	this.currentColumn = column;
 	this.moving = false;
 	this.square = new openfl.display.Sprite();
 	this.square.get_graphics().beginFill(color);
@@ -1566,7 +1602,7 @@ var SongObject = function(color,squareWidth,squareHeight,startY,startYVel) {
 	this.square.get_graphics().endFill();
 	this.addChild(this.square);
 	this.speed = 30.5;
-	this.columnWidth = (400 - 2 * this.columnStart) / this.maxColumns;
+	this.columnWidth = (400 - 2 * this.columnStart) / SongObject.maxColumns;
 	this.set_x(this.getColumnX(this.currentColumn));
 	this.set_y(startY - this.get_height());
 	this.yVelocity = startYVel;
@@ -1584,11 +1620,13 @@ SongObject.prototype = $extend(openfl.display.Sprite.prototype,{
 	}
 	,update: function() {
 		if(this.currentColumn < 0) this.currentColumn = 0;
-		if(this.currentColumn > this.maxColumns - 1) this.currentColumn = this.maxColumns - 1;
+		if(this.currentColumn > SongObject.maxColumns - 1) this.currentColumn = SongObject.maxColumns - 1;
 		if(Math.abs(this.getColumnX(this.currentColumn) - this.get_x()) < this.speed) this.set_x(this.getColumnX(this.currentColumn)); else {
 			var _g = this;
 			_g.set_x(_g.get_x() + this.speed * (this.getColumnX(this.currentColumn) - this.get_x()) / Math.abs(this.getColumnX(this.currentColumn) - this.get_x()));
 		}
+		var _g1 = this;
+		_g1.set_y(_g1.get_y() + this.yVelocity);
 	}
 	,__class__: SongObject
 });
@@ -8063,6 +8101,7 @@ openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
 haxel.Core.screenScale = 4;
+SongObject.maxColumns = 5;
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
