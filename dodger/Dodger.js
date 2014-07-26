@@ -1101,28 +1101,39 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 	,__class__: haxel.Core
 });
 var Main = function() {
-	this.hiscore = 0;
 	this.columnY = 525;
+	this.hiscore = 0;
 	haxel.Core.call(this);
 	this.init();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
+Main.screenWidth = null;
+Main.screenHeight = null;
+Main.columnWidth = null;
+Main.getColumnX = function(column,width) {
+	return Main.columnStart + column * Main.columnWidth - width / 2;
+};
 Main.__super__ = haxel.Core;
 Main.prototype = $extend(haxel.Core.prototype,{
 	init: function() {
+		Main.screenWidth = 400;
+		Main.screenHeight = 600;
+		this.bpm = 100;
+		this.objectBaseSpeed = (this.columnY - Main.spawnY) / (1 / this.bpm * 60 * 1000);
+		Main.columnWidth = (Main.screenWidth - 2 * Main.columnStart) / (Main.maxColumns - 1);
 		this.player = new SongObject(14544605,30,30,this.columnY);
 		var background = new openfl.display.Sprite();
 		background.get_graphics().beginFill(1118498);
-		background.get_graphics().drawRect(0,0,400,600);
+		background.get_graphics().drawRect(0,0,Main.screenWidth,Main.screenHeight);
 		background.get_graphics().endFill();
 		background.get_graphics().beginFill(328967);
 		var lineWidth = 4;
 		var _g1 = 0;
-		var _g = SongObject.maxColumns;
+		var _g = Main.maxColumns;
 		while(_g1 < _g) {
 			var i = _g1++;
-			background.get_graphics().drawRect(SongObject.columnStart + i * SongObject.columnWidth - lineWidth / 2,0,lineWidth,600);
+			background.get_graphics().drawRect(Main.columnStart + i * Main.columnWidth - lineWidth / 2,0,lineWidth,Main.screenHeight);
 		}
 		background.get_graphics().endFill();
 		this.addChild(background);
@@ -1142,16 +1153,22 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		this.scoreText = new openfl.text.TextField();
 		this.scoreText.set_text("Score: " + this.score);
 		this.scoreText.set_defaultTextFormat(myFormat);
-		this.scoreText.set_width(400);
+		this.scoreText.set_width(Main.screenWidth);
 		this.addChild(this.scoreText);
+		var _g2 = 10;
+		while(_g2 < 500) {
+			var i1 = _g2++;
+			this.spawnObject(i1,.5);
+			this.spawnCollectable(i1,1);
+		}
 	}
-	,spawnObject: function() {
-		var newObject = new SongObject(14487825,50,50,-20,Std["int"](Math.random() * SongObject.maxColumns),20);
+	,spawnObject: function(beatNumber,speed) {
+		var newObject = new SongObject(14487825,50,50,Main.spawnY - beatNumber * (1 / this.bpm * 60 * 1000) * (this.objectBaseSpeed * speed),Std["int"](Math.random() * Main.maxColumns),this.objectBaseSpeed * speed);
 		this.obstacles.push(newObject);
 		this.addChild(newObject);
 	}
-	,spawnCollectable: function() {
-		var newObject = new SongObject(1118685,30,30,-40,Std["int"](Math.random() * SongObject.maxColumns),20);
+	,spawnCollectable: function(beatNumber,speed) {
+		var newObject = new SongObject(1118685,30,30,Main.spawnY - beatNumber * (1 / this.bpm * 60 * 1000) * (this.objectBaseSpeed * speed),Std["int"](Math.random() * Main.maxColumns),this.objectBaseSpeed * speed);
 		this.collectables.push(newObject);
 		this.addChild(newObject);
 	}
@@ -1164,23 +1181,24 @@ Main.prototype = $extend(haxel.Core.prototype,{
 			++_g;
 			this.removeChild(obstacle);
 		}
+		var _g2 = 0;
+		var _g11 = this.collectables;
+		while(_g2 < _g11.length) {
+			var collectable = _g11[_g2];
+			++_g2;
+			this.removeChild(collectable);
+		}
 	}
 	,update: function(deltaTime) {
 		this.scoreText.set_text("Score: " + (this.score | 0) + " Hi: " + (this.hiscore | 0));
-		this.score += deltaTime / 100;
 		if(this.score > this.hiscore) this.hiscore = this.score;
-		this.player.update();
+		this.player.update(0);
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
 		if(haxel.KeyboardInput.pressed(39)) this.player.currentColumn += 1;
 		if(haxel.MouseInput.mousePressed) {
 			if(haxel.MouseInput.get_mouseX() > 200) this.player.currentColumn += 1; else this.player.currentColumn -= 1;
 		}
-		this.currentBeat = this.soundChannel.get_position() / 1000 / 60 * 100 - 10;
-		if(this.currentBeat > this.spawnedObjects) {
-			this.spawnCollectable();
-			this.spawnObject();
-			this.spawnedObjects += 1;
-		}
+		var toRemove = new Array();
 		var _g = 0;
 		var _g1 = this.obstacles;
 		while(_g < _g1.length) {
@@ -1191,25 +1209,36 @@ Main.prototype = $extend(haxel.Core.prototype,{
 				this.soundChannel.stop();
 				this.init();
 			}
-			obstacle.update();
+			obstacle.update(this.soundChannel.get_position());
+			if(obstacle.get_y() > Main.spawnY) obstacle.set_visible(true); else obstacle.set_visible(false);
+			if(obstacle.get_y() > this.columnY) toRemove.push(obstacle);
 		}
-		var toRemove = new Array();
 		var _g2 = 0;
-		var _g11 = this.collectables;
-		while(_g2 < _g11.length) {
-			var collectable = _g11[_g2];
+		while(_g2 < toRemove.length) {
+			var obstacle1 = toRemove[_g2];
 			++_g2;
+			HxOverrides.remove(this.obstacles,obstacle1);
+			this.removeChild(obstacle1);
+		}
+		toRemove = new Array();
+		var _g3 = 0;
+		var _g11 = this.collectables;
+		while(_g3 < _g11.length) {
+			var collectable = _g11[_g3];
+			++_g3;
 			if(collectable.hitbox.check(collectable.get_x(),collectable.get_y(),this.player.hitbox,this.player.get_x(),this.player.get_y())) {
 				this.score += 100;
 				toRemove.push(collectable);
 				this.hatSound.play();
 			}
-			collectable.update();
+			collectable.update(this.soundChannel.get_position());
+			if(collectable.get_y() > Main.spawnY) collectable.set_visible(true); else collectable.set_visible(false);
+			if(collectable.get_y() > this.columnY) toRemove.push(collectable);
 		}
-		var _g3 = 0;
-		while(_g3 < toRemove.length) {
-			var collectable1 = toRemove[_g3];
-			++_g3;
+		var _g4 = 0;
+		while(_g4 < toRemove.length) {
+			var collectable1 = toRemove[_g4];
+			++_g4;
 			HxOverrides.remove(this.collectables,collectable1);
 			this.removeChild(collectable1);
 		}
@@ -1662,44 +1691,38 @@ Reflect.deleteField = function(o,field) {
 	delete(o[field]);
 	return true;
 };
-var SongObject = function(color,squareWidth,squareHeight,startY,column,startYVel) {
-	if(startYVel == null) startYVel = 0;
+var SongObject = function(color,squareWidth,squareHeight,yStart,column,ySpeed) {
+	if(ySpeed == null) ySpeed = 0;
 	if(column == null) column = 2;
 	openfl.display.Sprite.call(this);
 	this.currentColumn = column;
-	this.moving = false;
 	this.square = new openfl.display.Sprite();
 	this.square.get_graphics().beginFill(color);
 	this.square.get_graphics().drawRect(0,0,squareWidth,squareHeight);
 	this.square.get_graphics().endFill();
 	this.addChild(this.square);
 	this.speed = 30.5;
-	SongObject.columnWidth = (400 - 2 * SongObject.columnStart) / (SongObject.maxColumns - 1);
-	this.set_x(this.getColumnX(this.currentColumn));
-	this.set_y(startY - this.get_height());
-	this.yVelocity = startYVel;
+	this.set_x(Main.getColumnX(this.currentColumn,this.get_width()));
+	this.startY = yStart;
+	this.set_y(this.startY - this.get_height());
+	this.yVelocity = ySpeed;
 	this.hitbox = new utils.Hitbox(0,0,this.get_width(),this.get_height());
 };
 $hxClasses["SongObject"] = SongObject;
 SongObject.__name__ = ["SongObject"];
-SongObject.columnWidth = null;
 SongObject.__super__ = openfl.display.Sprite;
 SongObject.prototype = $extend(openfl.display.Sprite.prototype,{
 	get_column: function() {
 		return this.currentColumn;
 	}
-	,getColumnX: function(column) {
-		return SongObject.columnStart + column * SongObject.columnWidth - this.get_width() / 2;
-	}
-	,update: function() {
+	,update: function(time) {
 		if(this.currentColumn < 0) this.currentColumn = 0;
-		if(this.currentColumn > SongObject.maxColumns - 1) this.currentColumn = SongObject.maxColumns - 1;
-		if(Math.abs(this.getColumnX(this.currentColumn) - this.get_x()) < this.speed) this.set_x(this.getColumnX(this.currentColumn)); else {
+		if(this.currentColumn > Main.maxColumns - 1) this.currentColumn = Main.maxColumns - 1;
+		if(Math.abs(Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()) < this.speed) this.set_x(Main.getColumnX(this.currentColumn,this.get_width())); else {
 			var _g = this;
-			_g.set_x(_g.get_x() + this.speed * (this.getColumnX(this.currentColumn) - this.get_x()) / Math.abs(this.getColumnX(this.currentColumn) - this.get_x()));
+			_g.set_x(_g.get_x() + this.speed * (Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()) / Math.abs(Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()));
 		}
-		var _g1 = this;
-		_g1.set_y(_g1.get_y() + this.yVelocity);
+		if(this.yVelocity > 0) this.set_y(this.startY + time * this.yVelocity);
 	}
 	,__class__: SongObject
 });
@@ -8885,8 +8908,9 @@ openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
 haxel.Core.screenScale = 4;
-SongObject.columnStart = 50;
-SongObject.maxColumns = 5;
+Main.columnStart = 50;
+Main.maxColumns = 5;
+Main.spawnY = 25;
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
