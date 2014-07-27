@@ -25,124 +25,42 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	ApplicationMain.preloader.onInit();
 	var sounds = [];
 	var id;
-	var image = new Image();
-	id = "assets/platform.png";
-	ApplicationMain.images.set(id,image);
-	image.onload = ApplicationMain.image_onLoad;
-	image.src = id;
-	ApplicationMain.total++;
-	var image1 = new Image();
-	id = "assets/floor.png";
-	ApplicationMain.images.set(id,image1);
-	image1.onload = ApplicationMain.image_onLoad;
-	image1.src = id;
-	ApplicationMain.total++;
-	var image2 = new Image();
-	id = "assets/squirrelwithacorn.png";
-	ApplicationMain.images.set(id,image2);
-	image2.onload = ApplicationMain.image_onLoad;
-	image2.src = id;
-	ApplicationMain.total++;
-	var image3 = new Image();
-	id = "assets/bg.png";
-	ApplicationMain.images.set(id,image3);
-	image3.onload = ApplicationMain.image_onLoad;
-	image3.src = id;
-	ApplicationMain.total++;
-	var image4 = new Image();
-	id = "assets/chicken.png";
-	ApplicationMain.images.set(id,image4);
-	image4.onload = ApplicationMain.image_onLoad;
-	image4.src = id;
-	ApplicationMain.total++;
-	var sound = haxe.io.Path.withoutExtension("assets/hat.ogg");
+	var sound = haxe.io.Path.withoutExtension("assets/snare.ogg");
 	if(!HxOverrides.remove(sounds,sound)) ApplicationMain.total++;
 	sounds.push(sound);
-	var image5 = new Image();
-	id = "assets/winged.png";
-	ApplicationMain.images.set(id,image5);
-	image5.onload = ApplicationMain.image_onLoad;
-	image5.src = id;
-	ApplicationMain.total++;
-	var image6 = new Image();
-	id = "assets/chickenmaster2.png";
-	ApplicationMain.images.set(id,image6);
-	image6.onload = ApplicationMain.image_onLoad;
-	image6.src = id;
-	ApplicationMain.total++;
-	var image7 = new Image();
-	id = "assets/resultsbg.png";
-	ApplicationMain.images.set(id,image7);
-	image7.onload = ApplicationMain.image_onLoad;
-	image7.src = id;
-	ApplicationMain.total++;
-	var image8 = new Image();
-	id = "assets/squirrelattempt.png";
-	ApplicationMain.images.set(id,image8);
-	image8.onload = ApplicationMain.image_onLoad;
-	image8.src = id;
-	ApplicationMain.total++;
-	var image9 = new Image();
-	id = "assets/squirrelwithpeanutbutter.png";
-	ApplicationMain.images.set(id,image9);
-	image9.onload = ApplicationMain.image_onLoad;
-	image9.src = id;
-	ApplicationMain.total++;
-	var image10 = new Image();
-	id = "assets/elvisbullet.png";
-	ApplicationMain.images.set(id,image10);
-	image10.onload = ApplicationMain.image_onLoad;
-	image10.src = id;
-	ApplicationMain.total++;
-	var image11 = new Image();
-	id = "assets/acorn.png";
-	ApplicationMain.images.set(id,image11);
-	image11.onload = ApplicationMain.image_onLoad;
-	image11.src = id;
-	ApplicationMain.total++;
-	var image12 = new Image();
-	id = "assets/wall.png";
-	ApplicationMain.images.set(id,image12);
-	image12.onload = ApplicationMain.image_onLoad;
-	image12.src = id;
-	ApplicationMain.total++;
-	var image13 = new Image();
-	id = "assets/skippypeanutbutter.png";
-	ApplicationMain.images.set(id,image13);
-	image13.onload = ApplicationMain.image_onLoad;
-	image13.src = id;
-	ApplicationMain.total++;
-	var image14 = new Image();
-	id = "assets/attack.png";
-	ApplicationMain.images.set(id,image14);
-	image14.onload = ApplicationMain.image_onLoad;
-	image14.src = id;
-	ApplicationMain.total++;
-	var sound1 = haxe.io.Path.withoutExtension("assets/dickbutt.ogg");
+	var sound1 = haxe.io.Path.withoutExtension("assets/hat.ogg");
 	if(!HxOverrides.remove(sounds,sound1)) ApplicationMain.total++;
 	sounds.push(sound1);
-	var image15 = new Image();
-	id = "assets/elvis.png";
-	ApplicationMain.images.set(id,image15);
-	image15.onload = ApplicationMain.image_onLoad;
-	image15.src = id;
+	var sound2 = haxe.io.Path.withoutExtension("assets/fart.ogg");
+	if(!HxOverrides.remove(sounds,sound2)) ApplicationMain.total++;
+	sounds.push(sound2);
+	var urlLoader = new openfl.net.URLLoader();
+	urlLoader.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("assets/songlist.json",urlLoader);
+	ApplicationMain.total++;
+	var sound3 = haxe.io.Path.withoutExtension("assets/dickbutt.ogg");
+	if(!HxOverrides.remove(sounds,sound3)) ApplicationMain.total++;
+	sounds.push(sound3);
+	var urlLoader1 = new openfl.net.URLLoader();
+	urlLoader1.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("assets/song.json",urlLoader1);
 	ApplicationMain.total++;
 	if(ApplicationMain.total == 0) ApplicationMain.start(); else {
 		var $it0 = ApplicationMain.urlLoaders.keys();
 		while( $it0.hasNext() ) {
 			var path = $it0.next();
-			var urlLoader = ApplicationMain.urlLoaders.get(path);
-			urlLoader.addEventListener("complete",ApplicationMain.loader_onComplete);
-			urlLoader.load(new openfl.net.URLRequest(path));
+			var urlLoader2 = ApplicationMain.urlLoaders.get(path);
+			urlLoader2.addEventListener("complete",ApplicationMain.loader_onComplete);
+			urlLoader2.load(new openfl.net.URLRequest(path));
 		}
 		var _g = 0;
 		while(_g < sounds.length) {
 			var soundName = sounds[_g];
 			++_g;
-			var sound2 = new openfl.media.Sound();
-			sound2.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
-			sound2.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
-			sound2.load(new openfl.net.URLRequest(soundName + ".ogg"));
+			var sound4 = new openfl.media.Sound();
+			sound4.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
+			sound4.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
+			sound4.load(new openfl.net.URLRequest(soundName + ".ogg"));
 		}
 	}
 };
@@ -180,8 +98,8 @@ ApplicationMain.preloader_onComplete = function(event) {
 	if(hasMain) Reflect.callMethod(Main,Reflect.field(Main,"main"),[]); else {
 		var instance = Type.createInstance(DocumentClass,[]);
 		if(js.Boot.__instanceof(instance,openfl.display.DisplayObject)) openfl.Lib.current.addChild(instance); else {
-			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 372, className : "ApplicationMain", methodName : "preloader_onComplete"});
-			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 373, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 226, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 227, className : "ApplicationMain", methodName : "preloader_onComplete"});
 		}
 	}
 };
@@ -1101,6 +1019,7 @@ haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
 	,__class__: haxel.Core
 });
 var Main = function() {
+	this.songSelectIndex = 0;
 	this.columnY = 525;
 	this.hiscore = 0;
 	haxel.Core.call(this);
@@ -1108,89 +1027,110 @@ var Main = function() {
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
-Main.screenWidth = null;
-Main.screenHeight = null;
-Main.columnWidth = null;
-Main.getColumnX = function(column,width) {
-	return Main.columnStart + column * Main.columnWidth - width / 2;
+Main.getColumnX = function(column) {
+	return Main.columnStart + column * Main.columnWidth;
 };
+Main.columnWidth = null;
 Main.__super__ = haxel.Core;
 Main.prototype = $extend(haxel.Core.prototype,{
 	init: function() {
-		Main.screenWidth = 400;
-		Main.screenHeight = 600;
-		this.bpm = 100;
-		this.objectBaseSpeed = (this.columnY - Main.spawnY) / (1 / this.bpm * 60 * 1000);
-		Main.columnWidth = (Main.screenWidth - 2 * Main.columnStart) / (Main.maxColumns - 1);
-		this.player = new SongObject(14544605,30,30,this.columnY);
+		this.removeAll();
 		var background = new openfl.display.Sprite();
 		background.get_graphics().beginFill(1118498);
 		background.get_graphics().drawRect(0,0,Main.screenWidth,Main.screenHeight);
 		background.get_graphics().endFill();
-		background.get_graphics().beginFill(328967);
-		var lineWidth = 4;
-		var _g1 = 0;
-		var _g = Main.maxColumns;
-		while(_g1 < _g) {
-			var i = _g1++;
-			background.get_graphics().drawRect(Main.columnStart + i * Main.columnWidth - lineWidth / 2,0,lineWidth,Main.screenHeight);
-		}
-		background.get_graphics().endFill();
 		this.addChild(background);
-		this.addChild(this.player);
-		this.song = openfl.Assets.getSound("assets/dickbutt.ogg");
-		this.hatSound = openfl.Assets.getSound("assets/hat.ogg");
-		this.soundChannel = this.song.play();
-		haxel.Time.callbackFunction = $bind(this,this.update);
-		this.obstacles = new Array();
-		this.collectables = new Array();
-		this.spawnedObjects = 0;
-		this.currentBeat = 0;
 		var myFormat = new openfl.text.TextFormat();
 		myFormat.size = 20;
 		myFormat.color = 16777181;
+		this.songSelectText = new openfl.text.TextField();
+		this.songSelectText.set_text("hi");
+		this.songSelectText.set_defaultTextFormat(myFormat);
+		this.songSelectText.set_width(Main.screenWidth);
+		this.addChild(this.songSelectText);
+		this.songSelectText.set_y(300);
+		var songData = JSON.parse(openfl.Assets.getText("assets/songlist.json"));
+		this.songs = songData.songs;
+		haxel.Time.callbackFunction = $bind(this,this.songSelectUpdate);
+	}
+	,loadSong: function(dataPath) {
+		var songData = JSON.parse(openfl.Assets.getText(dataPath));
+		this.bpm = songData.bpm;
+		Main.maxColumns = songData.maxColumns;
+		this.objectBaseSpeed = (this.columnY - Main.spawnY) / (1 / this.bpm * 60 * 1000);
+		Main.columnWidth = (Main.screenWidth - 2 * Main.columnStart) / (Main.maxColumns - 1);
+		this.drawBackground(Main.maxColumns,4);
+		this.song = openfl.Assets.getSound(songData.song);
+		this.songOffset = songData.songOffset;
+		this.spawnedObjects = 0;
 		this.score = 0;
-		this.scoreText = new openfl.text.TextField();
-		this.scoreText.set_text("Score: " + this.score);
-		this.scoreText.set_defaultTextFormat(myFormat);
-		this.scoreText.set_width(Main.screenWidth);
-		this.addChild(this.scoreText);
-		var _g2 = 10;
-		while(_g2 < 500) {
-			var i1 = _g2++;
-			this.spawnObject(i1,.5);
-			this.spawnCollectable(i1,1);
+		this.songObjects = new Array();
+		this.spawnObjects(songData);
+		this.soundChannel = this.song.play();
+		this.multiplier = 1;
+	}
+	,drawBackground: function(numColumns,lineWidth) {
+		var lineBackground = new openfl.display.Sprite();
+		lineBackground.get_graphics().beginFill(328967);
+		var _g = 0;
+		while(_g < numColumns) {
+			var i = _g++;
+			lineBackground.get_graphics().drawRect(Main.columnStart + i * Main.columnWidth - lineWidth / 2,0,lineWidth,Main.screenHeight);
+		}
+		lineBackground.get_graphics().endFill();
+		this.addChild(lineBackground);
+	}
+	,spawnObjects: function(songData) {
+		var dataObjects = songData.objects;
+		var _g = 0;
+		while(_g < dataObjects.length) {
+			var toSpawn = dataObjects[_g];
+			++_g;
+			var objectType = songData.types[toSpawn.type];
+			this.spawnObject(objectType.size,objectType.color,objectType.speed,toSpawn.beat - objectType.beatOffset,toSpawn.column,objectType.type);
 		}
 	}
-	,spawnObject: function(beatNumber,speed) {
-		var newObject = new SongObject(14487825,50,50,Main.spawnY - beatNumber * (1 / this.bpm * 60 * 1000) * (this.objectBaseSpeed * speed),Std["int"](Math.random() * Main.maxColumns),this.objectBaseSpeed * speed);
-		this.obstacles.push(newObject);
-		this.addChild(newObject);
-	}
-	,spawnCollectable: function(beatNumber,speed) {
-		var newObject = new SongObject(1118685,30,30,Main.spawnY - beatNumber * (1 / this.bpm * 60 * 1000) * (this.objectBaseSpeed * speed),Std["int"](Math.random() * Main.maxColumns),this.objectBaseSpeed * speed);
-		this.collectables.push(newObject);
+	,spawnObject: function(size,color,speed,beatNumber,column,type) {
+		var newObject = new SongObject(color,size,Main.spawnY - beatNumber * (1 / this.bpm * 60 * 1000) * (this.objectBaseSpeed * speed),column,this.objectBaseSpeed * speed,type);
+		this.songObjects.push(newObject);
 		this.addChild(newObject);
 	}
 	,removeAll: function() {
-		this.removeChild(this.player);
-		var _g = 0;
-		var _g1 = this.obstacles;
-		while(_g < _g1.length) {
-			var obstacle = _g1[_g];
-			++_g;
-			this.removeChild(obstacle);
+		while(this.get_numChildren() > 0) this.removeChildAt(0);
+	}
+	,comboBreak: function() {
+		this.multiplier = 1;
+	}
+	,songSelectUpdate: function(deltaTime) {
+		if(haxel.KeyboardInput.pressed(37)) this.songSelectIndex -= 1;
+		if(haxel.KeyboardInput.pressed(39)) this.songSelectIndex += 1;
+		if(haxel.MouseInput.mousePressed && haxel.MouseInput.get_mouseY() > 300) {
+			if(haxel.MouseInput.get_mouseX() > 200) this.songSelectIndex += 1; else this.songSelectIndex -= 1;
 		}
-		var _g2 = 0;
-		var _g11 = this.collectables;
-		while(_g2 < _g11.length) {
-			var collectable = _g11[_g2];
-			++_g2;
-			this.removeChild(collectable);
+		if(this.songSelectIndex >= this.songs.length) this.songSelectIndex = 0;
+		if(this.songSelectIndex < 0) this.songSelectIndex = this.songs.length - 1;
+		this.songSelectText.set_text(this.songs[this.songSelectIndex].title);
+		if(haxel.KeyboardInput.pressed(32) || haxel.MouseInput.mousePressed && haxel.MouseInput.get_mouseY() < 300) {
+			this.removeChild(this.songSelectText);
+			this.loadSong(this.songs[this.songSelectIndex].file);
+			var myFormat = new openfl.text.TextFormat();
+			myFormat.size = 20;
+			myFormat.color = 16777181;
+			this.scoreText = new openfl.text.TextField();
+			this.scoreText.set_text("Score: " + this.score);
+			this.scoreText.set_defaultTextFormat(myFormat);
+			this.scoreText.set_width(Main.screenWidth);
+			this.addChild(this.scoreText);
+			this.hatSound = openfl.Assets.getSound("assets/hat.ogg");
+			this.snareSound = openfl.Assets.getSound("assets/snare.ogg");
+			this.fartSound = openfl.Assets.getSound("assets/fart.ogg");
+			this.player = new SongObject(14544605,15,this.columnY);
+			this.addChild(this.player);
+			haxel.Time.callbackFunction = $bind(this,this.update);
 		}
 	}
 	,update: function(deltaTime) {
-		this.scoreText.set_text("Score: " + (this.score | 0) + " Hi: " + (this.hiscore | 0));
+		this.scoreText.set_text("multiplier: " + this.multiplier + " Score: " + (this.score | 0) + " Hi: " + (this.hiscore | 0));
 		if(this.score > this.hiscore) this.hiscore = this.score;
 		this.player.update(0);
 		if(haxel.KeyboardInput.pressed(37)) this.player.currentColumn -= 1;
@@ -1200,47 +1140,39 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		}
 		var toRemove = new Array();
 		var _g = 0;
-		var _g1 = this.obstacles;
+		var _g1 = this.songObjects;
 		while(_g < _g1.length) {
-			var obstacle = _g1[_g];
+			var songObject = _g1[_g];
 			++_g;
-			if(obstacle.hitbox.check(obstacle.get_x(),obstacle.get_y(),this.player.hitbox,this.player.get_x(),this.player.get_y())) {
-				this.removeAll();
-				this.soundChannel.stop();
-				this.init();
+			if(this.player.check(songObject)) {
+				if(songObject.type == 0) {
+					this.comboBreak();
+					toRemove.push(songObject);
+					this.fartSound.play();
+				} else if(songObject.type == 1) {
+					this.score += 100 * this.multiplier;
+					toRemove.push(songObject);
+					this.hatSound.play();
+				} else if(songObject.type == 2) {
+					this.multiplier += 1;
+					this.snareSound.play();
+					toRemove.push(songObject);
+				} else if(songObject.type == -1) {
+					this.removeAll();
+					this.soundChannel.stop();
+					this.init();
+				}
 			}
-			obstacle.update(this.soundChannel.get_position());
-			if(obstacle.get_y() > Main.spawnY) obstacle.set_visible(true); else obstacle.set_visible(false);
-			if(obstacle.get_y() > this.columnY) toRemove.push(obstacle);
+			songObject.update(this.soundChannel.get_position() + this.songOffset);
+			if(songObject.get_y() > Main.spawnY) songObject.set_visible(true); else songObject.set_visible(false);
+			if(songObject.get_y() > this.columnY) toRemove.push(songObject);
 		}
 		var _g2 = 0;
 		while(_g2 < toRemove.length) {
-			var obstacle1 = toRemove[_g2];
+			var songObject1 = toRemove[_g2];
 			++_g2;
-			HxOverrides.remove(this.obstacles,obstacle1);
-			this.removeChild(obstacle1);
-		}
-		toRemove = new Array();
-		var _g3 = 0;
-		var _g11 = this.collectables;
-		while(_g3 < _g11.length) {
-			var collectable = _g11[_g3];
-			++_g3;
-			if(collectable.hitbox.check(collectable.get_x(),collectable.get_y(),this.player.hitbox,this.player.get_x(),this.player.get_y())) {
-				this.score += 100;
-				toRemove.push(collectable);
-				this.hatSound.play();
-			}
-			collectable.update(this.soundChannel.get_position());
-			if(collectable.get_y() > Main.spawnY) collectable.set_visible(true); else collectable.set_visible(false);
-			if(collectable.get_y() > this.columnY) toRemove.push(collectable);
-		}
-		var _g4 = 0;
-		while(_g4 < toRemove.length) {
-			var collectable1 = toRemove[_g4];
-			++_g4;
-			HxOverrides.remove(this.collectables,collectable1);
-			this.removeChild(collectable1);
+			HxOverrides.remove(this.songObjects,songObject1);
+			this.removeChild(songObject1);
 		}
 	}
 	,__class__: Main
@@ -1330,60 +1262,24 @@ var DefaultAssetLibrary = function() {
 	this.className = new haxe.ds.StringMap();
 	openfl.AssetLibrary.call(this);
 	var id;
-	id = "assets/platform.png";
+	id = "assets/snare.ogg";
 	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/floor.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/squirrelwithacorn.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/bg.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/chicken.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
+	this.type.set(id,openfl.AssetType.SOUND);
 	id = "assets/hat.ogg";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.SOUND);
-	id = "assets/winged.png";
+	id = "assets/fart.ogg";
 	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/chickenmaster2.png";
+	this.type.set(id,openfl.AssetType.SOUND);
+	id = "assets/songlist.json";
 	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/resultsbg.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/squirrelattempt.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/squirrelwithpeanutbutter.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/elvisbullet.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/acorn.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/wall.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/skippypeanutbutter.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
-	id = "assets/attack.png";
-	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
+	this.type.set(id,openfl.AssetType.TEXT);
 	id = "assets/dickbutt.ogg";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.MUSIC);
-	id = "assets/elvis.png";
+	id = "assets/song.json";
 	this.path.set(id,id);
-	this.type.set(id,openfl.AssetType.IMAGE);
+	this.type.set(id,openfl.AssetType.TEXT);
 };
 $hxClasses["DefaultAssetLibrary"] = DefaultAssetLibrary;
 DefaultAssetLibrary.__name__ = ["DefaultAssetLibrary"];
@@ -1691,22 +1587,24 @@ Reflect.deleteField = function(o,field) {
 	delete(o[field]);
 	return true;
 };
-var SongObject = function(color,squareWidth,squareHeight,yStart,column,ySpeed) {
+var SongObject = function(color,radius,yStart,column,ySpeed,objectType) {
+	if(objectType == null) objectType = 0;
 	if(ySpeed == null) ySpeed = 0;
 	if(column == null) column = 2;
+	this.speed = 30.5;
 	openfl.display.Sprite.call(this);
 	this.currentColumn = column;
-	this.square = new openfl.display.Sprite();
-	this.square.get_graphics().beginFill(color);
-	this.square.get_graphics().drawRect(0,0,squareWidth,squareHeight);
-	this.square.get_graphics().endFill();
-	this.addChild(this.square);
-	this.speed = 30.5;
-	this.set_x(Main.getColumnX(this.currentColumn,this.get_width()));
+	this.type = objectType;
+	this.size = radius;
+	this.sprite = new openfl.display.Sprite();
+	this.sprite.get_graphics().beginFill(color);
+	this.sprite.get_graphics().drawCircle(0,0,this.size);
+	this.sprite.get_graphics().endFill();
+	this.addChild(this.sprite);
+	this.set_x(Main.getColumnX(this.currentColumn));
 	this.startY = yStart;
-	this.set_y(this.startY - this.get_height());
+	this.set_y(this.startY);
 	this.yVelocity = ySpeed;
-	this.hitbox = new utils.Hitbox(0,0,this.get_width(),this.get_height());
 };
 $hxClasses["SongObject"] = SongObject;
 SongObject.__name__ = ["SongObject"];
@@ -1715,12 +1613,18 @@ SongObject.prototype = $extend(openfl.display.Sprite.prototype,{
 	get_column: function() {
 		return this.currentColumn;
 	}
+	,check: function(songObject) {
+		var dx = this.get_x() - songObject.get_x();
+		var dy = this.get_y() - songObject.get_y();
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		return distance < this.size + songObject.size;
+	}
 	,update: function(time) {
 		if(this.currentColumn < 0) this.currentColumn = 0;
 		if(this.currentColumn > Main.maxColumns - 1) this.currentColumn = Main.maxColumns - 1;
-		if(Math.abs(Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()) < this.speed) this.set_x(Main.getColumnX(this.currentColumn,this.get_width())); else {
+		if(Math.abs(Main.getColumnX(this.currentColumn) - this.get_x()) < this.speed) this.set_x(Main.getColumnX(this.currentColumn)); else {
 			var _g = this;
-			_g.set_x(_g.get_x() + this.speed * (Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()) / Math.abs(Main.getColumnX(this.currentColumn,this.get_width()) - this.get_x()));
+			_g.set_x(_g.get_x() + this.speed * (Main.getColumnX(this.currentColumn) - this.get_x()) / Math.abs(Main.getColumnX(this.currentColumn) - this.get_x()));
 		}
 		if(this.yVelocity > 0) this.set_y(this.startY + time * this.yVelocity);
 	}
@@ -8908,9 +8812,15 @@ openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
 haxel.Core.screenScale = 4;
+Main.screenWidth = 400;
+Main.screenHeight = 600;
 Main.columnStart = 50;
 Main.maxColumns = 5;
 Main.spawnY = 25;
+SongObject.OBSTACLE = 0;
+SongObject.COLLECTABLE = 1;
+SongObject.MULTIPLIER = 2;
+SongObject.END = -1;
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;

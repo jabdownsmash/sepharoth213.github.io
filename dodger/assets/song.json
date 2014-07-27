@@ -1,0 +1,589 @@
+{
+    "bpm": 200,
+    "maxColumns": 5,
+    "objects": [
+        {
+            "beat": 5,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 5,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 7,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 7,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 4,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 5,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 7,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 9,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 10,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 11,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 14,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 15,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 13,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 16,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 17,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 17,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 18,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 18,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 19,
+            "column": 3,
+            "type": 2
+        },
+        {
+            "beat": 20,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 21,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 22,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 23,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 24,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 25,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 27,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 29,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 31,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 30,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 28,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 26,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 30,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 28,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 26,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 33,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 36,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 39,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 35,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 35,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 38,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 38,
+            "column": 0,
+            "type": 0
+        },
+        {
+            "beat": 41,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 42,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 43,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 45,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 46,
+            "column": 0,
+            "type": 2
+        },
+        {
+            "beat": 49,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 51,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 46,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 52,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 53,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 54,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 55,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 56,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 58,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 60,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 61,
+            "column": 2,
+            "type": 2
+        },
+        {
+            "beat": 63,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 63,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 63,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 65,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 66,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 68,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 69,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 71,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 67,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 67,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 70,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 70,
+            "column": 0,
+            "type": 0
+        },
+        {
+            "beat": 72,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 72,
+            "column": 0,
+            "type": 0
+        },
+        {
+            "beat": 73,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 74,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 75,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 78,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 74,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 75,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 76,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 77,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 78,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 74,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 75,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 75,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 78,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 76,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 78,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 79,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 80,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 81,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 79,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 80,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 81,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 82,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 80,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 82,
+            "column": 0,
+            "type": 1
+        },
+        {
+            "beat": 83,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 82,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 83,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 77,
+            "column": 4,
+            "type": 1
+        },
+        {
+            "beat": 84,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 83,
+            "column": 1,
+            "type": 1
+        },
+        {
+            "beat": 84,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 85,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 86,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 87,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 88,
+            "column": 0,
+            "type": 3
+        },
+        {
+            "beat": 88,
+            "column": 2,
+            "type": 3
+        },
+        {
+            "beat": 88,
+            "column": 3,
+            "type": 3
+        },
+        {
+            "beat": 88,
+            "column": 1,
+            "type": 3
+        },
+        {
+            "beat": 88,
+            "column": 4,
+            "type": 3
+        }
+    ],
+    "song": "assets/dickbutt.ogg",
+    "songOffset": -100,
+    "songPath": "../Assets/dickbutt.ogg",
+    "types": [
+        {
+            "beatOffset": 0,
+            "color": 14487825,
+            "size": 40,
+            "speed": 0.25,
+            "type": 0
+        },
+        {
+            "beatOffset": 0,
+            "color": 1118685,
+            "size": 20,
+            "speed": 0.25,
+            "type": 1
+        },
+        {
+            "beatOffset": 0,
+            "color": 1170705,
+            "size": 40,
+            "speed": 0.25,
+            "type": 2
+        },
+        {
+            "beatOffset": 0,
+            "color": 14540253,
+            "size": 20,
+            "speed": 0.25,
+            "type": -1
+        }
+    ]
+}
