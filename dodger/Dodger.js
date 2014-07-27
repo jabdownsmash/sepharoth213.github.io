@@ -991,25 +991,16 @@ haxel.Core = function() {
 	haxel.KeyboardInput.init();
 	haxel.MouseInput.init();
 	haxel.Time.init();
-	haxel.Core.screenScale = Std["int"](Math.min(this.stage.stageWidth,this.stage.stageHeight) / 200);
-	haxel.Core.viewport = new openfl.display.Sprite();
-	haxel.Core.viewport.set_scaleX(haxel.Core.screenScale);
-	haxel.Core.viewport.set_scaleY(haxel.Core.screenScale);
-	this.addChild(haxel.Core.viewport);
 };
 $hxClasses["haxel.Core"] = haxel.Core;
 haxel.Core.__name__ = ["haxel","Core"];
 haxel.Core.instance = null;
-haxel.Core.viewport = null;
-haxel.Core.viewportBitmapData = null;
 haxel.Core.screenBitmapData = null;
 haxel.Core.updateFrame = function() {
 	haxel.KeyboardInput.update();
 	haxel.MouseInput.update();
 };
 haxel.Core.updatePostFrame = function() {
-	haxel.Core.viewportBitmapData.draw(haxel.Core.viewport);
-	haxel.Core.screenBitmapData.draw(haxel.Core.viewportBitmapData,haxel.Utils.generateTransformMatrix(0,0,0,0,haxel.Core.screenScale,haxel.Core.screenScale));
 };
 haxel.Core.__super__ = openfl.display.Sprite;
 haxel.Core.prototype = $extend(openfl.display.Sprite.prototype,{
@@ -2373,95 +2364,6 @@ haxe.io.Path.prototype = {
 	}
 	,__class__: haxe.io.Path
 };
-haxel.ColorObject = function(r,g,b,a) {
-	if(a == null) a = 1;
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
-};
-$hxClasses["haxel.ColorObject"] = haxel.ColorObject;
-haxel.ColorObject.__name__ = ["haxel","ColorObject"];
-haxel.ColorObject.prototype = {
-	get_alpha: function() {
-		return this.a == 1;
-	}
-	,getUInt: function() {
-		return (this.r * 255 | 0) * 256 * 256 + (this.g * 255 | 0) * 256 + (this.b * 255 | 0);
-	}
-	,getAlphaUInt: function() {
-		var b = this.getUInt();
-		return (this.a * 255 | 0) * 256 * 256 * 256 + b;
-	}
-	,__class__: haxel.ColorObject
-};
-haxel.GraphicObject = function(width,height,alpha,fillColor) {
-	if(alpha == null) alpha = true;
-	if(height == null) height = 1;
-	if(width == null) width = 1;
-	if(fillColor == null) {
-		this.bitmapData = new openfl.display.BitmapData(width,height,alpha);
-		return;
-	}
-	this.bitmapData = new openfl.display.BitmapData(width,height,alpha,fillColor.getUInt());
-	this.hasAlpha = alpha;
-};
-$hxClasses["haxel.GraphicObject"] = haxel.GraphicObject;
-haxel.GraphicObject.__name__ = ["haxel","GraphicObject"];
-haxel.GraphicObject.prototype = {
-	get_width: function() {
-		return this.bitmapData.rect.width | 0;
-	}
-	,get_height: function() {
-		return this.bitmapData.rect.height | 0;
-	}
-	,draw: function(image,transformMatrix,x,y,centerX,centerY,xScale,yScale,rotation) {
-		if(rotation == null) rotation = 0;
-		if(yScale == null) yScale = 1;
-		if(xScale == null) xScale = 1;
-		if(centerY == null) centerY = 0;
-		if(centerX == null) centerX = 0;
-		if(y == null) y = 0;
-		if(x == null) x = 0;
-		if(transformMatrix != null) {
-			if(js.Boot.__instanceof(image,haxel.GraphicObject)) this.bitmapData.draw(image.bitmapData,transformMatrix); else this.bitmapData.draw(image,transformMatrix);
-		} else {
-			var transformMatrix1 = haxel.Utils.generateTransformMatrix(x,y,centerX,centerY,xScale,yScale,rotation);
-			this.draw(image,transformMatrix1);
-		}
-	}
-	,clear: function(color) {
-		this.bitmapData.fillRect(this.bitmapData.rect,color.getUInt());
-	}
-	,getBitmap: function() {
-		return new openfl.display.Bitmap(this.bitmapData);
-	}
-	,getBitmapData: function() {
-		return this.bitmapData;
-	}
-	,lock: function() {
-		this.bitmapData.lock();
-	}
-	,unlock: function() {
-		this.bitmapData.unlock();
-	}
-	,setPixel: function(x,y,color) {
-		if(this.hasAlpha) this.bitmapData.setPixel32(x,y,color.getAlphaUInt()); else this.bitmapData.setPixel(x,y,color.getUInt());
-	}
-	,getPixel: function(x,y) {
-		if(this.hasAlpha) {
-			var colorInt = this.bitmapData.getPixel32(x,y);
-			return haxel.Utils.getColorFromInt(colorInt);
-		} else {
-			var colorInt1 = this.bitmapData.getPixel(x,y);
-			return haxel.Utils.getAlphaColorFromInt(colorInt1);
-		}
-	}
-	,drawPixel: function(x,y,color) {
-		this.setPixel(x,y,haxel.Utils.blend(this.getPixel(x,y),color));
-	}
-	,__class__: haxel.GraphicObject
-};
 haxel.Key = function() { };
 $hxClasses["haxel.Key"] = haxel.Key;
 haxel.Key.__name__ = ["haxel","Key"];
@@ -2679,100 +2581,6 @@ haxel.Time.onTimerTick = function() {
 	}
 	if(haxel.Time.postCallbackFunction != null) haxel.Time.postCallbackFunction(framesCalled);
 	haxel.Core.updatePostFrame();
-};
-haxel.Utils = function() { };
-$hxClasses["haxel.Utils"] = haxel.Utils;
-haxel.Utils.__name__ = ["haxel","Utils"];
-haxel.Utils.loadImage = function(path) {
-	var image = new haxel.GraphicObject();
-	image.bitmapData = openfl.Assets.getBitmapData(path);
-	return image;
-};
-haxel.Utils.generateTransformMatrix = function(translateX,translateY,centerX,centerY,xScale,yScale,rotation) {
-	if(rotation == null) rotation = 0;
-	if(yScale == null) yScale = 1;
-	if(xScale == null) xScale = 1;
-	if(centerY == null) centerY = 0;
-	if(centerX == null) centerX = 0;
-	var transformMatrix = new openfl.geom.Matrix();
-	transformMatrix.translate(-centerX,-centerY);
-	transformMatrix.rotate(rotation);
-	transformMatrix.scale(xScale,yScale);
-	transformMatrix.translate(translateX,translateY);
-	return transformMatrix;
-};
-haxel.Utils.getColorFromInt = function(intColor) {
-	var r;
-	r = (((function($this) {
-		var $r;
-		var $int = intColor;
-		$r = $int < 0?4294967296.0 + $int:$int + 0.0;
-		return $r;
-	}(this)) / (function($this) {
-		var $r;
-		var int1 = 256;
-		$r = int1 < 0?4294967296.0 + int1:int1 + 0.0;
-		return $r;
-	}(this)) | 0) / 256 | 0) % 256 / 255;
-	var g;
-	g = ((function($this) {
-		var $r;
-		var int2 = intColor;
-		$r = int2 < 0?4294967296.0 + int2:int2 + 0.0;
-		return $r;
-	}(this)) / (function($this) {
-		var $r;
-		var int3 = 256;
-		$r = int3 < 0?4294967296.0 + int3:int3 + 0.0;
-		return $r;
-	}(this)) | 0) % 256 / 255;
-	var b;
-	b = (function($this) {
-		var $r;
-		var int4;
-		int4 = (function($this) {
-			var $r;
-			var int5 = intColor;
-			$r = int5 < 0?4294967296.0 + int5:int5 + 0.0;
-			return $r;
-		}($this)) % (function($this) {
-			var $r;
-			var int6 = 256;
-			$r = int6 < 0?4294967296.0 + int6:int6 + 0.0;
-			return $r;
-		}($this)) | 0;
-		$r = int4 < 0?4294967296.0 + int4:int4 + 0.0;
-		return $r;
-	}(this)) / (function($this) {
-		var $r;
-		var int7 = 255;
-		$r = int7 < 0?4294967296.0 + int7:int7 + 0.0;
-		return $r;
-	}(this));
-	return new haxel.ColorObject(r,g,b);
-};
-haxel.Utils.getAlphaColorFromInt = function(intColor) {
-	var color = haxel.Utils.getColorFromInt(intColor);
-	color.a = ((((function($this) {
-		var $r;
-		var $int = intColor;
-		$r = $int < 0?4294967296.0 + $int:$int + 0.0;
-		return $r;
-	}(this)) / (function($this) {
-		var $r;
-		var int1 = 256;
-		$r = int1 < 0?4294967296.0 + int1:int1 + 0.0;
-		return $r;
-	}(this)) | 0) / 256 | 0) / 256 | 0) % 256 / 255;
-	return color;
-};
-haxel.Utils.blend = function(targetColor,newColor) {
-	var finalColor = new haxel.ColorObject(0,0,0);
-	finalColor.r = newColor.r + (targetColor.r - newColor.r) * (1 - newColor.a);
-	finalColor.g = newColor.g + (targetColor.g - newColor.g) * (1 - newColor.a);
-	finalColor.b = newColor.b + (targetColor.b - newColor.b) * (1 - newColor.a);
-	finalColor.a = newColor.a + (1 - newColor.a) * targetColor.a;
-	return finalColor;
 };
 var js = {};
 js.Boot = function() { };
@@ -8940,7 +8748,6 @@ haxel.Time.maxElapsed = 0.0333;
 haxel.Time.maxFrameSkip = 5;
 haxel.Time.tickRate = 4;
 haxel.Time.delta = 0;
-haxel.Utils.m = Math;
 openfl.Assets.cache = new openfl.AssetCache();
 openfl.Assets.libraries = new haxe.ds.StringMap();
 openfl.Assets.dispatcher = new openfl.events.EventDispatcher();
