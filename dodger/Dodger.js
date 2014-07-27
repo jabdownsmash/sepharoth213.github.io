@@ -1147,6 +1147,7 @@ Main.prototype = $extend(haxel.Core.prototype,{
 			if(this.player.check(songObject)) {
 				if(songObject.type == 0) {
 					this.comboBreak();
+					this.score -= 200;
 					toRemove.push(songObject);
 					this.fartSound.play();
 				} else if(songObject.type == 1) {
