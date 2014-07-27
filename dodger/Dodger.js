@@ -1068,6 +1068,8 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		this.spawnObjects(songData);
 		this.soundChannel = this.song.play();
 		this.multiplier = 1;
+		this.lastReportedPlayheadPosition = 0;
+		this.currentSongTime = 0;
 	}
 	,drawBackground: function(numColumns,lineWidth) {
 		var lineBackground = new openfl.display.Sprite();
@@ -1130,6 +1132,11 @@ Main.prototype = $extend(haxel.Core.prototype,{
 		}
 	}
 	,update: function(deltaTime) {
+		this.currentSongTime += deltaTime;
+		if(this.soundChannel.get_position() != this.lastReportedPlayheadPosition) {
+			this.currentSongTime = (this.currentSongTime + this.soundChannel.get_position()) / 2;
+			this.lastReportedPlayheadPosition = this.soundChannel.get_position();
+		}
 		this.scoreText.set_text("multiplier: " + this.multiplier + " Score: " + (this.score | 0) + " Hi: " + (this.hiscore | 0));
 		if(this.score > this.hiscore) this.hiscore = this.score;
 		this.player.update(0);
@@ -1164,7 +1171,7 @@ Main.prototype = $extend(haxel.Core.prototype,{
 					this.init();
 				}
 			}
-			songObject.update(this.soundChannel.get_position() + this.songOffset);
+			songObject.update(this.currentSongTime + this.songOffset);
 			if(songObject.get_y() > Main.spawnY) songObject.set_visible(true); else songObject.set_visible(false);
 			if(songObject.get_y() > this.columnY) toRemove.push(songObject);
 		}
