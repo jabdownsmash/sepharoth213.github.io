@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="dlatc" package="jds.games.dlatc" version="1.0.0" company="Jab Down Smash" />
+	<window width="0" height="0" orientation="portrait"/>
+	<app main="Main" path="../../../dlatcBuilds" file="dlatc" />
+	<source path="Source" />
+
+    <!-- <haxelib name="openfl-bitfive" /> -->
+	<haxelib name="openfl" />
+	<haxelib name="spritesheet" />
+	<assets path="Assets" rename="assets" exclude="openfl.svg" />
+	<icon path="Assets/openfl.svg" />
+	
+</project>
