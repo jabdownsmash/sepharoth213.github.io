@@ -1,0 +1,244 @@
+{
+    "bpm": 200,
+    "maxColumns": 5,
+    "objects": [
+        {
+            "beat": 5,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 5,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 7,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 7,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 4,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 5,
+            "column": 2,
+            "type": 1
+        },
+        {
+            "beat": 7,
+            "column": 3,
+            "type": 1
+        },
+        {
+            "beat": 2,
+            "column": 2,
+            "type": 2
+        },
+        {
+            "beat": 3,
+            "column": 2,
+            "type": 2
+        },
+        {
+            "beat": 1,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 0,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 9,
+            "column": 0,
+            "type": 0
+        },
+        {
+            "beat": 9,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 9,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 11,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 11,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 11,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 13,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 13,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 13,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 13,
+            "column": 4,
+            "type": 0
+        },
+        {
+            "beat": 16,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 16,
+            "column": 0,
+            "type": 0
+        },
+        {
+            "beat": 19,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 18,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 21,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 22,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 24,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 15,
+            "column": 0,
+            "type": 2
+        },
+        {
+            "beat": 15,
+            "column": 1,
+            "type": 2
+        },
+        {
+            "beat": 15,
+            "column": 2,
+            "type": 2
+        },
+        {
+            "beat": 15,
+            "column": 3,
+            "type": 2
+        },
+        {
+            "beat": 15,
+            "column": 4,
+            "type": 2
+        },
+        {
+            "beat": 26,
+            "column": 1,
+            "type": 2
+        },
+        {
+            "beat": 27,
+            "column": 2,
+            "type": 2
+        },
+        {
+            "beat": 26,
+            "column": 3,
+            "type": 2
+        },
+        {
+            "beat": 28,
+            "column": 1,
+            "type": 2
+        },
+        {
+            "beat": 30,
+            "column": 3,
+            "type": 0
+        },
+        {
+            "beat": 29,
+            "column": 2,
+            "type": 0
+        },
+        {
+            "beat": 30,
+            "column": 1,
+            "type": 0
+        },
+        {
+            "beat": 31,
+            "column": 2,
+            "type": 0
+        }
+    ],
+    "song": "assets/dickbutt.ogg",
+    "songOffset": -100,
+    "songPath": "../Assets/dickbutt.ogg",
+    "types": [
+        {
+            "beatOffset": 0,
+            "color": 14487825,
+            "size": 30,
+            "speed": 0.25,
+            "type": 0
+        },
+        {
+            "beatOffset": 0,
+            "color": 1118685,
+            "size": 20,
+            "speed": 0.25,
+            "type": 1
+        },
+        {
+            "beatOffset": 0,
+            "color": 1170705,
+            "size": 40,
+            "speed": 0.25,
+            "type": 2
+        },
+        {
+            "beatOffset": 0,
+            "color": 14540253,
+            "size": 50,
+            "speed": 0.25,
+            "type": -1
+        }
+    ]
+}
