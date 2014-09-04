@@ -32,22 +32,36 @@ password
 
 <script>
 var myFirebaseRef = new Firebase("https://melee-match-history.firebaseio.com/");
+ myFirebaseRef.child("players").on("value", function(snapshot) {
+   players = snapshot.val();
+ });
+
+function checkNumber(number){
+  for(var player in players)
+  {
+    if(number == players[player].idNumber)
+    {
+      return true;
+    }
+  }
+  return false;
+}
 
 function myFunction() {
    var d = new Date();
    var players;
-   myFirebaseRef.child("players").on("value", function(playerData) {
-     players = playerData.val();
-   });
    var playerNumber = document.getElementById("playerNumber").value;
    if(document.getElementById("password").value == "bigfuckboy")
    {
-     if(!(playerNumber in players))
+     if(!checkNumber(playerNumber))
      {
       var obj = {};
-      obj[playerNumber] = document.getElementById("playerName").value;
+      // obj[playerNumber] = ;
         var postsRef = myFirebaseRef.child("players");
-          postsRef.push(obj);
+          postsRef.push({
+            idNumber : playerNumber,
+            playerName : document.getElementById("playerName").value
+          });
           alert("Submitted player!");
      }
      else

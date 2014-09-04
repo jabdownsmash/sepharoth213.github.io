@@ -117,20 +117,31 @@ You might have to click this button a few times before it works. <br />
 
 <script>
 var myFirebaseRef = new Firebase("https://melee-match-history.firebaseio.com/");
+myFirebaseRef.child("players").on("value", function(playerData) {
+ players = playerData.val();
+});
+
+function checkNumber(number){
+  for(var player in players)
+  {
+    if(number == players[player].idNumber)
+    {
+      return true;
+    }
+  }
+  return false;
+}
 
 function myFunction() {
    var d = new Date();
    var players;
-   myFirebaseRef.child("players").on("value", function(playerData) {
-     players = playerData.val();
-   });
    var player1Number = document.getElementById("player1").value;
    var player2Number = document.getElementById("player2").value;
    if(player1Number == player2Number)
    {
       alert("Enter different ID numbers...");
    }
-   else if(player1Number in players || player2Number in players)
+   else if(checkNumber(player1Number) && checkNumber(player2Number))
    {
       var postsRef = myFirebaseRef.child("matches");
         postsRef.push({
