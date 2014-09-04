@@ -45,7 +45,7 @@ function myFunction() {
      if(!(playerNumber in players))
      {
       var obj = {};
-      obj[playerNumber] = playerName;
+      obj[playerNumber] = document.getElementById("playerName").value;
         var postsRef = myFirebaseRef.child("players");
           postsRef.push(obj);
           alert("Submitted player!");
