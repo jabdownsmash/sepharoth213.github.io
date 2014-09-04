@@ -104,6 +104,8 @@ stage <br />
 
 <br />
 
+You might have to click this button a few times before it works. <br />
+
 <button onclick="myFunction()">Submit Match</button>
 
 <p id="demo"></p>
@@ -119,7 +121,11 @@ function myFunction() {
    });
    var player1Number = document.getElementById("player1").value;
    var player2Number = document.getElementById("player2").value;
-   if(player1Number in players || player2Number in players)
+   if(player1Number == player2Number)
+   {
+      alert("Enter different ID numbers...");
+   }
+   else if(player1Number in players || player2Number in players)
    {
       var postsRef = myFirebaseRef.child("matches");
         postsRef.push({
