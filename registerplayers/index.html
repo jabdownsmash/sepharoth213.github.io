@@ -1,0 +1,69 @@
+<html>
+   <head >
+   <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+      <title >Match submit page</title>
+   </head>
+<body>
+<h1>Match submit page</h1>
+
+<p1>
+if you have not registered your id number with the club, contact spencer kee, aaron santiago, or ian stanion mcloser
+</p1>
+<br />
+
+number <br />
+<input type="number" id="playerNumber" min="920000000" max="1000000000">
+<br />
+<br />
+name
+<br />
+<input type="text" id="playerName">
+
+<br />
+<br />
+password
+<br />
+<input type="password" id="password">
+<br />
+<br />
+You might have to click this button a few times before it works. <br />
+
+<button onclick="myFunction()">Submit Match</button>
+
+<p id="demo"></p>
+
+<script>
+var myFirebaseRef = new Firebase("https://melee-match-history.firebaseio.com/");
+
+function myFunction() {
+   var d = new Date();
+   var players;
+   myFirebaseRef.child("players").on("value", function(playerData) {
+     players = playerData.val();
+   });
+   var playerNumber = document.getElementById("playerNumber").value;
+   if(document.getElementById("password").value == "bigfuckboy")
+   {
+     if(!(playerNumber in players))
+     {
+      var obj = {};
+      obj[playerNumber] = playerName;
+        var postsRef = myFirebaseRef.child("players");
+          postsRef.push(obj);
+          alert("Submitted player!");
+     }
+     else
+     {
+        alert("ID number already registered");
+     }
+   }
+   else
+   {
+    alert("Incorrect password");
+   }
+}
+</script>
+ 
+</body>
+</html>
