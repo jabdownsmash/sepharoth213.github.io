@@ -1,0 +1,146 @@
+<html>
+   <head >
+   <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+      <title >Match submit page</title>
+   </head>
+<body>
+<h1>Match submit page</h1>
+
+<p1>
+if you have not registered your id number with the club, contact spencer kee, aaron santiago, or ian stanion mcloser
+</p1>
+<br />
+
+player 1
+<form>
+<input type="number" id="player1" min="920000000" max="1000000000">
+</form>
+
+<select id="char1">
+<option value="falco" selected="true">falco</option>
+<option value="fox">fox</option>
+<option value="sheik">sheik</option>
+<option value="marth">marth</option>
+<option value="jigglypuff">jigglypuff</option>
+<option value="peach">peach</option>
+<option value="captain falcon">captain falcon</option>
+<option value="ice">ice climbers</option>
+<option value="doctor mario">doctor mario</option>
+<option value="ganondorf">ganondorf</option>
+<option value="samus">samus</option>
+<option value="pikachu">pikachu</option>
+<option value="mario">mario</option>
+<option value="luigi">luigi</option>
+<option value="donkey kong">donkey kong</option>
+<option value="link">link</option>
+<option value="young link">young link</option>
+<option value="zelda">zelda</option>
+<option value="roy">roy</option>
+<option value="mewtwo">mewtwo</option>
+<option value="yoshi">yoshi</option>
+<option value="mr game and watch">mr game and watch</option>
+<option value="ness">ness</option>
+<option value="bowser">bowser</option>
+<option value="kirby">kirby</option>
+<option value="pichu">pichu</option>
+</select>
+
+<br />
+
+player 2
+<form>
+<input type="number" id="player2" min="920000000" max="1000000000"> 
+</form>
+<select id="char2">
+<option value="falco" selected="true">falco</option>
+<option value="fox">fox</option>
+<option value="sheik">sheik</option>
+<option value="marth">marth</option>
+<option value="jigglypuff">jigglypuff</option>
+<option value="peach">peach</option>
+<option value="captain falcon">captain falcon</option>
+<option value="ice">ice climbers</option>
+<option value="doctor mario">doctor mario</option>
+<option value="ganondorf">ganondorf</option>
+<option value="samus">samus</option>
+<option value="pikachu">pikachu</option>
+<option value="mario">mario</option>
+<option value="luigi">luigi</option>
+<option value="donkey kong">donkey kong</option>
+<option value="link">link</option>
+<option value="young link">young link</option>
+<option value="zelda">zelda</option>
+<option value="roy">roy</option>
+<option value="mewtwo">mewtwo</option>
+<option value="yoshi">yoshi</option>
+<option value="mr game and watch">mr game and watch</option>
+<option value="ness">ness</option>
+<option value="bowser">bowser</option>
+<option value="kirby">kirby</option>
+<option value="pichu">pichu</option>
+</select>
+
+<br />
+
+winner
+
+<select id="winner">
+<option value="1" selected="true">player 1</option>
+<option value="2">player 2</option>
+</select>
+<br />
+
+stage <br />
+
+<select id="stage">
+<option value="final destination" selected="true">final destination</option>
+<option value="battlefield">battlefield</option>
+<option value="pokemon stadium">pokemon stadium</option>
+<option value="dreamland">dreamland</option>
+<option value="yoshis story">yoshi's story</option>
+<option value="fountain of dreams">fountain of dreams</option>
+</select>
+
+<br />
+
+<button onclick="myFunction()">Submit Match</button>
+
+<p id="demo"></p>
+
+<script>
+var myFirebaseRef = new Firebase("https://melee-match-history.firebaseio.com/");
+
+function myFunction() {
+   var d = new Date();
+   var players;
+   myFirebaseRef.child("players").on("value", function(playerData) {
+     players = playerData.val();
+   });
+   var player1Number = document.getElementById("player1").value;
+   var player2Number = document.getElementById("player2").value;
+   if(player1Number in players || player2Number in players)
+   {
+      var postsRef = myFirebaseRef.child("matches");
+        postsRef.push({
+          player1: player1Number,
+          player2: player2Number,
+          character1: document.getElementById("char1").value,
+          character2: document.getElementById("char2").value,
+          winner: document.getElementById("winner").value,
+          stage: document.getElementById("stage").value,
+          day: d.getDate(),
+          month: d.getMonth(),
+          year: d.getFullYear()
+        });
+        alert("Submitted game!");
+     }
+     else
+     {
+        alert("Please enter valid, registered player ID numbers");
+     }
+}
+</script>
+ 
+</body>
+</html>
