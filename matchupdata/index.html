@@ -1,0 +1,219 @@
+<html>
+   <head >
+   <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+      <title >Match data page</title>
+   </head>
+<body>
+<script src="js/highcharts.js"></script>
+<h1>Match data page</h1>
+
+<p1>
+if you have not registered your id number with the club, contact spencer kee or ian stanion mcloser
+</p1>
+<br />
+
+<form>
+<input type="number" id="player" max="9999">
+</form>
+<!-- 
+<input type="checkbox" id="showPerStage">
+
+<select id="character">
+<option value="allchars" selected="true">all characters</option>
+<option value="falco">falco</option>
+<option value="fox">fox</option>
+<option value="sheik">sheik</option>
+<option value="marth">marth</option>
+<option value="jigglypuff">jigglypuff</option>
+<option value="peach">peach</option>
+<option value="captainfalcon">captain falcon</option>
+<option value="ice">ice climbers</option>
+<option value="doctormario">doctor mario</option>
+<option value="ganondorf">ganondorf</option>
+<option value="samus">samus</option>
+<option value="pikachu">pikachu</option>
+<option value="mario">mario</option>
+<option value="luigi">luigi</option>
+<option value="donkeykong">donkey kong</option>
+<option value="link">link</option>
+<option value="younglink">young link</option>
+<option value="zelda">zelda</option>
+<option value="roy">roy</option>
+<option value="mewtwo">mewtwo</option>
+<option value="yoshi">yoshi</option>
+<option value="mrgameandwatch">mr game and watch</option>
+<option value="ness">ness</option>
+<option value="bowser">bowser</option>
+<option value="kirby">kirby</option>
+<option value="pichu">pichu</option>
+</select>
+
+<select id="character">
+<option value="allchars" selected="true">all characters</option>
+
+<br />
+<br />
+
+winner
+
+<select id="winner">
+<option value="1" selected="true">player 1</option>
+<option value="2">player 2</option>
+</select>
+<br />
+<br />
+
+stage
+<br />
+
+<select id="stage">
+<option value="finaldestination" selected="true">final destination</option>
+<option value="battlefield">battlefield</option>
+<option value="pokemonstadium">pokemon stadium</option>
+<option value="dreamland">dreamland</option>
+<option value="yoshisstory">yoshi's story</option>
+<option value="fountainofdreams">fountain of dreams</option>
+</select>
+
+<br />
+<br />
+
+You might have to click this button a few times before it works. <br /> -->
+
+<button onclick="myFunction()">Get Winrates</button>
+
+<p id="demo"></p>
+
+<div id="container"></div>
+<!-- <div id="container"></div> -->
+
+<script>
+
+var myFirebaseRef = new Firebase("https://melee-match-history.firebaseio.com/");
+myFirebaseRef.child("matches").on("value", function(matchData) {
+ matches = matchData.val();
+});
+myFirebaseRef.child("players").on("value", function(playerData) {
+ players = playerData.val();
+});
+
+var characters = ['falco','fox','sheik','marth','jigglypuff','peach','captainfalcon','ice','doctormario','ganondorf','samus','pikachu','mario','luigi','donkeykong','link','younglink','zelda','roy','mewtwo','yoshi','mrgameandwatch','ness','bowser','kirby','pichu'];
+var applicableMatches = [];
+
+// function checkMatch(checkFunction)
+
+function checkNumber(number){
+  for(var player in players)
+  {
+    if(number == players[player].idNumber)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+var containerID = 0;
+function plotChart(title,applicableMatches,checkFunction){
+  var totalMatches = 0;
+  var wonMatches = 0;
+  for(var match in applicableMatches)
+  {
+    if(checkFunction(applicableMatches[match]))
+    {
+      if(applicableMatches[match].won)
+      {
+        wonMatches++;
+      }
+      totalMatches++;
+    }
+  }
+  if(totalMatches == 0)
+  {
+    return;
+  }
+  var dataToPlot = [ ['won',wonMatches/totalMatches],['lost',1 - wonMatches/totalMatches]];
+  var para = document.createElement("a");
+  para.setAttribute("id", "container" + containerID);
+  para.setAttribute("style", "min-width: 300px; height: 300px; margin: 1em;display: inline-block");
+  var element = document.getElementById("container");
+  element.appendChild(para);
+  var chart = new Highcharts.Chart({
+      chart: {
+          renderTo: 'container' + containerID,
+          // plotBackgroundColor: null,
+          // plotBorderWidth: 1,//null,
+          // plotShadow: false
+
+      },
+      title: {
+          text: title
+      },
+      legend: {
+          enabled: true,
+          align: 'right',
+      },
+      plotOptions: {
+          pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              showInLegend: true,
+              startAngle: -90,
+              endAngle: 90,
+              center: ['50%', '75%']
+          }
+      },
+      series: [{
+          type: 'pie',
+          name: 'winrate',
+          data: dataToPlot
+      }]
+  });
+  containerID++;
+}
+
+
+function myFunction() {
+   var players;
+   var playerNumber = document.getElementById("player").value;
+   if(!checkNumber(playerNumber))
+   {
+      alert("Enter existing ID number");
+   }
+   else
+   {
+      for(var match in matches)
+      {
+        if(playerNumber == matches[match].player1)
+        {
+          applicableMatches.push(
+          {
+            character: matches[match].character1,
+            opponentCharacter: matches[match].character2,
+            opponentNumber: matches[match].player2,
+            stage: matches[match].stage,
+            won: matches[match].winner == 1
+          });
+        }
+        else if(playerNumber == matches[match].player2)
+        {
+          applicableMatches.push(
+          {
+            character: matches[match].character2,
+            opponentCharacter: matches[match].character1,
+            opponentNumber: matches[match].player1,
+            stage: matches[match].stage,
+            won: matches[match].winner == 2
+          });
+        }
+      }
+      for(character in characters)
+      {
+        plotChart(characters[character],applicableMatches,function(dataEntry) {return dataEntry.character == characters[character]});
+      }
+   }
+}
+</script>
+ 
+</body>
+</html>
