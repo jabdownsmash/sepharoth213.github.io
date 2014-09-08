@@ -13,9 +13,8 @@ if you have not registered your id number with the club, contact spencer kee or 
 </p1>
 <br />
 
-<form>
+<form target="uploader_iframe" onsubmit="myFunction();">
 <input type="number" id="player" max="9999">
-</form>
 <!-- 
 <input type="checkbox" id="showPerStage">
 
@@ -81,7 +80,9 @@ stage
 
 You might have to click this button a few times before it works. <br /> -->
 
-<button onclick="myFunction()">Get Winrates</button>
+<button>Get Winrates</button>
+</form>
+<iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
 
 <p id="demo"></p>
 
@@ -102,6 +103,9 @@ var characters = ['falco','fox','sheik','marth','jigglypuff','peach','captainfal
 var applicableMatches = [];
 
 // function checkMatch(checkFunction)
+Highcharts.setOptions({
+ colors: ['#11DD00', '#DD0022', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+});
 
 function checkNumber(number){
   for(var player in players)
@@ -135,7 +139,7 @@ function plotChart(title,applicableMatches,checkFunction){
   var dataToPlot = [ ['won',wonMatches/totalMatches],['lost',1 - wonMatches/totalMatches]];
   var para = document.createElement("a");
   para.setAttribute("id", "container" + containerID);
-  para.setAttribute("style", "min-width: 300px; height: 300px; margin: 1em;display: inline-block");
+  para.setAttribute("style", "min-width: 150px; height: 150px; margin: 1em;display: inline-block");
   var element = document.getElementById("container");
   element.appendChild(para);
   var chart = new Highcharts.Chart({
@@ -147,25 +151,33 @@ function plotChart(title,applicableMatches,checkFunction){
 
       },
       title: {
-          text: title
+          text: title,
+            align: 'center',
+            verticalAlign: 'middle',
+            y: 50
+      },
+      subtitle: {
+        text: '' + (dataToPlot[0][1]*100).toFixed(0) + "%<br>" + totalMatches + ' matches' 
       },
       legend: {
-          enabled: true,
+          enabled: false,
           align: 'right',
       },
       plotOptions: {
           pie: {
               allowPointSelect: true,
               cursor: 'pointer',
-              showInLegend: true,
+              showInLegend: false,
               startAngle: -90,
               endAngle: 90,
-              center: ['50%', '75%']
+              center: ['50%', '75%'],
+              size: '150%'
           }
       },
       series: [{
           type: 'pie',
           name: 'winrate',
+          innerSize: '50%',
           data: dataToPlot
       }]
   });
@@ -182,6 +194,10 @@ function myFunction() {
    }
    else
    {
+      var myNode = document.getElementById("container");
+      while (myNode.firstChild) {
+          myNode.removeChild(myNode.firstChild);
+      }
       for(var match in matches)
       {
         if(playerNumber == matches[match].player1)
@@ -212,6 +228,7 @@ function myFunction() {
         plotChart(characters[character],applicableMatches,function(dataEntry) {return dataEntry.character == characters[character]});
       }
    }
+   return false;
 }
 </script>
  
