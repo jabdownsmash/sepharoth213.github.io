@@ -119,8 +119,8 @@ function checkNumber(number){
 }
 var containerID = 0;
 function plotChart(title,applicableMatches,checkFunction){
-  var totalMatches = 0;
-  var wonMatches = 0;
+  totalMatches = 0;
+  wonMatches = 0;
   for(var match in applicableMatches)
   {
     if(checkFunction(applicableMatches[match]))
@@ -194,6 +194,7 @@ function myFunction() {
    }
    else
    {
+      applicableMatches = [];
       var myNode = document.getElementById("container");
       while (myNode.firstChild) {
           myNode.removeChild(myNode.firstChild);
