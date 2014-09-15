@@ -1046,11 +1046,13 @@ var Main = function() {
 	this._light2.set_color(1118719);
 	this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
 	this._light3.set_color(16777215);
-	this._view.get_scene().addChild(this._light);
 	this._view.get_scene().addChild(this._light2);
-	this._view.get_scene().addChild(this._light3);
-	mMaterial.set_lightPicker(new away3d.materials.lightpickers.StaticLightPicker([this._light,this._light2,this._light3]));
-	var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(4);
+	var container = new away3d.containers.ObjectContainer3D();
+	container.addChild(this._light);
+	this._view.get_scene().addChild(container);
+	this.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light,this._light3]);
+	mMaterial.set_lightPicker(this.lightPicker);
+	var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
 	var specularMethod = new away3d.materials.methods.CelSpecularMethod();
 	specularMethod.set_smoothness(100);
 	diffuseMethod.set_smoothness(0);
@@ -1068,7 +1070,12 @@ var Main = function() {
 		this.accl = new openfl.sensors.Accelerometer();
 		this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
 	}
-	this.emitter = new FireEmitter(this.lightPicker,this._view);
+	var follow = new away3d.containers.ObjectContainer3D();
+	follow.set_z(-100);
+	this.mesh.addChild(follow);
+	this.emitter = new FireEmitter(this.lightPicker,container,follow);
+	this.lastMouseX = this.stage.get_mouseX();
+	this.lastMouseY = this.stage.get_mouseY();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -1087,8 +1094,21 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.zAccelerometerAxis = (this.zAccelerometerAxis * 9 + zAxis) / 10;
 	}
 	,_onEnterFrame: function(e) {
+		var xCalc = 0.3 * (this.lastMouseX - this.stage.get_mouseX());
+		var yCalc = 0.3 * (this.lastMouseY - this.stage.get_mouseY());
+		if(this.move) {
+			var objTransform = this.mesh.get_transform();
+			objTransform.appendRotation(xCalc,new openfl.geom.Vector3D(0,1,0),null);
+			objTransform.appendRotation(yCalc,new openfl.geom.Vector3D(1,0,0),null);
+			this.mesh.set_transform(objTransform);
+		}
+		this.lastMouseX = this.stage.get_mouseX();
+		this.lastMouseY = this.stage.get_mouseY();
 		this.emitter.update(new openfl.geom.Vector3D(this.xAccelerometerAxis / 10,this.yAccelerometerAxis / 10,this.zAccelerometerAxis / 10));
 		this._view.render();
+		this._light.set_x(this.emitter.x * 2);
+		this._light.set_y(this.emitter.y * 2);
+		this._light.set_z(this.emitter.z * 2);
 	}
 	,onResize: function(event) {
 		this._view.set_width(this.stage.stageWidth);
@@ -1107,7 +1127,8 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.stage.removeEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
 	,onMouseMove: function(e) {
-		if(this.move) this.particleMesh.set_x(e.localX);
+		if(this.move) {
+		}
 	}
 	,__class__: Main
 });
@@ -1353,9 +1374,11 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
-var FireEmitter = function(lightPicker,view) {
-	this._view = view;
+var FireEmitter = function(lightPicker,parentObject,followObject) {
+	this.follow = followObject;
+	this.parent = parentObject;
 	this.fireParticles = new Array();
+	this._lightPicker = lightPicker;
 	this.x = 0;
 	this.y = 0;
 	this.z = -100;
@@ -1366,7 +1389,6 @@ FireEmitter.prototype = {
 	spawnFire: function() {
 		var dat = new openfl.display.BitmapData(256,256,false,10234368);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
-		material.set_lightPicker(this._lightPicker);
 		material.set_alpha(.8);
 		material.set_blendMode(openfl.display.BlendMode.ADD);
 		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 - 1,.1,0,Math.random() * 2 - 1,Math.random() * 2 - 1,Math.random() * 2 - 1);
@@ -1374,7 +1396,7 @@ FireEmitter.prototype = {
 		fireParticle.set_y(this.y);
 		fireParticle.set_z(this.z);
 		fireParticle.speedOffset = Math.random() * .1;
-		this._view.get_scene().addChild(fireParticle);
+		this.parent.addChild(fireParticle);
 		this.fireParticles.push(fireParticle);
 	}
 	,update: function(gravity) {
@@ -1386,9 +1408,13 @@ FireEmitter.prototype = {
 			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
 		this.spawnFire();
+		var position = this.follow.get_scenePosition();
+		this.x = position.x;
+		this.y = position.y;
+		this.z = position.z;
 	}
 	,remove: function(fireParticle) {
-		this._view.get_scene().removeChild(fireParticle);
+		this.parent.removeChild(fireParticle);
 		HxOverrides.remove(this.fireParticles,fireParticle);
 	}
 	,__class__: FireEmitter
@@ -2747,7 +2773,7 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 });
 var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
 	this.speedOffset = 0;
-	var cube = new away3d.primitives.CubeGeometry(10,10,10);
+	var cube = new away3d.primitives.CubeGeometry(30,30,30);
 	this.decayCounter = decayTime;
 	this.xVelocity = xVel;
 	this.yVelocity = yVel;
@@ -2903,9 +2929,9 @@ var Marshmallow = function(mMaterial) {
 	var indices = new Array();
 	var cylinderHeight = 200;
 	var cylinderRadius = 100;
-	var verticalResolution = 50;
+	var verticalResolution = 10;
 	var PI = 3.1415926535897932;
-	var horizontalResolution = 30;
+	var horizontalResolution = 7;
 	var _g = 0;
 	while(_g < verticalResolution) {
 		var i = _g++;
@@ -10993,6 +11019,204 @@ away3d.core.math.Quaternion.prototype = {
 	}
 	,__class__: away3d.core.math.Quaternion
 	,__properties__: {get_magnitude:"get_magnitude"}
+};
+away3d.core.math.Vector3DUtils = function() { };
+$hxClasses["away3d.core.math.Vector3DUtils"] = away3d.core.math.Vector3DUtils;
+away3d.core.math.Vector3DUtils.__name__ = ["away3d","core","math","Vector3DUtils"];
+away3d.core.math.Vector3DUtils.getAngle = function(w,q) {
+	return Math.acos((w.x * q.x + w.y * q.y + w.z * q.z) / (Math.sqrt(w.x * w.x + w.y * w.y + w.z * w.z) * Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z)));
+};
+away3d.core.math.Vector3DUtils.matrix2euler = function(m1) {
+	var m2 = new openfl.geom.Matrix3D();
+	var result = new openfl.geom.Vector3D();
+	var raw;
+	var this1 = away3d.core.math.Matrix3DUtils.get_RAW_DATA_CONTAINER();
+	var value = new Array();
+	var _g1 = 0;
+	var _g = this1.data.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		value.push(this1.data[i]);
+	}
+	raw = value;
+	m1.copyRawDataTo((function($this) {
+		var $r;
+		var vectorData = new openfl.VectorData();
+		vectorData.length = raw.length;
+		vectorData.fixed = true;
+		{
+			var vec;
+			var this2;
+			this2 = new Array(raw.length);
+			vec = this2;
+			var _g11 = 0;
+			var _g2 = raw.length;
+			while(_g11 < _g2) {
+				var i1 = _g11++;
+				vec[i1] = raw[i1];
+			}
+			vectorData.data = vec;
+		}
+		$r = vectorData;
+		return $r;
+	}(this)));
+	result.x = -Math.atan2(raw[6],raw[10]);
+	m2.appendRotation(result.x * 180 / away3d.core.math.Vector3DUtils.MathPI,new openfl.geom.Vector3D(1,0,0),null);
+	m2.append(m1);
+	m2.copyRawDataTo((function($this) {
+		var $r;
+		var vectorData1 = new openfl.VectorData();
+		vectorData1.length = raw.length;
+		vectorData1.fixed = true;
+		{
+			var vec1;
+			var this3;
+			this3 = new Array(raw.length);
+			vec1 = this3;
+			var _g12 = 0;
+			var _g3 = raw.length;
+			while(_g12 < _g3) {
+				var i2 = _g12++;
+				vec1[i2] = raw[i2];
+			}
+			vectorData1.data = vec1;
+		}
+		$r = vectorData1;
+		return $r;
+	}(this)));
+	var cy = Math.sqrt(raw[0] * raw[0] + raw[1] * raw[1]);
+	result.y = Math.atan2(-raw[2],cy);
+	result.z = Math.atan2(-raw[4],raw[5]);
+	if(Math.round(result.z / away3d.core.math.Vector3DUtils.MathPI) == 1) {
+		if(result.y > 0) result.y = -(result.y - away3d.core.math.Vector3DUtils.MathPI); else result.y = -(result.y + away3d.core.math.Vector3DUtils.MathPI);
+		result.z -= away3d.core.math.Vector3DUtils.MathPI;
+		if(result.x > 0) result.x -= away3d.core.math.Vector3DUtils.MathPI; else result.x += away3d.core.math.Vector3DUtils.MathPI;
+	} else if(Math.round(result.z / away3d.core.math.Vector3DUtils.MathPI) == -1) {
+		if(result.y > 0) result.y = -(result.y - away3d.core.math.Vector3DUtils.MathPI); else result.y = -(result.y + away3d.core.math.Vector3DUtils.MathPI);
+		result.z += away3d.core.math.Vector3DUtils.MathPI;
+		if(result.x > 0) result.x -= away3d.core.math.Vector3DUtils.MathPI; else result.x += away3d.core.math.Vector3DUtils.MathPI;
+	} else if(Math.round(result.x / away3d.core.math.Vector3DUtils.MathPI) == 1) {
+		if(result.y > 0) result.y = -(result.y - away3d.core.math.Vector3DUtils.MathPI); else result.y = -(result.y + away3d.core.math.Vector3DUtils.MathPI);
+		result.x -= away3d.core.math.Vector3DUtils.MathPI;
+		if(result.z > 0) result.z -= away3d.core.math.Vector3DUtils.MathPI; else result.z += away3d.core.math.Vector3DUtils.MathPI;
+	} else if(Math.round(result.x / away3d.core.math.Vector3DUtils.MathPI) == -1) {
+		if(result.y > 0) result.y = -(result.y - away3d.core.math.Vector3DUtils.MathPI); else result.y = -(result.y + away3d.core.math.Vector3DUtils.MathPI);
+		result.x += away3d.core.math.Vector3DUtils.MathPI;
+		if(result.z > 0) result.z -= away3d.core.math.Vector3DUtils.MathPI; else result.z += away3d.core.math.Vector3DUtils.MathPI;
+	}
+	return result;
+};
+away3d.core.math.Vector3DUtils.quaternion2euler = function(quarternion) {
+	var result = new openfl.geom.Vector3D();
+	var test = quarternion.x * quarternion.y + quarternion.z * quarternion.w;
+	if(test > 0.499) {
+		result.x = 2 * Math.atan2(quarternion.x,quarternion.w);
+		result.y = Math.PI / 2;
+		result.z = 0;
+		return result;
+	}
+	if(test < -0.499) {
+		result.x = -2 * Math.atan2(quarternion.x,quarternion.w);
+		result.y = -Math.PI / 2;
+		result.z = 0;
+		return result;
+	}
+	var sqx = quarternion.x * quarternion.x;
+	var sqy = quarternion.y * quarternion.y;
+	var sqz = quarternion.z * quarternion.z;
+	result.x = Math.atan2(2 * quarternion.y * quarternion.w - 2 * quarternion.x * quarternion.z,1 - 2 * sqy - 2 * sqz);
+	result.y = Math.asin(2 * test);
+	result.z = Math.atan2(2 * quarternion.x * quarternion.w - 2 * quarternion.y * quarternion.z,1 - 2 * sqx - 2 * sqz);
+	return result;
+};
+away3d.core.math.Vector3DUtils.matrix2scale = function(m) {
+	var result = new openfl.geom.Vector3D();
+	var raw;
+	var this1 = away3d.core.math.Matrix3DUtils.get_RAW_DATA_CONTAINER();
+	var value = new Array();
+	var _g1 = 0;
+	var _g = this1.data.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		value.push(this1.data[i]);
+	}
+	raw = value;
+	m.copyRawDataTo((function($this) {
+		var $r;
+		var vectorData = new openfl.VectorData();
+		vectorData.length = raw.length;
+		vectorData.fixed = true;
+		{
+			var vec;
+			var this2;
+			this2 = new Array(raw.length);
+			vec = this2;
+			var _g11 = 0;
+			var _g2 = raw.length;
+			while(_g11 < _g2) {
+				var i1 = _g11++;
+				vec[i1] = raw[i1];
+			}
+			vectorData.data = vec;
+		}
+		$r = vectorData;
+		return $r;
+	}(this)));
+	result.x = Math.sqrt(raw[0] * raw[0] + raw[1] * raw[1] + raw[2] * raw[2]);
+	result.y = Math.sqrt(raw[4] * raw[4] + raw[5] * raw[5] + raw[6] * raw[6]);
+	result.z = Math.sqrt(raw[8] * raw[8] + raw[9] * raw[9] + raw[10] * raw[10]);
+	return result;
+};
+away3d.core.math.Vector3DUtils.rotatePoint = function(aPoint,rotation) {
+	if(rotation.x != 0 || rotation.y != 0 || rotation.z != 0) {
+		var x1;
+		var y1;
+		var rad = away3d.core.math.MathConsts.DEGREES_TO_RADIANS;
+		var rotx = rotation.x * rad;
+		var roty = rotation.y * rad;
+		var rotz = rotation.z * rad;
+		var sinx = Math.sin(rotx);
+		var cosx = Math.cos(rotx);
+		var siny = Math.sin(roty);
+		var cosy = Math.cos(roty);
+		var sinz = Math.sin(rotz);
+		var cosz = Math.cos(rotz);
+		var x = aPoint.x;
+		var y = aPoint.y;
+		var z = aPoint.z;
+		y1 = y;
+		y = y1 * cosx + z * -sinx;
+		z = y1 * sinx + z * cosx;
+		x1 = x;
+		x = x1 * cosy + z * siny;
+		z = x1 * -siny + z * cosy;
+		x1 = x;
+		x = x1 * cosz + y * -sinz;
+		y = x1 * sinz + y * cosz;
+		aPoint.x = x;
+		aPoint.y = y;
+		aPoint.z = z;
+	}
+	return aPoint;
+};
+away3d.core.math.Vector3DUtils.subdivide = function(startVal,endVal,numSegments) {
+	var points = new Array();
+	var numPoints = 0;
+	var stepx = (endVal.x - startVal.x) / numSegments;
+	var stepy = (endVal.y - startVal.y) / numSegments;
+	var stepz = (endVal.z - startVal.z) / numSegments;
+	var step = 1;
+	var scalestep;
+	while(step < numSegments) {
+		scalestep = new openfl.geom.Vector3D();
+		scalestep.x = startVal.x + stepx * step;
+		scalestep.y = startVal.y + stepy * step;
+		scalestep.z = startVal.z + stepz * step;
+		points[numPoints++] = scalestep;
+		step++;
+	}
+	points[numPoints] = endVal;
+	return points;
 };
 away3d.core.partition = {};
 away3d.core.partition.NodeBase = function() {
@@ -30422,6 +30646,7 @@ away3d.core.math.PlaneClassification.FRONT = 1;
 away3d.core.math.PlaneClassification.IN = 0;
 away3d.core.math.PlaneClassification.OUT = 1;
 away3d.core.math.PlaneClassification.INTERSECT = 2;
+away3d.core.math.Vector3DUtils.MathPI = Math.PI;
 away3d.core.traverse.PartitionTraverser._collectionMark = 0;
 away3d.core.pick.ShaderPicker.MOUSE_SCISSOR_RECT = new openfl.geom.Rectangle(0,0,1,1);
 away3d.core.pick.PickingType.SHADER = new away3d.core.pick.ShaderPicker();
