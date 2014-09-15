@@ -1089,9 +1089,9 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var roll = Math.atan(yAxis / Math.sqrt(Math.pow(xAxis,2) + Math.pow(zAxis,2)));
 		pitch = pitch * 57.2957795130823229;
 		roll = roll * 57.2957795130823229;
-		this.xAccelerometerAxis = (this.xAccelerometerAxis * 9 + xAxis) / 10;
-		this.yAccelerometerAxis = (this.yAccelerometerAxis * 9 + yAxis) / 10;
-		this.zAccelerometerAxis = (this.zAccelerometerAxis * 9 + zAxis) / 10;
+		this.xAccelerometerAxis = xAxis;
+		this.yAccelerometerAxis = yAxis;
+		this.zAccelerometerAxis = zAxis;
 	}
 	,_onEnterFrame: function(e) {
 		var xCalc = 0.3 * (this.lastMouseX - this.stage.get_mouseX());
@@ -1116,6 +1116,8 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 	}
 	,onMouseDown: function(event) {
 		this.move = true;
+		this.lastMouseX = this.stage.get_mouseX();
+		this.lastMouseY = this.stage.get_mouseY();
 		this.stage.addEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
 	,onMouseUp: function(e) {
@@ -2773,7 +2775,7 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 });
 var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
 	this.speedOffset = 0;
-	var cube = new away3d.primitives.CubeGeometry(30,30,30);
+	var cube = new away3d.primitives.CubeGeometry(10,10,10);
 	this.decayCounter = decayTime;
 	this.xVelocity = xVel;
 	this.yVelocity = yVel;
