@@ -1020,6 +1020,9 @@ openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.
 	,__properties__: $extend(openfl.display.DisplayObjectContainer.prototype.__properties__,{get_graphics:"get_graphics"})
 });
 var Main = function() {
+	this.zAccelerometerAxis = 0;
+	this.yAccelerometerAxis = 0;
+	this.xAccelerometerAxis = 0;
 	this.move = false;
 	openfl.display.Sprite.call(this);
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
@@ -1079,11 +1082,12 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var roll = Math.atan(yAxis / Math.sqrt(Math.pow(xAxis,2) + Math.pow(zAxis,2)));
 		pitch = pitch * 57.2957795130823229;
 		roll = roll * 57.2957795130823229;
-		this.mesh.set_rotationX(roll);
-		this.mesh.set_rotationY(-pitch);
+		this.xAccelerometerAxis = (this.xAccelerometerAxis * 9 + xAxis) / 10;
+		this.yAccelerometerAxis = (this.yAccelerometerAxis * 9 + yAxis) / 10;
+		this.zAccelerometerAxis = (this.zAccelerometerAxis * 9 + zAxis) / 10;
 	}
 	,_onEnterFrame: function(e) {
-		this.emitter.update(new openfl.geom.Vector3D(0,.1,0));
+		this.emitter.update(new openfl.geom.Vector3D(this.xAccelerometerAxis / 10,this.yAccelerometerAxis / 10,this.zAccelerometerAxis / 10));
 		this._view.render();
 	}
 	,onResize: function(event) {
@@ -1360,13 +1364,16 @@ $hxClasses["FireEmitter"] = FireEmitter;
 FireEmitter.__name__ = ["FireEmitter"];
 FireEmitter.prototype = {
 	spawnFire: function() {
-		var dat = new openfl.display.BitmapData(256,256,false,11342114);
+		var dat = new openfl.display.BitmapData(256,256,false,10234368);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
 		material.set_lightPicker(this._lightPicker);
-		var fireParticle = new FireParticle(this,material,40,Math.random() * 2 - 1,.1,0,Math.random() * 2 - 1,Math.random() * 2 - 1,Math.random() * 2 - 1);
+		material.set_alpha(.8);
+		material.set_blendMode(openfl.display.BlendMode.ADD);
+		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 - 1,.1,0,Math.random() * 2 - 1,Math.random() * 2 - 1,Math.random() * 2 - 1);
 		fireParticle.set_x(this.x);
 		fireParticle.set_y(this.y);
 		fireParticle.set_z(this.z);
+		fireParticle.speedOffset = Math.random() * .1;
 		this._view.get_scene().addChild(fireParticle);
 		this.fireParticles.push(fireParticle);
 	}
@@ -1376,7 +1383,7 @@ FireEmitter.prototype = {
 		while(_g < _g1.length) {
 			var fireParticle = _g1[_g];
 			++_g;
-			fireParticle.update(gravity);
+			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
 		this.spawnFire();
 	}
@@ -2739,6 +2746,7 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 	,__properties__: $extend(away3d.entities.Entity.prototype.__properties__,{set_shareAnimationGeometry:"set_shareAnimationGeometry",get_shareAnimationGeometry:"get_shareAnimationGeometry",get_subMeshes:"get_subMeshes",set_material:"set_material",get_material:"get_material",set_geometry:"set_geometry",get_geometry:"get_geometry",set_animator:"set_animator",get_animator:"get_animator",set_castsShadows:"set_castsShadows",get_castsShadows:"get_castsShadows"})
 });
 var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
+	this.speedOffset = 0;
 	var cube = new away3d.primitives.CubeGeometry(10,10,10);
 	this.decayCounter = decayTime;
 	this.xVelocity = xVel;
@@ -2749,12 +2757,13 @@ var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRV
 	this.zRVelocity = zRVel;
 	this.source = emitter;
 	away3d.entities.Mesh.call(this,cube,mMaterial);
+	this.scale(2);
 };
 $hxClasses["FireParticle"] = FireParticle;
 FireParticle.__name__ = ["FireParticle"];
 FireParticle.__super__ = away3d.entities.Mesh;
 FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
-	update: function(gravity) {
+	update: function(gravityX,gravityY,gravityZ) {
 		var _g = this;
 		_g.set_x(_g.get_x() + this.xVelocity);
 		var _g1 = this;
@@ -2767,11 +2776,19 @@ FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
 		_g4.set_rotationY(_g4.get_rotationY() + this.yRVelocity);
 		var _g5 = this;
 		_g5.set_rotationZ(_g5.get_rotationZ() + this.zRVelocity);
-		this.xVelocity += gravity.x;
-		this.yVelocity += gravity.y;
-		this.zVelocity += gravity.z;
+		this.xVelocity += gravityX;
+		this.yVelocity += gravityY + this.speedOffset;
+		this.zVelocity += gravityZ;
 		this.decayCounter -= 1;
 		if(this.decayCounter < 0) this.source.remove(this);
+		if(this.get_scaleX() > 0) {
+			var _g6 = this;
+			_g6.set_scaleX(_g6.get_scaleX() - .05);
+			var _g7 = this;
+			_g7.set_scaleY(_g7.get_scaleY() - .05);
+			var _g8 = this;
+			_g8.set_scaleZ(_g8.get_scaleZ() - .05);
+		}
 	}
 	,__class__: FireParticle
 });
