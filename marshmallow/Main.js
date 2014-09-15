@@ -1046,6 +1046,7 @@ var Main = function() {
 	this._light2.set_color(1118719);
 	this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
 	this._light3.set_color(16777215);
+	this._light3.set_ambient(.3);
 	this._view.get_scene().addChild(this._light2);
 	var container = new away3d.containers.ObjectContainer3D();
 	container.addChild(this._light);
@@ -1104,7 +1105,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		}
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
-		this.emitter.update(new openfl.geom.Vector3D(this.xAccelerometerAxis / 10,this.yAccelerometerAxis / 10,this.zAccelerometerAxis / 10));
+		this.emitter.update(new openfl.geom.Vector3D(0,.1,0));
 		this._view.render();
 		this._light.set_x(this.emitter.x * 2);
 		this._light.set_y(this.emitter.y * 2);
@@ -1377,6 +1378,10 @@ EReg.prototype = {
 	,__class__: EReg
 };
 var FireEmitter = function(lightPicker,parentObject,followObject) {
+	this.rotationalVariance = 1;
+	this.perpendicularVariance = .5;
+	this.fireRate = 2;
+	this.fireCounter = 0;
 	this.follow = followObject;
 	this.parent = parentObject;
 	this.fireParticles = new Array();
@@ -1384,16 +1389,18 @@ var FireEmitter = function(lightPicker,parentObject,followObject) {
 	this.x = 0;
 	this.y = 0;
 	this.z = -100;
+	this.spawnFire();
 };
 $hxClasses["FireEmitter"] = FireEmitter;
 FireEmitter.__name__ = ["FireEmitter"];
 FireEmitter.prototype = {
 	spawnFire: function() {
-		var dat = new openfl.display.BitmapData(256,256,false,10234368);
+		var dat = new openfl.display.BitmapData(256,256,false,10242560);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
-		material.set_alpha(.8);
+		material.set_alpha(.9);
+		material.set_alphaPremultiplied(true);
 		material.set_blendMode(openfl.display.BlendMode.ADD);
-		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 - 1,.1,0,Math.random() * 2 - 1,Math.random() * 2 - 1,Math.random() * 2 - 1);
+		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,.1,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance);
 		fireParticle.set_x(this.x);
 		fireParticle.set_y(this.y);
 		fireParticle.set_z(this.z);
@@ -1409,7 +1416,11 @@ FireEmitter.prototype = {
 			++_g;
 			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
-		this.spawnFire();
+		if(this.fireParticles.length == 0) this.fireRate = 999999999;
+		if(this.fireCounter++ > this.fireRate) {
+			this.spawnFire();
+			this.fireCounter = 0;
+		}
 		var position = this.follow.get_scenePosition();
 		this.x = position.x;
 		this.y = position.y;
@@ -2775,7 +2786,7 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 });
 var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
 	this.speedOffset = 0;
-	var cube = new away3d.primitives.CubeGeometry(10,10,10);
+	var cube = new away3d.primitives.CubeGeometry(40,40,40);
 	this.decayCounter = decayTime;
 	this.xVelocity = xVel;
 	this.yVelocity = yVel;
@@ -2785,7 +2796,6 @@ var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRV
 	this.zRVelocity = zRVel;
 	this.source = emitter;
 	away3d.entities.Mesh.call(this,cube,mMaterial);
-	this.scale(2);
 };
 $hxClasses["FireParticle"] = FireParticle;
 FireParticle.__name__ = ["FireParticle"];
@@ -2807,16 +2817,11 @@ FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.xVelocity += gravityX;
 		this.yVelocity += gravityY + this.speedOffset;
 		this.zVelocity += gravityZ;
-		this.decayCounter -= 1;
-		if(this.decayCounter < 0) this.source.remove(this);
-		if(this.get_scaleX() > 0) {
-			var _g6 = this;
-			_g6.set_scaleX(_g6.get_scaleX() - .05);
-			var _g7 = this;
-			_g7.set_scaleY(_g7.get_scaleY() - .05);
-			var _g8 = this;
-			_g8.set_scaleZ(_g8.get_scaleZ() - .05);
-		}
+		var scale = Math.sqrt(Math.pow(this.get_x() - this.source.x,2) + Math.pow(this.get_y() - this.source.y,2) + Math.pow(this.get_z() - this.source.z,2));
+		this.set_scaleX(1 - scale / 60);
+		this.set_scaleY(1 - scale / 60);
+		this.set_scaleZ(1 - scale / 60);
+		if(scale > 60) this.source.remove(this);
 	}
 	,__class__: FireParticle
 });
