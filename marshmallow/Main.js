@@ -1045,7 +1045,7 @@ var Main = function() {
 	this._light2.set_z(2000);
 	this._light2.set_color(1118719);
 	this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
-	this._light3.set_color(16777215);
+	this._light3.set_color(8947848);
 	this._light3.set_ambient(.3);
 	this._view.get_scene().addChild(this._light2);
 	var container = new away3d.containers.ObjectContainer3D();
@@ -1110,6 +1110,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this._light.set_x(this.emitter.x * 2);
 		this._light.set_y(this.emitter.y * 2);
 		this._light.set_z(this.emitter.z * 2);
+		if(this.emitter.fireRate > 1010) this._light.set_color(0);
 	}
 	,onResize: function(event) {
 		this._view.set_width(this.stage.stageWidth);
