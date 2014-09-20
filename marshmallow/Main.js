@@ -1454,6 +1454,7 @@ var FireEmitter = function(parentObject,followObject) {
 	this.z = followObject.get_scenePosition().z;
 	var dat2 = new openfl.display.BitmapData(256,256,false,9835281);
 	var material2 = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat2));
+	material2.set_alpha(.3);
 	var cube = new away3d.primitives.CubeGeometry(20,20,20);
 	this.bgMesh = new away3d.entities.Mesh(cube,material2);
 	this.bgMesh.set_x(this.x);
@@ -3037,8 +3038,8 @@ Marshmallow.__super__ = away3d.entities.Mesh;
 Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 	generateMeshAndNodes: function() {
 		var geometry = new away3d.core.base.Geometry();
-		var subgeometry = new away3d.core.base.SubGeometry();
-		var verts = new Array();
+		this.subgeometry = new away3d.core.base.SubGeometry();
+		this.verts = new Array();
 		var uvs = new Array();
 		var indices = new Array();
 		var _g1 = 0;
@@ -3053,9 +3054,9 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var z = i / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
-				verts.push(x);
-				verts.push(y);
-				verts.push(z);
+				this.verts.push(x);
+				this.verts.push(y);
+				this.verts.push(z);
 				uvs.push(j / this.horizontalResolution);
 				uvs.push(i / this.verticalResolution);
 				var adjacents = new Array();
@@ -3094,9 +3095,9 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			var x1 = Math.cos(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var y1 = Math.sin(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var z1 = this.cylinderHeight / 2;
-			verts.push(x1);
-			verts.push(y1);
-			verts.push(z1);
+			this.verts.push(x1);
+			this.verts.push(y1);
+			this.verts.push(z1);
 			uvs.push(0);
 			uvs.push(0);
 			var adjacents1 = new Array();
@@ -3126,9 +3127,9 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		var x2 = 0;
 		var y2 = 0;
 		var z2 = -this.cylinderHeight / 2;
-		verts.push(x2);
-		verts.push(y2);
-		verts.push(z2);
+		this.verts.push(x2);
+		this.verts.push(y2);
+		this.verts.push(z2);
 		uvs.push(0);
 		uvs.push(0);
 		var adjacents2 = new Array();
@@ -3140,15 +3141,15 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		}
 		this.addNode(x2,y2,z2,adjacents2);
 		z2 = this.cylinderHeight / 2;
-		verts.push(x2);
-		verts.push(y2);
-		verts.push(z2);
+		this.verts.push(x2);
+		this.verts.push(y2);
+		this.verts.push(z2);
 		var adjacents3 = new Array();
 		var _g13 = 0;
 		var _g6 = this.horizontalResolution;
 		while(_g13 < _g6) {
 			var i2 = _g13++;
-			adjacents3.push(i2 + this.horizontalResolution + this.verticalResolution);
+			adjacents3.push(i2 + this.horizontalResolution * this.verticalResolution);
 		}
 		this.addNode(x2,y2,z2,adjacents3);
 		uvs.push(1);
@@ -3169,10 +3170,10 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		indices.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
 		indices.push((this.verticalResolution + 1) * this.horizontalResolution - 1);
 		indices.push(this.verticalResolution * this.horizontalResolution);
-		subgeometry.updateVertexData(verts);
-		subgeometry.updateUVData(uvs);
-		subgeometry.updateIndexData(indices);
-		geometry.addSubGeometry(subgeometry);
+		this.subgeometry.updateVertexData(this.verts);
+		this.subgeometry.updateUVData(uvs);
+		this.subgeometry.updateIndexData(indices);
+		geometry.addSubGeometry(this.subgeometry);
 		var _g8 = 0;
 		var _g15 = this.nodes;
 		while(_g8 < _g15.length) {
@@ -3258,6 +3259,13 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.burning = false;
 			this.marshmallow.container.removeChild(this.emitter.bgMesh);
 			this.emitter.stop = true;
+			this.set_x(this.get_x() * (1.2 + Math.random() / 10));
+			this.set_y(this.get_y() * (1.2 + Math.random() / 10));
+			this.set_z(this.get_z() * (1.2 + Math.random() / 10));
+			this.marshmallow.verts[this.index * 3] = this.get_x();
+			this.marshmallow.verts[this.index * 3 + 1] = this.get_y();
+			this.marshmallow.verts[this.index * 3 + 2] = this.get_z();
+			this.marshmallow.subgeometry.updateVertexData(this.marshmallow.verts);
 		}
 	}
 	,__class__: MarshmallowNode
