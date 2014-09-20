@@ -1125,6 +1125,7 @@ var Main = function() {
 		this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
 	}
 	this.mesh.nodes[0].burn();
+	this.mesh.set_rotationZ(-90);
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -1149,7 +1150,6 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 			var emitter = _g1[_g];
 			++_g;
 			emitter.update(new openfl.geom.Vector3D(0,.2,0),this.mesh.nodes);
-			haxe.Log.trace("dakkekx",{ fileName : "Main.hx", lineNumber : 279, className : "Main", methodName : "_onEnterFrame"});
 			if(emitter.fireRate > 1010) this._light.set_color(0);
 		}
 		var fireTime = openfl.Lib.getTimer() - fireStartTime;
@@ -1162,7 +1162,6 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 			node.update(new openfl.geom.Vector3D(0,.2,0));
 		}
 		var nodeTime = openfl.Lib.getTimer() - nodeStartTime;
-		haxe.Log.trace("fire: " + fireTime + " node: " + nodeTime,{ fileName : "Main.hx", lineNumber : 295, className : "Main", methodName : "_onEnterFrame"});
 		this._view.render();
 	}
 	,onResize: function(event) {
@@ -3015,9 +3014,10 @@ var IMap = function() { };
 $hxClasses["IMap"] = IMap;
 IMap.__name__ = ["IMap"];
 var Marshmallow = function(mMaterial,cont) {
-	this.horizontalResolution = 30;
 	this.PI = 3.1415926535897932;
-	this.verticalResolution = 10;
+	this.innerRings = 3;
+	this.horizontalResolution = 16;
+	this.verticalResolution = 4;
 	this.cylinderRadius = 100;
 	this.cylinderHeight = 200;
 	this.container = cont;
@@ -3042,56 +3042,63 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.verts = new Array();
 		var uvs = new Array();
 		var indices = new Array();
+		var verticesPerCap = 1;
 		var _g1 = 0;
-		var _g = this.verticalResolution;
+		var _g = this.innerRings - 1;
 		while(_g1 < _g) {
 			var i = _g1++;
+			verticesPerCap += Std["int"](this.horizontalResolution / Math.pow(2,i + 1));
+		}
+		var _g11 = 0;
+		var _g2 = this.verticalResolution;
+		while(_g11 < _g2) {
+			var i1 = _g11++;
 			var _g3 = 0;
-			var _g2 = this.horizontalResolution;
-			while(_g3 < _g2) {
+			var _g21 = this.horizontalResolution;
+			while(_g3 < _g21) {
 				var j = _g3++;
 				var angleOffset = 0;
 				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
-				var z = i / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
+				var z = i1 / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
 				this.verts.push(x);
 				this.verts.push(y);
 				this.verts.push(z);
 				uvs.push(j / this.horizontalResolution);
-				uvs.push(i / this.verticalResolution);
+				uvs.push(i1 / this.verticalResolution);
 				var adjacents = new Array();
-				if(j > 0 && i > 0) {
-					indices.push(i * this.horizontalResolution + j);
-					indices.push(i * this.horizontalResolution + j - 1);
-					indices.push(i * this.horizontalResolution + j - this.horizontalResolution);
-					indices.push(i * this.horizontalResolution + j - 1);
-					indices.push(i * this.horizontalResolution + j - this.horizontalResolution - 1);
-					indices.push(i * this.horizontalResolution + j - this.horizontalResolution);
-					adjacents.push(i * this.horizontalResolution + j - 1);
-					adjacents.push(i * this.horizontalResolution + j - this.horizontalResolution);
-					adjacents.push(i * this.horizontalResolution + j + this.horizontalResolution);
-					if(j == this.horizontalResolution - 1) adjacents.push(i * this.horizontalResolution); else adjacents.push(i * this.horizontalResolution + j + 1);
+				if(j > 0 && i1 > 0) {
+					indices.push(i1 * this.horizontalResolution + j);
+					indices.push(i1 * this.horizontalResolution + j - 1);
+					indices.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
+					indices.push(i1 * this.horizontalResolution + j - 1);
+					indices.push(i1 * this.horizontalResolution + j - this.horizontalResolution - 1);
+					indices.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
+					adjacents.push(i1 * this.horizontalResolution + j - 1);
+					adjacents.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
+					adjacents.push(i1 * this.horizontalResolution + j + this.horizontalResolution);
+					if(j == this.horizontalResolution - 1) adjacents.push(i1 * this.horizontalResolution); else adjacents.push(i1 * this.horizontalResolution + j + 1);
 				} else {
-					adjacents.push(i * this.horizontalResolution + j + this.horizontalResolution);
-					adjacents.push(i * this.horizontalResolution + j + 1);
-					if(j == 0) adjacents.push(i * this.horizontalResolution + this.horizontalResolution); else adjacents.push(i * this.horizontalResolution + j - 1);
-					if(i == 0) adjacents.push(this.horizontalResolution * (this.verticalResolution + 1)); else adjacents.push(i * this.horizontalResolution + j - this.horizontalResolution);
+					adjacents.push(i1 * this.horizontalResolution + j + this.horizontalResolution);
+					adjacents.push(i1 * this.horizontalResolution + j + 1);
+					if(j == 0) adjacents.push(i1 * this.horizontalResolution + this.horizontalResolution); else adjacents.push(i1 * this.horizontalResolution + j - 1);
+					if(i1 == 0) adjacents.push(this.horizontalResolution * (this.verticalResolution + 1) + verticesPerCap + (j / 2 | 0)); else adjacents.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
 				}
 				this.addNode(x,y,z,adjacents);
 			}
-			if(i > 0) {
-				indices.push(i * this.horizontalResolution);
-				indices.push(i * this.horizontalResolution - 1 + this.horizontalResolution);
-				indices.push(i * this.horizontalResolution - 1);
-				indices.push(i * this.horizontalResolution);
-				indices.push(i * this.horizontalResolution - 1);
-				indices.push(i * this.horizontalResolution - this.horizontalResolution);
+			if(i1 > 0) {
+				indices.push(i1 * this.horizontalResolution);
+				indices.push(i1 * this.horizontalResolution - 1 + this.horizontalResolution);
+				indices.push(i1 * this.horizontalResolution - 1);
+				indices.push(i1 * this.horizontalResolution);
+				indices.push(i1 * this.horizontalResolution - 1);
+				indices.push(i1 * this.horizontalResolution - this.horizontalResolution);
 			}
 		}
-		var _g11 = 0;
+		var _g12 = 0;
 		var _g4 = this.horizontalResolution;
-		while(_g11 < _g4) {
-			var j1 = _g11++;
+		while(_g12 < _g4) {
+			var j1 = _g12++;
 			var x1 = Math.cos(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var y1 = Math.sin(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var z1 = this.cylinderHeight / 2;
@@ -3101,7 +3108,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			uvs.push(0);
 			uvs.push(0);
 			var adjacents1 = new Array();
-			adjacents1.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
+			adjacents1.push(this.horizontalResolution * (this.verticalResolution + 1) + (j1 / 2 | 0));
 			adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - this.horizontalResolution);
 			if(j1 > 0) {
 				indices.push(this.verticalResolution * this.horizontalResolution + j1);
@@ -3110,9 +3117,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				indices.push(this.verticalResolution * this.horizontalResolution + j1 - 1);
 				indices.push(this.verticalResolution * this.horizontalResolution + j1 - this.horizontalResolution - 1);
 				indices.push(this.verticalResolution * this.horizontalResolution + j1 - this.horizontalResolution);
-				indices.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
-				indices.push(this.verticalResolution * this.horizontalResolution + j1 - 1);
-				indices.push(this.verticalResolution * this.horizontalResolution + j1);
 				adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - 1);
 			} else adjacents1.push(this.horizontalResolution * this.verticalResolution + this.horizontalResolution);
 			if(j1 < this.horizontalResolution) adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 + 1); else adjacents1.push(this.horizontalResolution * this.verticalResolution);
@@ -3124,61 +3128,180 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		indices.push(this.verticalResolution * this.horizontalResolution);
 		indices.push(this.verticalResolution * this.horizontalResolution - 1);
 		indices.push(this.verticalResolution * this.horizontalResolution - this.horizontalResolution);
-		var x2 = 0;
-		var y2 = 0;
-		var z2 = -this.cylinderHeight / 2;
-		this.verts.push(x2);
-		this.verts.push(y2);
-		this.verts.push(z2);
-		uvs.push(0);
-		uvs.push(0);
-		var adjacents2 = new Array();
-		var _g12 = 0;
-		var _g5 = this.horizontalResolution;
-		while(_g12 < _g5) {
-			var i1 = _g12++;
-			adjacents2.push(i1);
-		}
-		this.addNode(x2,y2,z2,adjacents2);
-		z2 = this.cylinderHeight / 2;
-		this.verts.push(x2);
-		this.verts.push(y2);
-		this.verts.push(z2);
-		var adjacents3 = new Array();
+		var totalNonInnerNodes = this.horizontalResolution * (this.verticalResolution + 1);
+		var totalInnerNodes = 0;
+		var previousRingCount = this.horizontalResolution;
+		var previousPreviousRingCount = 0;
 		var _g13 = 0;
-		var _g6 = this.horizontalResolution;
-		while(_g13 < _g6) {
+		var _g5 = this.innerRings - 1;
+		while(_g13 < _g5) {
 			var i2 = _g13++;
-			adjacents3.push(i2 + this.horizontalResolution * this.verticalResolution);
-		}
-		this.addNode(x2,y2,z2,adjacents3);
-		uvs.push(1);
-		uvs.push(1);
-		var _g14 = 0;
-		var _g7 = this.horizontalResolution;
-		while(_g14 < _g7) {
-			var j2 = _g14++;
-			if(j2 > 0) {
-				indices.push(this.horizontalResolution * (this.verticalResolution + 1));
-				indices.push(j2);
-				indices.push(j2 - 1);
+			var innerRadius = this.cylinderRadius - (i2 + 1) / this.innerRings * this.cylinderRadius;
+			var numNodes = Std["int"](this.horizontalResolution / Math.pow(2,i2 + 1));
+			var _g22 = 0;
+			while(_g22 < numNodes) {
+				var j2 = _g22++;
+				var adjacents2 = new Array();
+				var x2 = Math.cos(j2 / numNodes * 2 * this.PI) * innerRadius;
+				var y2 = Math.sin(j2 / numNodes * 2 * this.PI) * innerRadius;
+				var z2 = this.cylinderHeight / 2;
+				this.verts.push(x2);
+				this.verts.push(y2);
+				this.verts.push(z2);
+				uvs.push(1);
+				uvs.push(1);
+				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2);
+				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
+				if(j2 != numNodes - 1) adjacents2.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - numNodes + 1);
+				if(i2 != this.innerRings - 2) adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0)); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0) - 1);
+				if(j2 > 0) {
+					adjacents2.push(totalNonInnerNodes + totalInnerNodes - 1);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 - 1);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 - 1);
+					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2);
+					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
+				}
+				this.addNode(x2,y2,z2,adjacents2);
+				totalInnerNodes += 1;
 			}
+			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes);
+			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+			indices.push(totalNonInnerNodes - previousRingCount);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes);
+			indices.push(totalNonInnerNodes - previousRingCount);
+			indices.push(totalNonInnerNodes - previousRingCount + 1);
+			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes - 1);
+			indices.push(totalNonInnerNodes - previousRingCount);
+			previousRingCount = previousPreviousRingCount;
+			previousPreviousRingCount += numNodes;
 		}
-		indices.push(this.horizontalResolution * (this.verticalResolution + 1));
-		indices.push(0);
-		indices.push(this.horizontalResolution - 1);
-		indices.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
-		indices.push((this.verticalResolution + 1) * this.horizontalResolution - 1);
-		indices.push(this.verticalResolution * this.horizontalResolution);
+		var x3 = 0;
+		var y3 = 0;
+		var z3 = this.cylinderHeight / 2;
+		var adjacents3 = new Array();
+		this.verts.push(x3);
+		this.verts.push(y3);
+		this.verts.push(z3);
+		uvs.push(0);
+		uvs.push(0);
+		var numInnerRingNodes = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
+		var _g14 = 0;
+		var _g6 = numInnerRingNodes - 1;
+		while(_g14 < _g6) {
+			var i3 = _g14++;
+			adjacents3.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes + i3);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes + i3);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes + i3 + 1);
+			indices.push(totalNonInnerNodes + totalInnerNodes);
+		}
+		adjacents3.push(totalNonInnerNodes + totalInnerNodes - 1);
+		this.addNode(x3,y3,z3,adjacents3);
+		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes);
+		indices.push(totalNonInnerNodes + totalInnerNodes);
+		totalNonInnerNodes = this.horizontalResolution * (this.verticalResolution + 1) + totalInnerNodes + 1;
+		totalInnerNodes = 0;
+		previousRingCount = totalNonInnerNodes;
+		previousPreviousRingCount = 0;
+		var _g15 = 0;
+		var _g7 = this.innerRings - 1;
+		while(_g15 < _g7) {
+			var i4 = _g15++;
+			var innerRadius1 = this.cylinderRadius - (i4 + 1) / this.innerRings * this.cylinderRadius;
+			var numNodes1 = Std["int"](this.horizontalResolution / Math.pow(2,i4 + 1));
+			var _g23 = 0;
+			while(_g23 < numNodes1) {
+				var j3 = _g23++;
+				var adjacents4 = new Array();
+				var x4 = Math.cos(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
+				var y4 = Math.sin(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
+				var z4 = -this.cylinderHeight / 2;
+				this.verts.push(x4);
+				this.verts.push(y4);
+				this.verts.push(z4);
+				uvs.push(1);
+				uvs.push(1);
+				if(i4 != 0) {
+					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2);
+					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
+				} else {
+					adjacents4.push(j3 * 2);
+					adjacents4.push(j3 * 2 + 1);
+				}
+				if(j3 != numNodes1 - 1) adjacents4.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents4.push(totalNonInnerNodes + totalInnerNodes - numNodes1 + 1);
+				if(i4 != this.innerRings - 2) adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0)); else adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0) - 1);
+				if(j3 > 0) {
+					adjacents4.push(totalNonInnerNodes + totalInnerNodes - 1);
+					indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 - 1);
+					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 - 1);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2);
+					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2);
+					indices.push(totalNonInnerNodes + totalInnerNodes);
+					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
+				}
+				this.addNode(x4,y4,z4,adjacents4);
+				totalInnerNodes += 1;
+			}
+			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1);
+			indices.push(totalNonInnerNodes - previousRingCount);
+			indices.push(totalNonInnerNodes - previousRingCount);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1);
+			indices.push(totalNonInnerNodes - previousRingCount + 1);
+			if(i4 == 0) {
+				indices.push(0);
+				indices.push(this.horizontalResolution - 1);
+				indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+			} else {
+				indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1 - 1);
+				indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+				indices.push(totalNonInnerNodes - previousRingCount);
+			}
+			previousRingCount = previousPreviousRingCount;
+			previousPreviousRingCount += numNodes1;
+		}
+		var x5 = 0;
+		var y5 = 0;
+		var z5 = -this.cylinderHeight / 2;
+		var adjacents5 = new Array();
+		this.verts.push(x5);
+		this.verts.push(y5);
+		this.verts.push(z5);
+		uvs.push(0);
+		uvs.push(0);
+		var numInnerRingNodes1 = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
+		var _g16 = 0;
+		var _g8 = numInnerRingNodes1 - 1;
+		while(_g16 < _g8) {
+			var i5 = _g16++;
+			adjacents5.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5);
+			indices.push(totalNonInnerNodes + totalInnerNodes);
+			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5 + 1);
+		}
+		adjacents5.push(totalNonInnerNodes + totalInnerNodes - 1);
+		this.addNode(x5,y5,z5,adjacents5);
+		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+		indices.push(totalNonInnerNodes + totalInnerNodes);
+		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1);
 		this.subgeometry.updateVertexData(this.verts);
 		this.subgeometry.updateUVData(uvs);
 		this.subgeometry.updateIndexData(indices);
 		geometry.addSubGeometry(this.subgeometry);
-		var _g8 = 0;
-		var _g15 = this.nodes;
-		while(_g8 < _g15.length) {
-			var node = _g15[_g8];
-			++_g8;
+		var _g9 = 0;
+		var _g17 = this.nodes;
+		while(_g9 < _g17.length) {
+			var node = _g17[_g9];
+			++_g9;
 			node.addNeighbors();
 		}
 		return geometry;
@@ -3219,6 +3342,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		while(_g < _g1.length) {
 			var adj = _g1[_g];
 			++_g;
+			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 64, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
 			this.neighbors.push(this.marshmallow.nodes[adj]);
 		}
 	}
