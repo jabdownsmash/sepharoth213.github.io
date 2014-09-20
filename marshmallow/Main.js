@@ -1038,12 +1038,62 @@ var Main = function() {
 	this._light.set_x(1000);
 	this._light.set_y(2000);
 	this._light.set_z(-2000);
-	this._light.set_color(16777215);
+	this._light.set_color(0);
+	this._light2 = new away3d.lights.PointLight();
+	this._light2.set_x(1000);
+	this._light2.set_y(200);
+	this._light2.set_z(-2000);
+	this._light2.set_color(0);
+	this._light4 = new away3d.lights.PointLight();
+	this._light4.set_x(100);
+	this._light4.set_y(2000);
+	this._light4.set_z(-2000);
+	this._light4.set_color(0);
+	this._light5 = new away3d.lights.PointLight();
+	this._light5.set_x(1000);
+	this._light5.set_y(2000);
+	this._light5.set_z(-2000);
+	this._light5.set_color(0);
+	this._light6 = new away3d.lights.PointLight();
+	this._light6.set_x(1000);
+	this._light6.set_y(2000);
+	this._light6.set_z(-2000);
+	this._light6.set_color(0);
+	this._light7 = new away3d.lights.PointLight();
+	this._light7.set_x(1000);
+	this._light7.set_y(2000);
+	this._light7.set_z(-2000);
+	this._light7.set_color(0);
+	this._light8 = new away3d.lights.PointLight();
+	this._light8.set_x(1000);
+	this._light8.set_y(2000);
+	this._light8.set_z(-2000);
+	this._light8.set_color(0);
+	this._light9 = new away3d.lights.PointLight();
+	this._light9.set_x(1000);
+	this._light9.set_y(2000);
+	this._light9.set_z(-2000);
+	this._light9.set_color(0);
+	this._light10 = new away3d.lights.PointLight();
+	this._light10.set_x(1000);
+	this._light10.set_y(2000);
+	this._light10.set_z(-2000);
+	this._light10.set_color(0);
+	this._light11 = new away3d.lights.PointLight();
+	this._light11.set_x(1000);
+	this._light11.set_y(2000);
+	this._light11.set_z(-2000);
+	this._light11.set_color(0);
+	this._light12 = new away3d.lights.PointLight();
+	this._light12.set_x(1000);
+	this._light12.set_y(2000);
+	this._light12.set_z(-2000);
+	this._light12.set_color(0);
 	this._light2 = new away3d.lights.PointLight();
 	this._light2.set_x(5000);
 	this._light2.set_y(5000);
-	this._light2.set_z(2000);
-	this._light2.set_color(1118719);
+	this._light2.set_z(200);
+	this._light2.set_color(16777215);
 	this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
 	this._light3.set_color(8947848);
 	this._light3.set_ambient(.3);
@@ -1051,7 +1101,7 @@ var Main = function() {
 	var container = new away3d.containers.ObjectContainer3D();
 	container.addChild(this._light);
 	this._view.get_scene().addChild(container);
-	this.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light,this._light3]);
+	this.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light,this._light2,this._light4,this._light5,this._light6,this._light7,this._light3]);
 	mMaterial.set_lightPicker(this.lightPicker);
 	var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
 	var specularMethod = new away3d.materials.methods.CelSpecularMethod();
@@ -1059,24 +1109,22 @@ var Main = function() {
 	diffuseMethod.set_smoothness(0);
 	mMaterial.set_diffuseMethod(diffuseMethod);
 	mMaterial.set_specularMethod(specularMethod);
-	this.mesh = new Marshmallow(mMaterial);
+	this.mesh = new Marshmallow(mMaterial,container);
 	this._view.get_scene().addChild(this.mesh);
 	this._view.setRenderCallback($bind(this,this._onEnterFrame));
+	this._t = openfl.Lib.getTimer();
 	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_DOWN,$bind(this,this.onMouseDown));
 	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_MOVE,$bind(this,this.onMouseMove));
 	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_UP,$bind(this,this.onMouseUp));
+	this.lastMouseX = this.stage.get_mouseX();
+	this.lastMouseY = this.stage.get_mouseY();
 	this.stage.addEventListener(openfl.events.Event.RESIZE,$bind(this,this.onResize));
 	this.onResize();
 	if(openfl.sensors.Accelerometer.get_isSupported()) {
 		this.accl = new openfl.sensors.Accelerometer();
 		this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
 	}
-	var follow = new away3d.containers.ObjectContainer3D();
-	follow.set_z(-100);
-	this.mesh.addChild(follow);
-	this.emitter = new FireEmitter(this.lightPicker,container,follow);
-	this.lastMouseX = this.stage.get_mouseX();
-	this.lastMouseY = this.stage.get_mouseY();
+	this.mesh.nodes[0].burn();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -1086,31 +1134,36 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var xAxis = e.accelerationX;
 		var yAxis = e.accelerationY;
 		var zAxis = e.accelerationZ;
-		var pitch = Math.atan(xAxis / Math.sqrt(Math.pow(yAxis,2) + Math.pow(zAxis,2)));
-		var roll = Math.atan(yAxis / Math.sqrt(Math.pow(xAxis,2) + Math.pow(zAxis,2)));
-		pitch = pitch * 57.2957795130823229;
-		roll = roll * 57.2957795130823229;
 		this.xAccelerometerAxis = xAxis;
 		this.yAccelerometerAxis = yAxis;
 		this.zAccelerometerAxis = zAxis;
 	}
 	,_onEnterFrame: function(e) {
-		var xCalc = 0.3 * (this.lastMouseX - this.stage.get_mouseX());
-		var yCalc = 0.3 * (this.lastMouseY - this.stage.get_mouseY());
-		if(this.move) {
-			var objTransform = this.mesh.get_transform();
-			objTransform.appendRotation(xCalc,new openfl.geom.Vector3D(0,1,0),null);
-			objTransform.appendRotation(yCalc,new openfl.geom.Vector3D(1,0,0),null);
-			this.mesh.set_transform(objTransform);
+		var t = openfl.Lib.getTimer();
+		var dt = (t - this._t) * 0.001;
+		this._t = t;
+		var fireStartTime = openfl.Lib.getTimer();
+		var _g = 0;
+		var _g1 = this.mesh.emitters;
+		while(_g < _g1.length) {
+			var emitter = _g1[_g];
+			++_g;
+			emitter.update(new openfl.geom.Vector3D(0,.2,0),this.mesh.nodes);
+			haxe.Log.trace("dakkekx",{ fileName : "Main.hx", lineNumber : 279, className : "Main", methodName : "_onEnterFrame"});
+			if(emitter.fireRate > 1010) this._light.set_color(0);
 		}
-		this.lastMouseX = this.stage.get_mouseX();
-		this.lastMouseY = this.stage.get_mouseY();
-		this.emitter.update(new openfl.geom.Vector3D(0,.1,0));
+		var fireTime = openfl.Lib.getTimer() - fireStartTime;
+		var nodeStartTime = openfl.Lib.getTimer();
+		var _g2 = 0;
+		var _g11 = this.mesh.nodes;
+		while(_g2 < _g11.length) {
+			var node = _g11[_g2];
+			++_g2;
+			node.update(new openfl.geom.Vector3D(0,.2,0));
+		}
+		var nodeTime = openfl.Lib.getTimer() - nodeStartTime;
+		haxe.Log.trace("fire: " + fireTime + " node: " + nodeTime,{ fileName : "Main.hx", lineNumber : 295, className : "Main", methodName : "_onEnterFrame"});
 		this._view.render();
-		this._light.set_x(this.emitter.x * 2);
-		this._light.set_y(this.emitter.y * 2);
-		this._light.set_z(this.emitter.z * 2);
-		if(this.emitter.fireRate > 1010) this._light.set_color(0);
 	}
 	,onResize: function(event) {
 		this._view.set_width(this.stage.stageWidth);
@@ -1131,8 +1184,16 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.stage.removeEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
 	,onMouseMove: function(e) {
+		var xCalc = 0.3 * (this.lastMouseX - this.stage.get_mouseX());
+		var yCalc = 0.3 * (this.lastMouseY - this.stage.get_mouseY());
 		if(this.move) {
+			var objTransform = this.mesh.get_transform();
+			objTransform.appendRotation(xCalc,new openfl.geom.Vector3D(0,1,0),null);
+			objTransform.appendRotation(yCalc,new openfl.geom.Vector3D(1,0,0),null);
+			this.mesh.set_transform(objTransform);
 		}
+		this.lastMouseX = this.stage.get_mouseX();
+		this.lastMouseY = this.stage.get_mouseY();
 	}
 	,__class__: Main
 });
@@ -1378,19 +1439,27 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
-var FireEmitter = function(lightPicker,parentObject,followObject) {
+var FireEmitter = function(parentObject,followObject) {
+	this.stop = false;
 	this.rotationalVariance = 1;
 	this.perpendicularVariance = .5;
-	this.fireRate = 2;
+	this.fireRate = 5;
 	this.fireCounter = 0;
 	this.follow = followObject;
 	this.parent = parentObject;
 	this.fireParticles = new Array();
-	this._lightPicker = lightPicker;
-	this.x = 0;
-	this.y = 0;
-	this.z = -100;
-	this.spawnFire();
+	this.toRemove = new Array();
+	this.x = followObject.get_scenePosition().x;
+	this.y = followObject.get_scenePosition().y;
+	this.z = followObject.get_scenePosition().z;
+	var dat2 = new openfl.display.BitmapData(256,256,false,9835281);
+	var material2 = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat2));
+	var cube = new away3d.primitives.CubeGeometry(20,20,20);
+	this.bgMesh = new away3d.entities.Mesh(cube,material2);
+	this.bgMesh.set_x(this.x);
+	this.bgMesh.set_y(this.y);
+	this.bgMesh.set_z(this.z);
+	this.parent.addChild(this.bgMesh);
 };
 $hxClasses["FireEmitter"] = FireEmitter;
 FireEmitter.__name__ = ["FireEmitter"];
@@ -1398,18 +1467,20 @@ FireEmitter.prototype = {
 	spawnFire: function() {
 		var dat = new openfl.display.BitmapData(256,256,false,10242560);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
-		material.set_alpha(.9);
-		material.set_alphaPremultiplied(true);
+		material.set_alpha(.7);
 		material.set_blendMode(openfl.display.BlendMode.ADD);
 		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,.1,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance);
 		fireParticle.set_x(this.x);
 		fireParticle.set_y(this.y);
 		fireParticle.set_z(this.z);
+		fireParticle.set_rotationX(Math.random() * 360);
+		fireParticle.set_rotationY(Math.random() * 360);
+		fireParticle.set_rotationZ(Math.random() * 360);
 		fireParticle.speedOffset = Math.random() * .1;
 		this.parent.addChild(fireParticle);
 		this.fireParticles.push(fireParticle);
 	}
-	,update: function(gravity) {
+	,update: function(gravity,marshmallowNodes) {
 		var _g = 0;
 		var _g1 = this.fireParticles;
 		while(_g < _g1.length) {
@@ -1417,8 +1488,7 @@ FireEmitter.prototype = {
 			++_g;
 			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
-		if(this.fireParticles.length == 0) this.fireRate = 999999999;
-		if(this.fireCounter++ > this.fireRate) {
+		if(this.fireCounter++ > this.fireRate && !this.stop) {
 			this.spawnFire();
 			this.fireCounter = 0;
 		}
@@ -1426,10 +1496,23 @@ FireEmitter.prototype = {
 		this.x = position.x;
 		this.y = position.y;
 		this.z = position.z;
+		this.bgMesh.set_x(this.x);
+		this.bgMesh.set_y(this.y);
+		this.bgMesh.set_z(this.z);
+		this.bgMesh.set_rotationX(Math.random() * 360);
+		this.bgMesh.set_rotationY(Math.random() * 360);
+		this.bgMesh.set_rotationZ(Math.random() * 360);
+		var _g2 = 0;
+		var _g11 = this.toRemove;
+		while(_g2 < _g11.length) {
+			var fireParticle1 = _g11[_g2];
+			++_g2;
+			HxOverrides.remove(this.fireParticles,fireParticle1);
+		}
 	}
-	,remove: function(fireParticle) {
+	,removeParticle: function(fireParticle) {
 		this.parent.removeChild(fireParticle);
-		HxOverrides.remove(this.fireParticles,fireParticle);
+		this.toRemove.push(fireParticle);
 	}
 	,__class__: FireEmitter
 };
@@ -2787,7 +2870,7 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 });
 var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
 	this.speedOffset = 0;
-	var cube = new away3d.primitives.CubeGeometry(40,40,40);
+	if(FireParticle.cubeGeom == null) FireParticle.cubeGeom = new away3d.primitives.CubeGeometry(40,40,40);
 	this.decayCounter = decayTime;
 	this.xVelocity = xVel;
 	this.yVelocity = yVel;
@@ -2796,10 +2879,11 @@ var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRV
 	this.yRVelocity = yRVel;
 	this.zRVelocity = zRVel;
 	this.source = emitter;
-	away3d.entities.Mesh.call(this,cube,mMaterial);
+	away3d.entities.Mesh.call(this,FireParticle.cubeGeom,mMaterial);
 };
 $hxClasses["FireParticle"] = FireParticle;
 FireParticle.__name__ = ["FireParticle"];
+FireParticle.cubeGeom = null;
 FireParticle.__super__ = away3d.entities.Mesh;
 FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
 	update: function(gravityX,gravityY,gravityZ) {
@@ -2818,11 +2902,11 @@ FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.xVelocity += gravityX;
 		this.yVelocity += gravityY + this.speedOffset;
 		this.zVelocity += gravityZ;
-		var scale = Math.sqrt(Math.pow(this.get_x() - this.source.x,2) + Math.pow(this.get_y() - this.source.y,2) + Math.pow(this.get_z() - this.source.z,2));
-		this.set_scaleX(1 - scale / 60);
-		this.set_scaleY(1 - scale / 60);
-		this.set_scaleZ(1 - scale / 60);
-		if(scale > 60) this.source.remove(this);
+		var scale = Math.pow(this.get_x() - this.source.x,2) + Math.pow(this.get_y() - this.source.y,2) + Math.pow(this.get_z() - this.source.z,2);
+		this.set_scaleX(1 - scale / 9000);
+		this.set_scaleY(1 - scale / 9000);
+		this.set_scaleZ(1 - scale / 9000);
+		if(scale > 9000) this.source.removeParticle(this);
 	}
 	,__class__: FireParticle
 });
@@ -2929,109 +3013,254 @@ List.prototype = {
 var IMap = function() { };
 $hxClasses["IMap"] = IMap;
 IMap.__name__ = ["IMap"];
-var Marshmallow = function(mMaterial) {
-	var geometry = new away3d.core.base.Geometry();
-	var subgeometry = new away3d.core.base.SubGeometry();
-	var verts = new Array();
-	var uvs = new Array();
-	var indices = new Array();
-	var cylinderHeight = 200;
-	var cylinderRadius = 100;
-	var verticalResolution = 10;
-	var PI = 3.1415926535897932;
-	var horizontalResolution = 7;
+var Marshmallow = function(mMaterial,cont) {
+	this.horizontalResolution = 30;
+	this.PI = 3.1415926535897932;
+	this.verticalResolution = 10;
+	this.cylinderRadius = 100;
+	this.cylinderHeight = 200;
+	this.container = cont;
+	this.emitters = new Array();
+	this.nodes = new Array();
+	away3d.entities.Mesh.call(this,this.generateMeshAndNodes(),mMaterial);
 	var _g = 0;
-	while(_g < verticalResolution) {
-		var i = _g++;
-		var _g1 = 0;
-		while(_g1 < horizontalResolution) {
-			var j = _g1++;
-			var angleOffset = 0;
-			verts.push(Math.cos(j / horizontalResolution * 2 * PI + angleOffset) * cylinderRadius);
-			verts.push(Math.sin(j / horizontalResolution * 2 * PI + angleOffset) * cylinderRadius);
-			verts.push(i / verticalResolution * cylinderHeight - cylinderHeight / 2);
-			uvs.push(j / horizontalResolution);
-			uvs.push(i / verticalResolution);
-			if(j > 0 && i > 0) {
-				indices.push(i * horizontalResolution + j);
-				indices.push(i * horizontalResolution + j - 1);
-				indices.push(i * horizontalResolution + j - horizontalResolution);
-				indices.push(i * horizontalResolution + j - 1);
-				indices.push(i * horizontalResolution + j - horizontalResolution - 1);
-				indices.push(i * horizontalResolution + j - horizontalResolution);
-			}
-		}
-		if(i > 0) {
-			indices.push(i * horizontalResolution);
-			indices.push(i * horizontalResolution - 1 + horizontalResolution);
-			indices.push(i * horizontalResolution - 1);
-			indices.push(i * horizontalResolution);
-			indices.push(i * horizontalResolution - 1);
-			indices.push(i * horizontalResolution - horizontalResolution);
-		}
+	var _g1 = this.nodes;
+	while(_g < _g1.length) {
+		var node = _g1[_g];
+		++_g;
+		this.addChild(node);
 	}
-	var _g2 = 0;
-	while(_g2 < horizontalResolution) {
-		var j1 = _g2++;
-		verts.push(Math.cos(j1 / horizontalResolution * 2 * PI) * cylinderRadius);
-		verts.push(Math.sin(j1 / horizontalResolution * 2 * PI) * cylinderRadius);
-		verts.push(cylinderHeight / 2);
-		uvs.push(0);
-		uvs.push(0);
-		if(j1 > 0) {
-			indices.push(verticalResolution * horizontalResolution + j1);
-			indices.push(verticalResolution * horizontalResolution + j1 - 1);
-			indices.push(verticalResolution * horizontalResolution + j1 - horizontalResolution);
-			indices.push(verticalResolution * horizontalResolution + j1 - 1);
-			indices.push(verticalResolution * horizontalResolution + j1 - horizontalResolution - 1);
-			indices.push(verticalResolution * horizontalResolution + j1 - horizontalResolution);
-			indices.push(horizontalResolution * (verticalResolution + 1) + 1);
-			indices.push(verticalResolution * horizontalResolution + j1 - 1);
-			indices.push(verticalResolution * horizontalResolution + j1);
-		}
-	}
-	indices.push(verticalResolution * horizontalResolution);
-	indices.push(verticalResolution * horizontalResolution - 1 + horizontalResolution);
-	indices.push(verticalResolution * horizontalResolution - 1);
-	indices.push(verticalResolution * horizontalResolution);
-	indices.push(verticalResolution * horizontalResolution - 1);
-	indices.push(verticalResolution * horizontalResolution - horizontalResolution);
-	verts.push(0);
-	verts.push(0);
-	verts.push(-cylinderHeight / 2);
-	uvs.push(0);
-	uvs.push(0);
-	verts.push(0);
-	verts.push(0);
-	verts.push(cylinderHeight / 2);
-	uvs.push(1);
-	uvs.push(1);
-	var _g3 = 0;
-	while(_g3 < horizontalResolution) {
-		var j2 = _g3++;
-		if(j2 > 0) {
-			indices.push(horizontalResolution * (verticalResolution + 1));
-			indices.push(j2);
-			indices.push(j2 - 1);
-		}
-	}
-	indices.push(horizontalResolution * (verticalResolution + 1));
-	indices.push(0);
-	indices.push(horizontalResolution - 1);
-	indices.push(horizontalResolution * (verticalResolution + 1) + 1);
-	indices.push((verticalResolution + 1) * horizontalResolution - 1);
-	indices.push(verticalResolution * horizontalResolution);
-	subgeometry.updateVertexData(verts);
-	subgeometry.updateUVData(uvs);
-	subgeometry.updateIndexData(indices);
-	geometry.addSubGeometry(subgeometry);
-	away3d.entities.Mesh.call(this,geometry,mMaterial);
 };
 $hxClasses["Marshmallow"] = Marshmallow;
 Marshmallow.__name__ = ["Marshmallow"];
 Marshmallow.__super__ = away3d.entities.Mesh;
 Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
-	__class__: Marshmallow
+	generateMeshAndNodes: function() {
+		var geometry = new away3d.core.base.Geometry();
+		var subgeometry = new away3d.core.base.SubGeometry();
+		var verts = new Array();
+		var uvs = new Array();
+		var indices = new Array();
+		var _g1 = 0;
+		var _g = this.verticalResolution;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var _g3 = 0;
+			var _g2 = this.horizontalResolution;
+			while(_g3 < _g2) {
+				var j = _g3++;
+				var angleOffset = 0;
+				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
+				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
+				var z = i / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
+				verts.push(x);
+				verts.push(y);
+				verts.push(z);
+				uvs.push(j / this.horizontalResolution);
+				uvs.push(i / this.verticalResolution);
+				var adjacents = new Array();
+				if(j > 0 && i > 0) {
+					indices.push(i * this.horizontalResolution + j);
+					indices.push(i * this.horizontalResolution + j - 1);
+					indices.push(i * this.horizontalResolution + j - this.horizontalResolution);
+					indices.push(i * this.horizontalResolution + j - 1);
+					indices.push(i * this.horizontalResolution + j - this.horizontalResolution - 1);
+					indices.push(i * this.horizontalResolution + j - this.horizontalResolution);
+					adjacents.push(i * this.horizontalResolution + j - 1);
+					adjacents.push(i * this.horizontalResolution + j - this.horizontalResolution);
+					adjacents.push(i * this.horizontalResolution + j + this.horizontalResolution);
+					if(j == this.horizontalResolution - 1) adjacents.push(i * this.horizontalResolution); else adjacents.push(i * this.horizontalResolution + j + 1);
+				} else {
+					adjacents.push(i * this.horizontalResolution + j + this.horizontalResolution);
+					adjacents.push(i * this.horizontalResolution + j + 1);
+					if(j == 0) adjacents.push(i * this.horizontalResolution + this.horizontalResolution); else adjacents.push(i * this.horizontalResolution + j - 1);
+					if(i == 0) adjacents.push(this.horizontalResolution * (this.verticalResolution + 1)); else adjacents.push(i * this.horizontalResolution + j - this.horizontalResolution);
+				}
+				this.addNode(x,y,z,adjacents);
+			}
+			if(i > 0) {
+				indices.push(i * this.horizontalResolution);
+				indices.push(i * this.horizontalResolution - 1 + this.horizontalResolution);
+				indices.push(i * this.horizontalResolution - 1);
+				indices.push(i * this.horizontalResolution);
+				indices.push(i * this.horizontalResolution - 1);
+				indices.push(i * this.horizontalResolution - this.horizontalResolution);
+			}
+		}
+		var _g11 = 0;
+		var _g4 = this.horizontalResolution;
+		while(_g11 < _g4) {
+			var j1 = _g11++;
+			var x1 = Math.cos(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
+			var y1 = Math.sin(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
+			var z1 = this.cylinderHeight / 2;
+			verts.push(x1);
+			verts.push(y1);
+			verts.push(z1);
+			uvs.push(0);
+			uvs.push(0);
+			var adjacents1 = new Array();
+			adjacents1.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
+			adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - this.horizontalResolution);
+			if(j1 > 0) {
+				indices.push(this.verticalResolution * this.horizontalResolution + j1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - 1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - this.horizontalResolution);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - 1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - this.horizontalResolution - 1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - this.horizontalResolution);
+				indices.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1 - 1);
+				indices.push(this.verticalResolution * this.horizontalResolution + j1);
+				adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - 1);
+			} else adjacents1.push(this.horizontalResolution * this.verticalResolution + this.horizontalResolution);
+			if(j1 < this.horizontalResolution) adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 + 1); else adjacents1.push(this.horizontalResolution * this.verticalResolution);
+			this.addNode(x1,y1,z1,adjacents1);
+		}
+		indices.push(this.verticalResolution * this.horizontalResolution);
+		indices.push(this.verticalResolution * this.horizontalResolution - 1 + this.horizontalResolution);
+		indices.push(this.verticalResolution * this.horizontalResolution - 1);
+		indices.push(this.verticalResolution * this.horizontalResolution);
+		indices.push(this.verticalResolution * this.horizontalResolution - 1);
+		indices.push(this.verticalResolution * this.horizontalResolution - this.horizontalResolution);
+		var x2 = 0;
+		var y2 = 0;
+		var z2 = -this.cylinderHeight / 2;
+		verts.push(x2);
+		verts.push(y2);
+		verts.push(z2);
+		uvs.push(0);
+		uvs.push(0);
+		var adjacents2 = new Array();
+		var _g12 = 0;
+		var _g5 = this.horizontalResolution;
+		while(_g12 < _g5) {
+			var i1 = _g12++;
+			adjacents2.push(i1);
+		}
+		this.addNode(x2,y2,z2,adjacents2);
+		z2 = this.cylinderHeight / 2;
+		verts.push(x2);
+		verts.push(y2);
+		verts.push(z2);
+		var adjacents3 = new Array();
+		var _g13 = 0;
+		var _g6 = this.horizontalResolution;
+		while(_g13 < _g6) {
+			var i2 = _g13++;
+			adjacents3.push(i2 + this.horizontalResolution + this.verticalResolution);
+		}
+		this.addNode(x2,y2,z2,adjacents3);
+		uvs.push(1);
+		uvs.push(1);
+		var _g14 = 0;
+		var _g7 = this.horizontalResolution;
+		while(_g14 < _g7) {
+			var j2 = _g14++;
+			if(j2 > 0) {
+				indices.push(this.horizontalResolution * (this.verticalResolution + 1));
+				indices.push(j2);
+				indices.push(j2 - 1);
+			}
+		}
+		indices.push(this.horizontalResolution * (this.verticalResolution + 1));
+		indices.push(0);
+		indices.push(this.horizontalResolution - 1);
+		indices.push(this.horizontalResolution * (this.verticalResolution + 1) + 1);
+		indices.push((this.verticalResolution + 1) * this.horizontalResolution - 1);
+		indices.push(this.verticalResolution * this.horizontalResolution);
+		subgeometry.updateVertexData(verts);
+		subgeometry.updateUVData(uvs);
+		subgeometry.updateIndexData(indices);
+		geometry.addSubGeometry(subgeometry);
+		var _g8 = 0;
+		var _g15 = this.nodes;
+		while(_g8 < _g15.length) {
+			var node = _g15[_g8];
+			++_g8;
+			node.addNeighbors();
+		}
+		return geometry;
+	}
+	,addNode: function(x,y,z,adjacents) {
+		var node = new MarshmallowNode(this.nodes.length,this,adjacents);
+		node.set_x(x);
+		node.set_y(y);
+		node.set_z(z);
+		this.nodes.push(node);
+	}
+	,__class__: Marshmallow
+});
+var MarshmallowNode = function(i,p,adjacent) {
+	this.m = Math;
+	this.burnedThreshold = 50;
+	this.burnThreshold = 10;
+	this.index = i;
+	this.heat = 0;
+	this.burned = false;
+	this.burning = false;
+	this.oldX = 0;
+	this.oldY = 0;
+	this.oldZ = 0;
+	this.marshmallow = p;
+	this.neighborIndices = adjacent;
+	if(!MarshmallowNode.init) MarshmallowNode.init = true;
+	away3d.containers.ObjectContainer3D.call(this);
+};
+$hxClasses["MarshmallowNode"] = MarshmallowNode;
+MarshmallowNode.__name__ = ["MarshmallowNode"];
+MarshmallowNode.__super__ = away3d.containers.ObjectContainer3D;
+MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototype,{
+	addNeighbors: function() {
+		this.neighbors = new Array();
+		var _g = 0;
+		var _g1 = this.neighborIndices;
+		while(_g < _g1.length) {
+			var adj = _g1[_g];
+			++_g;
+			this.neighbors.push(this.marshmallow.nodes[adj]);
+		}
+	}
+	,burn: function() {
+		this.emitter = new FireEmitter(this.marshmallow.container,this);
+		this.marshmallow.emitters.push(this.emitter);
+		this.burning = true;
+	}
+	,dotProduct: function(aX,aY,aZ,bX,bY,bZ) {
+		return bX * aX + bY * aY + bZ * aZ;
+	}
+	,update: function(fireUp) {
+		if(this.oldX != this.get_x() || this.oldY != this.get_y() || this.oldZ != this.get_z()) {
+			this.magnitude = Math.sqrt(this.get_x() * this.get_x() + this.get_y() * this.get_y() + this.get_z() * this.get_z());
+			this.oldX = this.get_x();
+			this.oldY = this.get_y();
+			this.oldZ = this.get_z();
+		}
+		if(this.burning) {
+			this.heat += .5;
+			var _g = 0;
+			var _g1 = this.neighbors;
+			while(_g < _g1.length) {
+				var neighbor = _g1[_g];
+				++_g;
+				if(!neighbor.burning && !neighbor.burned) {
+					var fireMagnitude = Math.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z);
+					var neighborDistance = Math.pow(neighbor.get_scenePosition().x - this.get_scenePosition().x,2) + Math.pow(neighbor.get_scenePosition().y - this.get_scenePosition().y,2) + Math.pow(neighbor.get_scenePosition().z - this.get_scenePosition().z,2);
+					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z);
+					var heatTransfer = (neighborProjection - MarshmallowNode.heatTransferThresholdProjection) / (1 - MarshmallowNode.heatTransferThresholdProjection);
+					neighbor.heat += heatTransfer * MarshmallowNode.heatTransferModifier;
+				}
+			}
+		}
+		if(this.heat > this.burnThreshold && !this.burning && !this.burned) this.burn();
+		if(this.heat > this.burnedThreshold && !this.burned) {
+			this.burned = true;
+			this.burning = false;
+			this.marshmallow.container.removeChild(this.emitter.bgMesh);
+			this.emitter.stop = true;
+		}
+	}
+	,__class__: MarshmallowNode
 });
 Math.__name__ = ["Math"];
 var NMEPreloader = function() {
@@ -30560,8 +30789,10 @@ ApplicationMain.total = 0;
 openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
-Main.ctr = 0;
 away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
+MarshmallowNode.init = false;
+MarshmallowNode.heatTransferThresholdProjection = -.4;
+MarshmallowNode.heatTransferModifier = .05;
 aglsl.Context3D.enableErrorChecking = false;
 aglsl.Context3D.resources = [];
 aglsl.Context3D.driverInfo = "Call getter function instead";
