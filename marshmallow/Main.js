@@ -1020,15 +1020,12 @@ openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.
 	,__properties__: $extend(openfl.display.DisplayObjectContainer.prototype.__properties__,{get_graphics:"get_graphics"})
 });
 var Main = function() {
-	this.zAccelerometerAxis = 0;
-	this.yAccelerometerAxis = 0;
-	this.xAccelerometerAxis = 0;
 	this.move = false;
 	openfl.display.Sprite.call(this);
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
 	this.stage.align = openfl.display.StageAlign.TOP_LEFT;
 	this._view = new away3d.containers.View3D();
-	this._view.set_backgroundColor(1118498);
+	this._view.set_backgroundColor(1250098);
 	this.addChild(this._view);
 	this._view.get_camera().set_z(-600);
 	this._view.get_camera().set_y(200);
@@ -1045,9 +1042,9 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var xAxis = e.accelerationX;
 		var yAxis = e.accelerationY;
 		var zAxis = e.accelerationZ;
-		this.xAccelerometerAxis = xAxis;
-		this.yAccelerometerAxis = yAxis;
-		this.zAccelerometerAxis = zAxis;
+		Main.xAccelerometerAxis = xAxis;
+		Main.yAccelerometerAxis = yAxis;
+		Main.zAccelerometerAxis = zAxis;
 	}
 	,init: function() {
 		while(this._view.get_scene().get_numChildren() > 0) this._view.get_scene().removeChildAt(0);
@@ -1071,7 +1068,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this._light3.set_ambient(.3);
 		var container = new away3d.containers.ObjectContainer3D();
 		Main.fireContainer = new away3d.core.base.Geometry();
-		var dat = new openfl.display.BitmapData(256,256,false,10242560);
+		var dat = new openfl.display.BitmapData(256,256,false,6034689);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
 		material.set_blendMode(openfl.display.BlendMode.ADD);
 		var fireMesh = new away3d.entities.Mesh(Main.fireContainer,material);
@@ -1422,6 +1419,7 @@ var FireEmitter = function(parentObject,followObject) {
 	this.scale = 1;
 	this.rotationalVariance = 1;
 	this.perpendicularVariance = .5;
+	this.verticalVariance = .5;
 	this.spawnChance = .6;
 	this.fireRate = 7;
 	this.fireCounter = 0;
@@ -1451,7 +1449,10 @@ FireEmitter.prototype = {
 		translateMatrix.appendTranslation(this.x,this.y,this.z);
 		var cubeGeom = new away3d.primitives.CubeGeometry(40,40,40);
 		cubeGeom.applyTransformation(translateMatrix);
-		var fireParticle = new FireParticle(this,90,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,cubeGeom.get_subGeometries()[0].clone());
+		var particleSpeed = new openfl.geom.Vector3D(Main.xAccelerometerAxis,Main.yAccelerometerAxis,Main.zAccelerometerAxis);
+		particleSpeed.scaleBy(Math.random() * 2 * this.verticalVariance + 1 - this.verticalVariance);
+		particleSpeed.incrementBy(new openfl.geom.Vector3D(Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance));
+		var fireParticle = new FireParticle(this,90,particleSpeed.x,particleSpeed.y,particleSpeed.z,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,cubeGeom.get_subGeometries()[0].clone());
 		fireParticle.x = this.x;
 		fireParticle.y = this.y;
 		fireParticle.z = this.z;
@@ -1466,7 +1467,7 @@ FireEmitter.prototype = {
 			++_g;
 			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
-		if(Math.random() < this.spawnChance) {
+		if(Math.random() < this.spawnChance && !this.stop) {
 			this.spawnFire();
 			this.fireCounter = 0;
 		}
@@ -3010,7 +3011,7 @@ var Marshmallow = function(mMaterial,cont,isBlackMallow) {
 		this.addChild(node);
 	}
 	if(!isBlackMallow) {
-		var dat = new openfl.display.BitmapData(256,256,false,1512209);
+		var dat = new openfl.display.BitmapData(256,256,false,2564881);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
 		material.set_lightPicker(Main.lightPicker);
 		var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
@@ -30956,6 +30957,9 @@ ApplicationMain.total = 0;
 openfl.display.DisplayObject.__instanceCount = 0;
 openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
+Main.xAccelerometerAxis = 0;
+Main.yAccelerometerAxis = 0;
+Main.zAccelerometerAxis = 0;
 away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
 MarshmallowNode.init = false;
 MarshmallowNode.heatTransferThresholdProjection = -.2;
