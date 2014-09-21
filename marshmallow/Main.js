@@ -1028,107 +1028,17 @@ var Main = function() {
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
 	this.stage.align = openfl.display.StageAlign.TOP_LEFT;
 	this._view = new away3d.containers.View3D();
+	this._view.set_backgroundColor(1118498);
 	this.addChild(this._view);
 	this._view.get_camera().set_z(-600);
 	this._view.get_camera().set_y(200);
 	this._view.get_camera().lookAt(new openfl.geom.Vector3D());
-	var dat = new openfl.display.BitmapData(256,256,false,11382189);
-	var mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
-	this._light = new away3d.lights.PointLight();
-	this._light.set_x(1000);
-	this._light.set_y(2000);
-	this._light.set_z(-2000);
-	this._light.set_color(0);
-	this._light2 = new away3d.lights.PointLight();
-	this._light2.set_x(1000);
-	this._light2.set_y(200);
-	this._light2.set_z(-2000);
-	this._light2.set_color(0);
-	this._light4 = new away3d.lights.PointLight();
-	this._light4.set_x(100);
-	this._light4.set_y(2000);
-	this._light4.set_z(-2000);
-	this._light4.set_color(0);
-	this._light5 = new away3d.lights.PointLight();
-	this._light5.set_x(1000);
-	this._light5.set_y(2000);
-	this._light5.set_z(-2000);
-	this._light5.set_color(0);
-	this._light6 = new away3d.lights.PointLight();
-	this._light6.set_x(1000);
-	this._light6.set_y(2000);
-	this._light6.set_z(-2000);
-	this._light6.set_color(0);
-	this._light7 = new away3d.lights.PointLight();
-	this._light7.set_x(1000);
-	this._light7.set_y(2000);
-	this._light7.set_z(-2000);
-	this._light7.set_color(0);
-	this._light8 = new away3d.lights.PointLight();
-	this._light8.set_x(1000);
-	this._light8.set_y(2000);
-	this._light8.set_z(-2000);
-	this._light8.set_color(0);
-	this._light9 = new away3d.lights.PointLight();
-	this._light9.set_x(1000);
-	this._light9.set_y(2000);
-	this._light9.set_z(-2000);
-	this._light9.set_color(0);
-	this._light10 = new away3d.lights.PointLight();
-	this._light10.set_x(1000);
-	this._light10.set_y(2000);
-	this._light10.set_z(-2000);
-	this._light10.set_color(0);
-	this._light11 = new away3d.lights.PointLight();
-	this._light11.set_x(1000);
-	this._light11.set_y(2000);
-	this._light11.set_z(-2000);
-	this._light11.set_color(0);
-	this._light12 = new away3d.lights.PointLight();
-	this._light12.set_x(1000);
-	this._light12.set_y(2000);
-	this._light12.set_z(-2000);
-	this._light12.set_color(0);
-	this._light2 = new away3d.lights.PointLight();
-	this._light2.set_x(5000);
-	this._light2.set_y(5000);
-	this._light2.set_z(200);
-	this._light2.set_color(16777215);
-	this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
-	this._light3.set_color(8947848);
-	this._light3.set_ambient(.3);
-	this._view.get_scene().addChild(this._light2);
-	var container = new away3d.containers.ObjectContainer3D();
-	container.addChild(this._light);
-	this._view.get_scene().addChild(container);
-	this.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light,this._light2,this._light4,this._light5,this._light6,this._light7,this._light3]);
-	mMaterial.set_lightPicker(this.lightPicker);
-	var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
-	var specularMethod = new away3d.materials.methods.CelSpecularMethod();
-	specularMethod.set_smoothness(100);
-	diffuseMethod.set_smoothness(0);
-	mMaterial.set_diffuseMethod(diffuseMethod);
-	mMaterial.set_specularMethod(specularMethod);
-	this.mesh = new Marshmallow(mMaterial,container);
-	this._view.get_scene().addChild(this.mesh);
-	this._view.setRenderCallback($bind(this,this._onEnterFrame));
-	this._t = openfl.Lib.getTimer();
-	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_DOWN,$bind(this,this.onMouseDown));
-	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_MOVE,$bind(this,this.onMouseMove));
-	this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_UP,$bind(this,this.onMouseUp));
-	this.lastMouseX = this.stage.get_mouseX();
-	this.lastMouseY = this.stage.get_mouseY();
-	this.stage.addEventListener(openfl.events.Event.RESIZE,$bind(this,this.onResize));
-	this.onResize();
-	if(openfl.sensors.Accelerometer.get_isSupported()) {
-		this.accl = new openfl.sensors.Accelerometer();
-		this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
-	}
-	this.mesh.nodes[0].burn();
-	this.mesh.set_rotationZ(-90);
+	this.init();
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
+Main.lightPicker = null;
+Main.fireContainer = null;
 Main.__super__ = openfl.display.Sprite;
 Main.prototype = $extend(openfl.display.Sprite.prototype,{
 	onAcclUpdate: function(e) {
@@ -1138,6 +1048,65 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.xAccelerometerAxis = xAxis;
 		this.yAccelerometerAxis = yAxis;
 		this.zAccelerometerAxis = zAxis;
+	}
+	,init: function() {
+		while(this._view.get_scene().get_numChildren() > 0) this._view.get_scene().removeChildAt(0);
+		var rectWidth = 128;
+		var rectHeight = 128;
+		var rect = new openfl.display.Sprite();
+		var mat = new openfl.geom.Matrix();
+		var colors = [12092939,12092939,16777215,12092939];
+		var alphas = [1,1,1];
+		var ratios = [0,86,128,255];
+		mat.createGradientBox(rectWidth,rectHeight);
+		rect.get_graphics().lineStyle();
+		rect.get_graphics().beginGradientFill(openfl.display.GradientType.LINEAR,colors,alphas,ratios,mat);
+		rect.get_graphics().drawRect(0,0,rectWidth,rectHeight);
+		rect.get_graphics().endFill();
+		var b = new openfl.display.BitmapData(128,128);
+		b.draw(rect);
+		var mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(b));
+		this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
+		this._light3.set_color(8947848);
+		this._light3.set_ambient(.3);
+		var container = new away3d.containers.ObjectContainer3D();
+		Main.fireContainer = new away3d.core.base.Geometry();
+		var dat = new openfl.display.BitmapData(256,256,false,10242560);
+		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
+		material.set_blendMode(openfl.display.BlendMode.ADD);
+		var fireMesh = new away3d.entities.Mesh(Main.fireContainer,material);
+		this._view.get_scene().addChild(fireMesh);
+		this._view.get_scene().addChild(container);
+		Main.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light3]);
+		mMaterial.set_lightPicker(Main.lightPicker);
+		var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
+		var specularMethod = new away3d.materials.methods.CelSpecularMethod();
+		specularMethod.set_smoothness(100);
+		diffuseMethod.set_smoothness(0);
+		mMaterial.set_diffuseMethod(diffuseMethod);
+		mMaterial.set_specularMethod(specularMethod);
+		this.mesh = new Marshmallow(mMaterial,container);
+		this._view.get_scene().addChild(this.mesh);
+		this._view.setRenderCallback($bind(this,this._onEnterFrame));
+		this._t = openfl.Lib.getTimer();
+		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_DOWN,$bind(this,this.onMouseDown));
+		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_MOVE,$bind(this,this.onMouseMove));
+		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_UP,$bind(this,this.onMouseUp));
+		this.stage.addEventListener(openfl.events.Event.ACTIVATE,$bind(this,this.onResume));
+		this.lastMouseX = this.stage.get_mouseX();
+		this.lastMouseY = this.stage.get_mouseY();
+		this.stage.addEventListener(openfl.events.Event.RESIZE,$bind(this,this.onResize));
+		this.onResize();
+		if(openfl.sensors.Accelerometer.get_isSupported()) {
+			this.accl = new openfl.sensors.Accelerometer();
+			this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
+		}
+		this.mesh.nodes[0].burn();
+		this.mesh.nodes[1].burn();
+		this.mesh.nodes[2].burn();
+		this.inputSphereRadius = Math.sqrt(Math.pow(this.mesh.cylinderHeight / 2,2) + Math.pow(this.mesh.cylinderRadius,2)) * (Math.min(this.stage.stageWidth,this.stage.stageHeight) / 450);
+	}
+	,onResume: function(e) {
 	}
 	,_onEnterFrame: function(e) {
 		var t = openfl.Lib.getTimer();
@@ -1161,7 +1130,17 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 			++_g2;
 			node.update(new openfl.geom.Vector3D(0,.2,0));
 		}
+		var _g3 = 0;
+		var _g12 = this.mesh.nodes;
+		while(_g3 < _g12.length) {
+			var node1 = _g12[_g3];
+			++_g3;
+			node1.calcHeat();
+		}
 		var nodeTime = openfl.Lib.getTimer() - nodeStartTime;
+		this.mesh.blackMallow.set_rotationX(this.mesh.get_rotationX());
+		this.mesh.blackMallow.set_rotationY(this.mesh.get_rotationY());
+		this.mesh.blackMallow.set_rotationZ(this.mesh.get_rotationZ());
 		this._view.render();
 	}
 	,onResize: function(event) {
@@ -1440,9 +1419,11 @@ EReg.prototype = {
 };
 var FireEmitter = function(parentObject,followObject) {
 	this.stop = false;
+	this.scale = 1;
 	this.rotationalVariance = 1;
 	this.perpendicularVariance = .5;
-	this.fireRate = 5;
+	this.spawnChance = .6;
+	this.fireRate = 7;
 	this.fireCounter = 0;
 	this.follow = followObject;
 	this.parent = parentObject;
@@ -1453,31 +1434,28 @@ var FireEmitter = function(parentObject,followObject) {
 	this.z = followObject.get_scenePosition().z;
 	var dat2 = new openfl.display.BitmapData(256,256,false,9835281);
 	var material2 = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat2));
-	material2.set_alpha(.3);
 	var cube = new away3d.primitives.CubeGeometry(20,20,20);
 	this.bgMesh = new away3d.entities.Mesh(cube,material2);
 	this.bgMesh.set_x(this.x);
 	this.bgMesh.set_y(this.y);
 	this.bgMesh.set_z(this.z);
-	this.parent.addChild(this.bgMesh);
 };
 $hxClasses["FireEmitter"] = FireEmitter;
 FireEmitter.__name__ = ["FireEmitter"];
 FireEmitter.prototype = {
 	spawnFire: function() {
-		var dat = new openfl.display.BitmapData(256,256,false,10242560);
-		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
-		material.set_alpha(.7);
-		material.set_blendMode(openfl.display.BlendMode.ADD);
-		var fireParticle = new FireParticle(this,material,90,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,.1,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance);
-		fireParticle.set_x(this.x);
-		fireParticle.set_y(this.y);
-		fireParticle.set_z(this.z);
-		fireParticle.set_rotationX(Math.random() * 360);
-		fireParticle.set_rotationY(Math.random() * 360);
-		fireParticle.set_rotationZ(Math.random() * 360);
-		fireParticle.speedOffset = Math.random() * .1;
-		this.parent.addChild(fireParticle);
+		var translateMatrix = new openfl.geom.Matrix3D();
+		translateMatrix.appendRotation(Math.random() * 360 - 180,new openfl.geom.Vector3D(1,0,0),null);
+		translateMatrix.appendRotation(Math.random() * 360 - 180,new openfl.geom.Vector3D(0,1,0),null);
+		translateMatrix.appendRotation(Math.random() * 360 - 180,new openfl.geom.Vector3D(0,0,1),null);
+		translateMatrix.appendTranslation(this.x,this.y,this.z);
+		var cubeGeom = new away3d.primitives.CubeGeometry(40,40,40);
+		cubeGeom.applyTransformation(translateMatrix);
+		var fireParticle = new FireParticle(this,90,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.perpendicularVariance - this.perpendicularVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,Math.random() * 2 * this.rotationalVariance - this.rotationalVariance,cubeGeom.get_subGeometries()[0].clone());
+		fireParticle.x = this.x;
+		fireParticle.y = this.y;
+		fireParticle.z = this.z;
+		this.parent.addSubGeometry(fireParticle.subGeom);
 		this.fireParticles.push(fireParticle);
 	}
 	,update: function(gravity,marshmallowNodes) {
@@ -1488,7 +1466,7 @@ FireEmitter.prototype = {
 			++_g;
 			fireParticle.update(gravity.x,gravity.y,gravity.z);
 		}
-		if(this.fireCounter++ > this.fireRate && !this.stop) {
+		if(Math.random() < this.spawnChance) {
 			this.spawnFire();
 			this.fireCounter = 0;
 		}
@@ -1511,11 +1489,155 @@ FireEmitter.prototype = {
 		}
 	}
 	,removeParticle: function(fireParticle) {
-		this.parent.removeChild(fireParticle);
+		Main.fireContainer.removeSubGeometry(fireParticle.subGeom);
 		this.toRemove.push(fireParticle);
 	}
 	,__class__: FireEmitter
 };
+var FireParticle = function(emitter,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel,sg) {
+	this.oldScale = 1;
+	this.speedOffset = 0;
+	this.decayTime = 30;
+	this.decayCounter = 0;
+	this.xVelocity = xVel;
+	this.yVelocity = yVel;
+	this.zVelocity = zVel;
+	this.xRVelocity = xRVel;
+	this.yRVelocity = yRVel;
+	this.zRVelocity = zRVel;
+	this.source = emitter;
+	this.subGeom = sg;
+};
+$hxClasses["FireParticle"] = FireParticle;
+FireParticle.__name__ = ["FireParticle"];
+FireParticle.prototype = {
+	update: function(gravityX,gravityY,gravityZ) {
+		this.xVelocity += gravityX;
+		this.yVelocity += gravityY + this.speedOffset;
+		this.zVelocity += gravityZ;
+		this.decayCounter++;
+		var scale = 1 - this.decayCounter / this.decayTime;
+		if(scale < 0) this.source.removeParticle(this);
+		var translateMatrix = new openfl.geom.Matrix3D();
+		translateMatrix.appendTranslation(-this.x,-this.y,-this.z);
+		translateMatrix.appendScale(scale / this.oldScale,scale / this.oldScale,scale / this.oldScale);
+		translateMatrix.appendTranslation(this.x,this.y,this.z);
+		this.subGeom.applyTransformation(translateMatrix);
+		translateMatrix.appendRotation(this.xRVelocity,new openfl.geom.Vector3D(1,0,0),null);
+		translateMatrix.appendRotation(this.yRVelocity,new openfl.geom.Vector3D(0,1,0),null);
+		translateMatrix.appendRotation(this.zRVelocity,new openfl.geom.Vector3D(0,0,1),null);
+		translateMatrix.appendTranslation(this.xVelocity,this.yVelocity,this.zVelocity);
+		this.subGeom.applyTransformation(translateMatrix);
+		this.x += this.xVelocity;
+		this.y += this.yVelocity;
+		this.z += this.zVelocity;
+		this.oldScale = scale;
+	}
+	,__class__: FireParticle
+};
+var HxOverrides = function() { };
+$hxClasses["HxOverrides"] = HxOverrides;
+HxOverrides.__name__ = ["HxOverrides"];
+HxOverrides.strDate = function(s) {
+	var _g = s.length;
+	switch(_g) {
+	case 8:
+		var k = s.split(":");
+		var d = new Date();
+		d.setTime(0);
+		d.setUTCHours(k[0]);
+		d.setUTCMinutes(k[1]);
+		d.setUTCSeconds(k[2]);
+		return d;
+	case 10:
+		var k1 = s.split("-");
+		return new Date(k1[0],k1[1] - 1,k1[2],0,0,0);
+	case 19:
+		var k2 = s.split(" ");
+		var y = k2[0].split("-");
+		var t = k2[1].split(":");
+		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+	default:
+		throw "Invalid date format : " + s;
+	}
+};
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+};
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
+};
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
+};
+HxOverrides.remove = function(a,obj) {
+	var i = HxOverrides.indexOf(a,obj,0);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+};
+HxOverrides.iter = function(a) {
+	return { cur : 0, arr : a, hasNext : function() {
+		return this.cur < this.arr.length;
+	}, next : function() {
+		return this.arr[this.cur++];
+	}};
+};
+var Lambda = function() { };
+$hxClasses["Lambda"] = Lambda;
+Lambda.__name__ = ["Lambda"];
+Lambda.foreach = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(!f(x)) return false;
+	}
+	return true;
+};
+Lambda.indexOf = function(it,v) {
+	var i = 0;
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v2 = $it0.next();
+		if(v == v2) return i;
+		i++;
+	}
+	return -1;
+};
+var List = function() {
+	this.length = 0;
+};
+$hxClasses["List"] = List;
+List.__name__ = ["List"];
+List.prototype = {
+	add: function(item) {
+		var x = [item];
+		if(this.h == null) this.h = x; else this.q[1] = x;
+		this.q = x;
+		this.length++;
+	}
+	,__class__: List
+};
+var IMap = function() { };
+$hxClasses["IMap"] = IMap;
+IMap.__name__ = ["IMap"];
 var away3d = {};
 away3d.library = {};
 away3d.library.assets = {};
@@ -2868,152 +2990,8 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 	,__class__: away3d.entities.Mesh
 	,__properties__: $extend(away3d.entities.Entity.prototype.__properties__,{set_shareAnimationGeometry:"set_shareAnimationGeometry",get_shareAnimationGeometry:"get_shareAnimationGeometry",get_subMeshes:"get_subMeshes",set_material:"set_material",get_material:"get_material",set_geometry:"set_geometry",get_geometry:"get_geometry",set_animator:"set_animator",get_animator:"get_animator",set_castsShadows:"set_castsShadows",get_castsShadows:"get_castsShadows"})
 });
-var FireParticle = function(emitter,mMaterial,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel) {
-	this.speedOffset = 0;
-	if(FireParticle.cubeGeom == null) FireParticle.cubeGeom = new away3d.primitives.CubeGeometry(40,40,40);
-	this.decayCounter = decayTime;
-	this.xVelocity = xVel;
-	this.yVelocity = yVel;
-	this.zVelocity = zVel;
-	this.xRVelocity = xRVel;
-	this.yRVelocity = yRVel;
-	this.zRVelocity = zRVel;
-	this.source = emitter;
-	away3d.entities.Mesh.call(this,FireParticle.cubeGeom,mMaterial);
-};
-$hxClasses["FireParticle"] = FireParticle;
-FireParticle.__name__ = ["FireParticle"];
-FireParticle.cubeGeom = null;
-FireParticle.__super__ = away3d.entities.Mesh;
-FireParticle.prototype = $extend(away3d.entities.Mesh.prototype,{
-	update: function(gravityX,gravityY,gravityZ) {
-		var _g = this;
-		_g.set_x(_g.get_x() + this.xVelocity);
-		var _g1 = this;
-		_g1.set_y(_g1.get_y() + this.yVelocity);
-		var _g2 = this;
-		_g2.set_z(_g2.get_z() + this.zVelocity);
-		var _g3 = this;
-		_g3.set_rotationX(_g3.get_rotationX() + this.xRVelocity);
-		var _g4 = this;
-		_g4.set_rotationY(_g4.get_rotationY() + this.yRVelocity);
-		var _g5 = this;
-		_g5.set_rotationZ(_g5.get_rotationZ() + this.zRVelocity);
-		this.xVelocity += gravityX;
-		this.yVelocity += gravityY + this.speedOffset;
-		this.zVelocity += gravityZ;
-		var scale = Math.pow(this.get_x() - this.source.x,2) + Math.pow(this.get_y() - this.source.y,2) + Math.pow(this.get_z() - this.source.z,2);
-		this.set_scaleX(1 - scale / 9000);
-		this.set_scaleY(1 - scale / 9000);
-		this.set_scaleZ(1 - scale / 9000);
-		if(scale > 9000) this.source.removeParticle(this);
-	}
-	,__class__: FireParticle
-});
-var HxOverrides = function() { };
-$hxClasses["HxOverrides"] = HxOverrides;
-HxOverrides.__name__ = ["HxOverrides"];
-HxOverrides.strDate = function(s) {
-	var _g = s.length;
-	switch(_g) {
-	case 8:
-		var k = s.split(":");
-		var d = new Date();
-		d.setTime(0);
-		d.setUTCHours(k[0]);
-		d.setUTCMinutes(k[1]);
-		d.setUTCSeconds(k[2]);
-		return d;
-	case 10:
-		var k1 = s.split("-");
-		return new Date(k1[0],k1[1] - 1,k1[2],0,0,0);
-	case 19:
-		var k2 = s.split(" ");
-		var y = k2[0].split("-");
-		var t = k2[1].split(":");
-		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
-	default:
-		throw "Invalid date format : " + s;
-	}
-};
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-};
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-};
-HxOverrides.indexOf = function(a,obj,i) {
-	var len = a.length;
-	if(i < 0) {
-		i += len;
-		if(i < 0) i = 0;
-	}
-	while(i < len) {
-		if(a[i] === obj) return i;
-		i++;
-	}
-	return -1;
-};
-HxOverrides.remove = function(a,obj) {
-	var i = HxOverrides.indexOf(a,obj,0);
-	if(i == -1) return false;
-	a.splice(i,1);
-	return true;
-};
-HxOverrides.iter = function(a) {
-	return { cur : 0, arr : a, hasNext : function() {
-		return this.cur < this.arr.length;
-	}, next : function() {
-		return this.arr[this.cur++];
-	}};
-};
-var Lambda = function() { };
-$hxClasses["Lambda"] = Lambda;
-Lambda.__name__ = ["Lambda"];
-Lambda.foreach = function(it,f) {
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		if(!f(x)) return false;
-	}
-	return true;
-};
-Lambda.indexOf = function(it,v) {
-	var i = 0;
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var v2 = $it0.next();
-		if(v == v2) return i;
-		i++;
-	}
-	return -1;
-};
-var List = function() {
-	this.length = 0;
-};
-$hxClasses["List"] = List;
-List.__name__ = ["List"];
-List.prototype = {
-	add: function(item) {
-		var x = [item];
-		if(this.h == null) this.h = x; else this.q[1] = x;
-		this.q = x;
-		this.length++;
-	}
-	,__class__: List
-};
-var IMap = function() { };
-$hxClasses["IMap"] = IMap;
-IMap.__name__ = ["IMap"];
-var Marshmallow = function(mMaterial,cont) {
+var Marshmallow = function(mMaterial,cont,isBlackMallow) {
+	if(isBlackMallow == null) isBlackMallow = false;
 	this.PI = 3.1415926535897932;
 	this.innerRings = 3;
 	this.horizontalResolution = 16;
@@ -3031,6 +3009,24 @@ var Marshmallow = function(mMaterial,cont) {
 		++_g;
 		this.addChild(node);
 	}
+	if(!isBlackMallow) {
+		var dat = new openfl.display.BitmapData(256,256,false,1512209);
+		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
+		material.set_lightPicker(Main.lightPicker);
+		var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
+		var specularMethod = new away3d.materials.methods.CelSpecularMethod();
+		specularMethod.set_smoothness(100);
+		diffuseMethod.set_smoothness(0);
+		material.set_diffuseMethod(diffuseMethod);
+		material.set_specularMethod(specularMethod);
+		this.blackMallow = new Marshmallow(material,cont,true);
+		cont.addChild(this.blackMallow);
+	} else {
+		this.set_scaleX(.9);
+		this.set_scaleY(.9);
+		this.set_scaleZ(.9);
+	}
+	this.isBlack = isBlackMallow;
 };
 $hxClasses["Marshmallow"] = Marshmallow;
 Marshmallow.__name__ = ["Marshmallow"];
@@ -3040,7 +3036,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		var geometry = new away3d.core.base.Geometry();
 		this.subgeometry = new away3d.core.base.SubGeometry();
 		this.verts = new Array();
-		var uvs = new Array();
+		this.uvs = new Array();
 		var indices = new Array();
 		var verticesPerCap = 1;
 		var _g1 = 0;
@@ -3057,15 +3053,15 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			var _g21 = this.horizontalResolution;
 			while(_g3 < _g21) {
 				var j = _g3++;
-				var angleOffset = 0;
+				var angleOffset = i1 % 2 / this.horizontalResolution * 2 * this.PI / 2;
 				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var z = i1 / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
 				this.verts.push(x);
 				this.verts.push(y);
 				this.verts.push(z);
-				uvs.push(j / this.horizontalResolution);
-				uvs.push(i1 / this.verticalResolution);
+				this.uvs.push(0);
+				this.uvs.push(.5);
 				var adjacents = new Array();
 				if(j > 0 && i1 > 0) {
 					indices.push(i1 * this.horizontalResolution + j);
@@ -3084,7 +3080,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 					if(j == 0) adjacents.push(i1 * this.horizontalResolution + this.horizontalResolution); else adjacents.push(i1 * this.horizontalResolution + j - 1);
 					if(i1 == 0) adjacents.push(this.horizontalResolution * (this.verticalResolution + 1) + verticesPerCap + (j / 2 | 0)); else adjacents.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
 				}
-				this.addNode(x,y,z,adjacents);
+				if(i1 == 0) this.addNode(x,y,z,adjacents,true); else this.addNode(x,y,z,adjacents);
 			}
 			if(i1 > 0) {
 				indices.push(i1 * this.horizontalResolution);
@@ -3105,8 +3101,8 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			this.verts.push(x1);
 			this.verts.push(y1);
 			this.verts.push(z1);
-			uvs.push(0);
-			uvs.push(0);
+			this.uvs.push(0);
+			this.uvs.push(.5);
 			var adjacents1 = new Array();
 			adjacents1.push(this.horizontalResolution * (this.verticalResolution + 1) + (j1 / 2 | 0));
 			adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - this.horizontalResolution);
@@ -3120,7 +3116,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - 1);
 			} else adjacents1.push(this.horizontalResolution * this.verticalResolution + this.horizontalResolution);
 			if(j1 < this.horizontalResolution) adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 + 1); else adjacents1.push(this.horizontalResolution * this.verticalResolution);
-			this.addNode(x1,y1,z1,adjacents1);
+			this.addNode(x1,y1,z1,adjacents1,true);
 		}
 		indices.push(this.verticalResolution * this.horizontalResolution);
 		indices.push(this.verticalResolution * this.horizontalResolution - 1 + this.horizontalResolution);
@@ -3148,12 +3144,12 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				this.verts.push(x2);
 				this.verts.push(y2);
 				this.verts.push(z2);
-				uvs.push(1);
-				uvs.push(1);
+				this.uvs.push(0);
+				this.uvs.push(.5);
 				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2);
 				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
 				if(j2 != numNodes - 1) adjacents2.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - numNodes + 1);
-				if(i2 != this.innerRings - 2) adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0)); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0) - 1);
+				if(i2 != this.innerRings - 2) adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0)); else adjacents2.push(totalNonInnerNodes + verticesPerCap - 1);
 				if(j2 > 0) {
 					adjacents2.push(totalNonInnerNodes + totalInnerNodes - 1);
 					indices.push(totalNonInnerNodes + totalInnerNodes);
@@ -3188,8 +3184,8 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.verts.push(x3);
 		this.verts.push(y3);
 		this.verts.push(z3);
-		uvs.push(0);
-		uvs.push(0);
+		this.uvs.push(0);
+		this.uvs.push(.5);
 		var numInnerRingNodes = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
 		var _g14 = 0;
 		var _g6 = numInnerRingNodes - 1;
@@ -3225,8 +3221,8 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				this.verts.push(x4);
 				this.verts.push(y4);
 				this.verts.push(z4);
-				uvs.push(1);
-				uvs.push(1);
+				this.uvs.push(0);
+				this.uvs.push(.5);
 				if(i4 != 0) {
 					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2);
 					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
@@ -3235,7 +3231,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 					adjacents4.push(j3 * 2 + 1);
 				}
 				if(j3 != numNodes1 - 1) adjacents4.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents4.push(totalNonInnerNodes + totalInnerNodes - numNodes1 + 1);
-				if(i4 != this.innerRings - 2) adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0)); else adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0) - 1);
+				if(i4 != this.innerRings - 2) adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0)); else adjacents4.push(totalNonInnerNodes + verticesPerCap - 1);
 				if(j3 > 0) {
 					adjacents4.push(totalNonInnerNodes + totalInnerNodes - 1);
 					indices.push(totalNonInnerNodes + totalInnerNodes - 1);
@@ -3276,8 +3272,8 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.verts.push(x5);
 		this.verts.push(y5);
 		this.verts.push(z5);
-		uvs.push(0);
-		uvs.push(0);
+		this.uvs.push(0);
+		this.uvs.push(.5);
 		var numInnerRingNodes1 = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
 		var _g16 = 0;
 		var _g8 = numInnerRingNodes1 - 1;
@@ -3294,7 +3290,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		indices.push(totalNonInnerNodes + totalInnerNodes);
 		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1);
 		this.subgeometry.updateVertexData(this.verts);
-		this.subgeometry.updateUVData(uvs);
+		this.subgeometry.updateUVData(this.uvs);
 		this.subgeometry.updateIndexData(indices);
 		geometry.addSubGeometry(this.subgeometry);
 		var _g9 = 0;
@@ -3306,8 +3302,9 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		}
 		return geometry;
 	}
-	,addNode: function(x,y,z,adjacents) {
-		var node = new MarshmallowNode(this.nodes.length,this,adjacents);
+	,addNode: function(x,y,z,adjacents,corner) {
+		if(corner == null) corner = false;
+		var node = new MarshmallowNode(this.nodes.length,this,adjacents,corner);
 		node.set_x(x);
 		node.set_y(y);
 		node.set_z(z);
@@ -3315,20 +3312,26 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 	}
 	,__class__: Marshmallow
 });
-var MarshmallowNode = function(i,p,adjacent) {
+var MarshmallowNode = function(i,p,adjacent,corner) {
 	this.m = Math;
-	this.burnedThreshold = 50;
-	this.burnThreshold = 10;
+	this.burnRatio = .005;
+	this.burnCounter = 0;
+	this.burnTimer = 300;
+	this.heatDissipation = .999;
+	this.burnThreshold = 90;
 	this.index = i;
+	this.isCorner = corner;
 	this.heat = 0;
 	this.burned = false;
 	this.burning = false;
+	this.burnCounter = 0;
 	this.oldX = 0;
 	this.oldY = 0;
 	this.oldZ = 0;
+	this.addedHeat = 0;
+	this.heatMultiplier = 0;
 	this.marshmallow = p;
 	this.neighborIndices = adjacent;
-	if(!MarshmallowNode.init) MarshmallowNode.init = true;
 	away3d.containers.ObjectContainer3D.call(this);
 };
 $hxClasses["MarshmallowNode"] = MarshmallowNode;
@@ -3342,17 +3345,32 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		while(_g < _g1.length) {
 			var adj = _g1[_g];
 			++_g;
-			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 64, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
+			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 78, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
 			this.neighbors.push(this.marshmallow.nodes[adj]);
+		}
+		if(this.isCorner) {
+			this.maxXGrowth = this.get_x() * (1.13 + Math.random() / 10) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.13 + Math.random() / 10) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.13 + Math.random() / 10) - this.get_z();
+		} else {
+			this.maxXGrowth = this.get_x() * (1.2 + Math.random() / 10) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.2 + Math.random() / 10) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.2 + Math.random() / 10) - this.get_z();
 		}
 	}
 	,burn: function() {
-		this.emitter = new FireEmitter(this.marshmallow.container,this);
+		this.emitter = new FireEmitter(Main.fireContainer,this);
 		this.marshmallow.emitters.push(this.emitter);
 		this.burning = true;
+		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 1.5;
 	}
 	,dotProduct: function(aX,aY,aZ,bX,bY,bZ) {
 		return bX * aX + bY * aY + bZ * aZ;
+	}
+	,calcHeat: function() {
+		this.heat += this.addedHeat * this.heatMultiplier;
+		this.addedHeat = 0;
+		this.heatMultiplier = 0;
 	}
 	,update: function(fireUp) {
 		if(this.oldX != this.get_x() || this.oldY != this.get_y() || this.oldZ != this.get_z()) {
@@ -3362,35 +3380,52 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.oldZ = this.get_z();
 		}
 		if(this.burning) {
-			this.heat += .5;
+			this.heat = this.heat * this.heatDissipation;
+			if(this.heat < this.burnThreshold) this.burnCounter = this.burnTimer;
+			this.burnCounter += this.heat * this.burnRatio;
+			var fireIsAgainstMarshmallow = 0 > this.dotProduct(this.get_x(),this.get_y(),this.get_z(),fireUp.x,fireUp.y,fireUp.z) / this.m.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z) - this.magnitude;
 			var _g = 0;
 			var _g1 = this.neighbors;
 			while(_g < _g1.length) {
 				var neighbor = _g1[_g];
 				++_g;
-				if(!neighbor.burning && !neighbor.burned) {
+				if(!neighbor.burned) {
 					var fireMagnitude = Math.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z);
 					var neighborDistance = Math.pow(neighbor.get_scenePosition().x - this.get_scenePosition().x,2) + Math.pow(neighbor.get_scenePosition().y - this.get_scenePosition().y,2) + Math.pow(neighbor.get_scenePosition().z - this.get_scenePosition().z,2);
-					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z);
-					var heatTransfer = (neighborProjection - MarshmallowNode.heatTransferThresholdProjection) / (1 - MarshmallowNode.heatTransferThresholdProjection);
-					neighbor.heat += heatTransfer * MarshmallowNode.heatTransferModifier;
+					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / this.m.sqrt(neighborDistance);
+					if(fireIsAgainstMarshmallow) {
+						if(neighborProjection > .1) neighborProjection = 1.3 + (1 - neighborProjection) * 1.4;
+						if(neighbor.get_z() == this.get_z()) neighborProjection = 4 * neighborProjection + 1;
+						this.heat += this.heat * MarshmallowNode.heatTransferModifier;
+					}
+					if(neighborProjection > MarshmallowNode.heatTransferThresholdProjection) {
+						var heatTransfer = (neighborProjection - MarshmallowNode.heatTransferThresholdProjection) / (1 - MarshmallowNode.heatTransferThresholdProjection);
+						neighbor.addedHeat += this.heat * heatTransfer * MarshmallowNode.heatTransferModifier;
+						neighbor.heatMultiplier += .5;
+						if(fireIsAgainstMarshmallow && this.get_z() != this.marshmallow.cylinderHeight / 2 && this.get_z() != -this.marshmallow.cylinderHeight / 2) neighbor.heatMultiplier += .5;
+					}
 				}
 			}
 		}
 		if(this.heat > this.burnThreshold && !this.burning && !this.burned) this.burn();
-		if(this.heat > this.burnedThreshold && !this.burned) {
+		if(this.burnCounter > this.burnTimer && !this.burned) {
 			this.burned = true;
 			this.burning = false;
-			this.marshmallow.container.removeChild(this.emitter.bgMesh);
 			this.emitter.stop = true;
-			this.set_x(this.get_x() * (1.2 + Math.random() / 10));
-			this.set_y(this.get_y() * (1.2 + Math.random() / 10));
-			this.set_z(this.get_z() * (1.2 + Math.random() / 10));
-			this.marshmallow.verts[this.index * 3] = this.get_x();
-			this.marshmallow.verts[this.index * 3 + 1] = this.get_y();
-			this.marshmallow.verts[this.index * 3 + 2] = this.get_z();
-			this.marshmallow.subgeometry.updateVertexData(this.marshmallow.verts);
 		}
+		var growth = Math.min(1,this.burnCounter / this.burnTimer);
+		if(this.burning) {
+		}
+		this.marshmallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth;
+		this.marshmallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth;
+		this.marshmallow.verts[this.index * 3 + 2] = this.get_z() + this.maxZGrowth * growth;
+		this.marshmallow.subgeometry.updateVertexData(this.marshmallow.verts);
+		this.marshmallow.uvs[this.index * 2] = (1 - growth) / 2;
+		this.marshmallow.subgeometry.updateUVData(this.marshmallow.uvs);
+		this.marshmallow.blackMallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth * 2;
+		this.marshmallow.blackMallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth * 2;
+		this.marshmallow.blackMallow.verts[this.index * 3 + 2] = this.get_z() + this.maxZGrowth * growth * 2;
+		this.marshmallow.blackMallow.subgeometry.updateVertexData(this.marshmallow.blackMallow.verts);
 	}
 	,__class__: MarshmallowNode
 });
@@ -30923,8 +30958,8 @@ openfl.display.DisplayObject.__worldRenderDirty = 0;
 openfl.display.DisplayObject.__worldTransformDirty = 0;
 away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
 MarshmallowNode.init = false;
-MarshmallowNode.heatTransferThresholdProjection = -.4;
-MarshmallowNode.heatTransferModifier = .05;
+MarshmallowNode.heatTransferThresholdProjection = -.2;
+MarshmallowNode.heatTransferModifier = .001;
 aglsl.Context3D.enableErrorChecking = false;
 aglsl.Context3D.resources = [];
 aglsl.Context3D.driverInfo = "Call getter function instead";
