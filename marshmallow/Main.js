@@ -25,28 +25,59 @@ ApplicationMain.embed = $hx_exports.openfl.embed = function(elementName,width,he
 	ApplicationMain.preloader.onInit();
 	var sounds = [];
 	var id;
+	var urlLoader = new openfl.net.URLLoader();
+	urlLoader.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("embeds/SkipLegDay.eot",urlLoader);
+	ApplicationMain.total++;
 	var image = new Image();
 	id = "embeds/floor_diffuse.jpg";
 	ApplicationMain.images.set(id,image);
 	image.onload = ApplicationMain.image_onLoad;
 	image.src = id;
 	ApplicationMain.total++;
+	var image1 = new Image();
+	id = "embeds/icon.png";
+	ApplicationMain.images.set(id,image1);
+	image1.onload = ApplicationMain.image_onLoad;
+	image1.src = id;
+	ApplicationMain.total++;
+	var urlLoader1 = new openfl.net.URLLoader();
+	urlLoader1.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("embeds/icon.svg",urlLoader1);
+	ApplicationMain.total++;
+	var image2 = new Image();
+	id = "embeds/texture.png";
+	ApplicationMain.images.set(id,image2);
+	image2.onload = ApplicationMain.image_onLoad;
+	image2.src = id;
+	ApplicationMain.total++;
+	var urlLoader2 = new openfl.net.URLLoader();
+	urlLoader2.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("embeds/SkipLegDay.woff",urlLoader2);
+	ApplicationMain.total++;
+	var sound = haxe.io.Path.withoutExtension("embeds/asdfire.ogg");
+	if(!HxOverrides.remove(sounds,sound)) ApplicationMain.total++;
+	sounds.push(sound);
+	var urlLoader3 = new openfl.net.URLLoader();
+	urlLoader3.set_dataFormat(openfl.net.URLLoaderDataFormat.BINARY);
+	ApplicationMain.urlLoaders.set("embeds/SkipLegDay.svg",urlLoader3);
+	ApplicationMain.total++;
 	if(ApplicationMain.total == 0) ApplicationMain.start(); else {
 		var $it0 = ApplicationMain.urlLoaders.keys();
 		while( $it0.hasNext() ) {
 			var path = $it0.next();
-			var urlLoader = ApplicationMain.urlLoaders.get(path);
-			urlLoader.addEventListener("complete",ApplicationMain.loader_onComplete);
-			urlLoader.load(new openfl.net.URLRequest(path));
+			var urlLoader4 = ApplicationMain.urlLoaders.get(path);
+			urlLoader4.addEventListener("complete",ApplicationMain.loader_onComplete);
+			urlLoader4.load(new openfl.net.URLRequest(path));
 		}
 		var _g = 0;
 		while(_g < sounds.length) {
 			var soundName = sounds[_g];
 			++_g;
-			var sound = new openfl.media.Sound();
-			sound.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
-			sound.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
-			sound.load(new openfl.net.URLRequest(soundName + ".ogg"));
+			var sound1 = new openfl.media.Sound();
+			sound1.addEventListener(openfl.events.Event.COMPLETE,ApplicationMain.sound_onComplete);
+			sound1.addEventListener(openfl.events.IOErrorEvent.IO_ERROR,ApplicationMain.sound_onIOError);
+			sound1.load(new openfl.net.URLRequest(soundName + ".ogg"));
 		}
 	}
 };
@@ -84,8 +115,8 @@ ApplicationMain.preloader_onComplete = function(event) {
 	if(hasMain) Reflect.callMethod(Main,Reflect.field(Main,"main"),[]); else {
 		var instance = Type.createInstance(DocumentClass,[]);
 		if(js.Boot.__instanceof(instance,openfl.display.DisplayObject)) openfl.Lib.current.addChild(instance); else {
-			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 191, className : "ApplicationMain", methodName : "preloader_onComplete"});
-			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 192, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("Error: No entry point found",{ fileName : "ApplicationMain.hx", lineNumber : 251, className : "ApplicationMain", methodName : "preloader_onComplete"});
+			haxe.Log.trace("If you are using DCE with a static main, you may need to @:keep the function",{ fileName : "ApplicationMain.hx", lineNumber : 252, className : "ApplicationMain", methodName : "preloader_onComplete"});
 		}
 	}
 };
@@ -1020,16 +1051,41 @@ openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.
 	,__properties__: $extend(openfl.display.DisplayObjectContainer.prototype.__properties__,{get_graphics:"get_graphics"})
 });
 var Main = function() {
+	this.active = false;
 	this.move = false;
 	openfl.display.Sprite.call(this);
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
 	this.stage.align = openfl.display.StageAlign.TOP_LEFT;
+	this.stage.quality = "low";
 	this._view = new away3d.containers.View3D();
 	this._view.set_backgroundColor(1250098);
 	this.addChild(this._view);
-	this._view.get_camera().set_z(-600);
-	this._view.get_camera().set_y(200);
-	this._view.get_camera().lookAt(new openfl.geom.Vector3D());
+	var font = openfl.Assets.getFont("embeds/SkipLegDay.ttf");
+	var textFormat = new openfl.text.TextFormat(font.fontName,this.stage.stageHeight / 8,16777215);
+	textFormat.align = openfl.text.TextFormatAlign.CENTER;
+	this.txtField = new openfl.text.TextField();
+	this.txtField.multiline = true;
+	this.txtField.set_width(this.stage.stageWidth);
+	this.txtField.set_height(this.stage.stageHeight / 2);
+	this.txtField.set_defaultTextFormat(textFormat);
+	this.txtField.set_htmlText("marsh<br>mallo");
+	this.txtField.set_x(this.stage.stageWidth / 2 - this.txtField.get_width() / 2);
+	this.txtField.set_y(20);
+	this.addChild(this.txtField);
+	var textFormat1 = new openfl.text.TextFormat(font.fontName,this.stage.stageHeight / 10,16777215);
+	textFormat1.align = openfl.text.TextFormatAlign.CENTER;
+	this.txtField2 = new openfl.text.TextField();
+	this.txtField2.multiline = true;
+	this.txtField2.set_width(this.stage.stageWidth);
+	this.txtField2.set_height(this.stage.stageHeight / 2);
+	this.txtField2.set_defaultTextFormat(textFormat1);
+	this.txtField2.set_htmlText("click<br>to start");
+	this.txtField2.set_x(this.stage.stageWidth / 2 - this.txtField2.get_width() / 2);
+	this.txtField2.set_y(this.stage.stageHeight - this.txtField2.get_textHeight());
+	this.addChild(this.txtField2);
+	this._view.get_camera().set_z(-400);
+	this._view.get_camera().set_y(600);
+	this._view.get_camera().lookAt(new openfl.geom.Vector3D(0,100,0));
 	this.init();
 };
 $hxClasses["Main"] = Main;
@@ -1047,21 +1103,9 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		Main.zAccelerometerAxis = zAxis;
 	}
 	,init: function() {
+		this.active = false;
 		while(this._view.get_scene().get_numChildren() > 0) this._view.get_scene().removeChildAt(0);
-		var rectWidth = 128;
-		var rectHeight = 128;
-		var rect = new openfl.display.Sprite();
-		var mat = new openfl.geom.Matrix();
-		var colors = [12092939,12092939,16777215,12092939];
-		var alphas = [1,1,1];
-		var ratios = [0,86,128,255];
-		mat.createGradientBox(rectWidth,rectHeight);
-		rect.get_graphics().lineStyle();
-		rect.get_graphics().beginGradientFill(openfl.display.GradientType.LINEAR,colors,alphas,ratios,mat);
-		rect.get_graphics().drawRect(0,0,rectWidth,rectHeight);
-		rect.get_graphics().endFill();
-		var b = new openfl.display.BitmapData(128,128);
-		b.draw(rect);
+		var b = openfl.Assets.getBitmapData("embeds/texture.png");
 		var mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(b));
 		this._light3 = new away3d.lights.DirectionalLight(-1,-1,1);
 		this._light3.set_color(8947848);
@@ -1090,6 +1134,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_MOVE,$bind(this,this.onMouseMove));
 		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_UP,$bind(this,this.onMouseUp));
 		this.stage.addEventListener(openfl.events.Event.ACTIVATE,$bind(this,this.onResume));
+		this.stage.addEventListener(openfl.events.Event.DEACTIVATE,$bind(this,this.onPause));
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
 		this.stage.addEventListener(openfl.events.Event.RESIZE,$bind(this,this.onResize));
@@ -1098,10 +1143,9 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 			this.accl = new openfl.sensors.Accelerometer();
 			this.accl.addEventListener(openfl.events.AccelerometerEvent.UPDATE,$bind(this,this.onAcclUpdate));
 		}
-		this.mesh.nodes[0].burn();
-		this.mesh.nodes[1].burn();
-		this.mesh.nodes[2].burn();
 		this.inputSphereRadius = Math.sqrt(Math.pow(this.mesh.cylinderHeight / 2,2) + Math.pow(this.mesh.cylinderRadius,2)) * (Math.min(this.stage.stageWidth,this.stage.stageHeight) / 450);
+	}
+	,onPause: function(e) {
 	}
 	,onResume: function(e) {
 	}
@@ -1134,11 +1178,56 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 			++_g3;
 			node1.calcHeat();
 		}
+		var done = true;
+		var _g4 = 0;
+		var _g13 = this.mesh.nodes;
+		while(_g4 < _g13.length) {
+			var node2 = _g13[_g4];
+			++_g4;
+			if(node2.burning) done = false;
+		}
+		if(done) this.endGame();
 		var nodeTime = openfl.Lib.getTimer() - nodeStartTime;
+		if(this.active) {
+			if(this.txtField2.get_alpha() >= 0) {
+				var _g5 = this.txtField;
+				_g5.set_alpha(_g5.get_alpha() - .02);
+				var _g6 = this.txtField2;
+				_g6.set_alpha(_g6.get_alpha() - .02);
+			} else {
+				this.txtField.set_visible(false);
+				this.txtField2.set_visible(false);
+			}
+		} else {
+			this.txtField.set_visible(true);
+			this.txtField2.set_visible(true);
+			if(this.txtField2.get_alpha() <= 1) {
+				var _g7 = this.txtField;
+				_g7.set_alpha(_g7.get_alpha() + .05);
+				var _g8 = this.txtField2;
+				_g8.set_alpha(_g8.get_alpha() + .05);
+			}
+		}
 		this.mesh.blackMallow.set_rotationX(this.mesh.get_rotationX());
 		this.mesh.blackMallow.set_rotationY(this.mesh.get_rotationY());
 		this.mesh.blackMallow.set_rotationZ(this.mesh.get_rotationZ());
 		this._view.render();
+	}
+	,startGame: function() {
+		this.active = true;
+		var _g = 0;
+		var _g1 = this.mesh.nodes;
+		while(_g < _g1.length) {
+			var node = _g1[_g];
+			++_g;
+			node.reset();
+		}
+		var i = Std["int"](Math.random() * this.mesh.nodes.length);
+		this.mesh.nodes[i].burn();
+		this.mesh.nodes[i + 1].burn();
+	}
+	,endGame: function() {
+		this.active = false;
 	}
 	,onResize: function(event) {
 		this._view.set_width(this.stage.stageWidth);
@@ -1148,6 +1237,8 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.move = true;
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
+		haxe.Log.trace(this.stage.get_mouseX(),{ fileName : "Main.hx", lineNumber : 392, className : "Main", methodName : "onMouseDown", customParams : [this.stage.get_mouseY()]});
+		if(!this.active) this.startGame();
 		this.stage.addEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
 	,onMouseUp: function(e) {
@@ -1257,9 +1348,33 @@ var DefaultAssetLibrary = function() {
 	this.className = new haxe.ds.StringMap();
 	openfl.AssetLibrary.call(this);
 	var id;
+	id = "embeds/SkipLegDay.eot";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.BINARY);
 	id = "embeds/floor_diffuse.jpg";
 	this.path.set(id,id);
 	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "embeds/icon.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "embeds/icon.svg";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.TEXT);
+	id = "embeds/SkipLegDay.ttf";
+	this.className.set(id,__ASSET__embeds_skiplegday_ttf);
+	this.type.set(id,openfl.AssetType.FONT);
+	id = "embeds/texture.png";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.IMAGE);
+	id = "embeds/SkipLegDay.woff";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.BINARY);
+	id = "embeds/asdfire.ogg";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.SOUND);
+	id = "embeds/SkipLegDay.svg";
+	this.path.set(id,id);
+	this.type.set(id,openfl.AssetType.TEXT);
 };
 $hxClasses["DefaultAssetLibrary"] = DefaultAssetLibrary;
 DefaultAssetLibrary.__name__ = ["DefaultAssetLibrary"];
@@ -1380,6 +1495,30 @@ DefaultAssetLibrary.prototype = $extend(openfl.AssetLibrary.prototype,{
 	}
 	,__class__: DefaultAssetLibrary
 });
+openfl.text = {};
+openfl.text.Font = function() {
+};
+$hxClasses["openfl.text.Font"] = openfl.text.Font;
+openfl.text.Font.__name__ = ["openfl","text","Font"];
+openfl.text.Font.enumerateFonts = function(enumerateDeviceFonts) {
+	if(enumerateDeviceFonts == null) enumerateDeviceFonts = false;
+	return [];
+};
+openfl.text.Font.registerFont = function(font) {
+};
+openfl.text.Font.prototype = {
+	__class__: openfl.text.Font
+};
+var __ASSET__embeds_skiplegday_ttf = function() {
+	openfl.text.Font.call(this);
+	this.fontName = "embeds/SkipLegDay.ttf";
+};
+$hxClasses["__ASSET__embeds_skiplegday_ttf"] = __ASSET__embeds_skiplegday_ttf;
+__ASSET__embeds_skiplegday_ttf.__name__ = ["__ASSET__embeds_skiplegday_ttf"];
+__ASSET__embeds_skiplegday_ttf.__super__ = openfl.text.Font;
+__ASSET__embeds_skiplegday_ttf.prototype = $extend(openfl.text.Font.prototype,{
+	__class__: __ASSET__embeds_skiplegday_ttf
+});
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -1416,7 +1555,7 @@ EReg.prototype = {
 };
 var FireEmitter = function(parentObject,followObject) {
 	this.stop = false;
-	this.scale = 1;
+	this.scale = .001;
 	this.rotationalVariance = 1;
 	this.perpendicularVariance = .5;
 	this.verticalVariance = .5;
@@ -3011,7 +3150,7 @@ var Marshmallow = function(mMaterial,cont,isBlackMallow) {
 		this.addChild(node);
 	}
 	if(!isBlackMallow) {
-		var dat = new openfl.display.BitmapData(256,256,false,2564881);
+		var dat = new openfl.display.BitmapData(256,256,false,1118481);
 		var material = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
 		material.set_lightPicker(Main.lightPicker);
 		var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
@@ -3316,7 +3455,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 var MarshmallowNode = function(i,p,adjacent,corner) {
 	this.m = Math;
 	this.burnRatio = .005;
-	this.burnCounter = 0;
 	this.burnTimer = 300;
 	this.heatDissipation = .999;
 	this.burnThreshold = 90;
@@ -3339,14 +3477,36 @@ $hxClasses["MarshmallowNode"] = MarshmallowNode;
 MarshmallowNode.__name__ = ["MarshmallowNode"];
 MarshmallowNode.__super__ = away3d.containers.ObjectContainer3D;
 MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototype,{
-	addNeighbors: function() {
+	reset: function() {
+		this.heat = 0;
+		this.burned = false;
+		this.burning = false;
+		this.burnCounter = 0;
+		this.oldX = 0;
+		this.oldY = 0;
+		this.oldZ = 0;
+		this.emitter = null;
+		this.addedHeat = 0;
+		this.heatMultiplier = 0;
+		this.marshmallow.verts[this.index * 3] = this.get_x();
+		this.marshmallow.verts[this.index * 3 + 1] = this.get_y();
+		this.marshmallow.verts[this.index * 3 + 2] = this.get_z();
+		this.marshmallow.subgeometry.updateVertexData(this.marshmallow.verts);
+		this.marshmallow.uvs[this.index * 2] = .5;
+		this.marshmallow.subgeometry.updateUVData(this.marshmallow.uvs);
+		this.marshmallow.blackMallow.verts[this.index * 3] = this.get_x();
+		this.marshmallow.blackMallow.verts[this.index * 3 + 1] = this.get_y();
+		this.marshmallow.blackMallow.verts[this.index * 3 + 2] = this.get_z();
+		this.marshmallow.blackMallow.subgeometry.updateVertexData(this.marshmallow.blackMallow.verts);
+	}
+	,addNeighbors: function() {
 		this.neighbors = new Array();
 		var _g = 0;
 		var _g1 = this.neighborIndices;
 		while(_g < _g1.length) {
 			var adj = _g1[_g];
 			++_g;
-			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 78, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
+			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 107, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
 			this.neighbors.push(this.marshmallow.nodes[adj]);
 		}
 		if(this.isCorner) {
@@ -3363,7 +3523,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		this.emitter = new FireEmitter(Main.fireContainer,this);
 		this.marshmallow.emitters.push(this.emitter);
 		this.burning = true;
-		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 1.5;
+		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 2;
 	}
 	,dotProduct: function(aX,aY,aZ,bX,bY,bZ) {
 		return bX * aX + bY * aY + bZ * aZ;
@@ -3396,7 +3556,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / this.m.sqrt(neighborDistance);
 					if(fireIsAgainstMarshmallow) {
 						if(neighborProjection > .1) neighborProjection = 1.3 + (1 - neighborProjection) * 1.4;
-						if(neighbor.get_z() == this.get_z()) neighborProjection = 4 * neighborProjection + 1;
+						if(neighbor.get_z() == this.get_z() && neighborProjection < .6) neighborProjection = 4 * neighborProjection + 1;
 						this.heat += this.heat * MarshmallowNode.heatTransferModifier;
 					}
 					if(neighborProjection > MarshmallowNode.heatTransferThresholdProjection) {
@@ -3415,8 +3575,6 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.emitter.stop = true;
 		}
 		var growth = Math.min(1,this.burnCounter / this.burnTimer);
-		if(this.burning) {
-		}
 		this.marshmallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 2] = this.get_z() + this.maxZGrowth * growth;
@@ -29879,24 +30037,10 @@ openfl.system.SecurityDomain.__name__ = ["openfl","system","SecurityDomain"];
 openfl.system.SecurityDomain.prototype = {
 	__class__: openfl.system.SecurityDomain
 };
-openfl.text = {};
 openfl.text._AntiAliasType = {};
 openfl.text._AntiAliasType.AntiAliasType_Impl_ = function() { };
 $hxClasses["openfl.text._AntiAliasType.AntiAliasType_Impl_"] = openfl.text._AntiAliasType.AntiAliasType_Impl_;
 openfl.text._AntiAliasType.AntiAliasType_Impl_.__name__ = ["openfl","text","_AntiAliasType","AntiAliasType_Impl_"];
-openfl.text.Font = function() {
-};
-$hxClasses["openfl.text.Font"] = openfl.text.Font;
-openfl.text.Font.__name__ = ["openfl","text","Font"];
-openfl.text.Font.enumerateFonts = function(enumerateDeviceFonts) {
-	if(enumerateDeviceFonts == null) enumerateDeviceFonts = false;
-	return [];
-};
-openfl.text.Font.registerFont = function(font) {
-};
-openfl.text.Font.prototype = {
-	__class__: openfl.text.Font
-};
 openfl.text.FontStyle = $hxClasses["openfl.text.FontStyle"] = { __ename__ : true, __constructs__ : ["REGULAR","ITALIC","BOLD_ITALIC","BOLD"] };
 openfl.text.FontStyle.REGULAR = ["REGULAR",0];
 openfl.text.FontStyle.REGULAR.toString = $estr;
@@ -30963,7 +31107,7 @@ Main.zAccelerometerAxis = 0;
 away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
 MarshmallowNode.init = false;
 MarshmallowNode.heatTransferThresholdProjection = -.2;
-MarshmallowNode.heatTransferModifier = .001;
+MarshmallowNode.heatTransferModifier = .0015;
 aglsl.Context3D.enableErrorChecking = false;
 aglsl.Context3D.resources = [];
 aglsl.Context3D.driverInfo = "Call getter function instead";
