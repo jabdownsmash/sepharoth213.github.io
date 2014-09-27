@@ -1118,6 +1118,11 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		Main.lightPicker = new away3d.materials.lightpickers.StaticLightPicker([this._light3]);
 		this.mesh = new Marshmallow(container);
 		this._view.get_scene().addChild(this.mesh);
+		this.match = new Match();
+		this.match.set_x(-100);
+		this.match.set_y(-900);
+		this.match.set_rotationZ(100);
+		this._view.get_scene().addChild(this.match);
 		this._view.setRenderCallback($bind(this,this._onEnterFrame));
 		this._t = openfl.Lib.getTimer();
 		this.stage.addEventListener(openfl.events.MouseEvent.MOUSE_DOWN,$bind(this,this.onMouseDown));
@@ -1143,18 +1148,21 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var dt = (t - this._t) * 0.001;
 		this._t = t;
 		this.mesh.update(dt);
-		if(this.mesh.done()) this.endGame();
+		if(this.mesh.burningNodes() > 3) {
+			motion.Actuate.tween(this.match,1,{ x : -100, y : -800, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
+			motion.Actuate.tween(this.match,1,{ rotationZ : 120}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
+		}
+		this.match.update(dt,this.mesh.nodes);
 		this._view.render();
 	}
 	,startGame: function() {
 		this.mesh.reset($bind(this,this.beginBurn));
 		motion.Actuate.tween(this.txtField,1,{ alpha : 0});
 		motion.Actuate.tween(this.txtField2,1,{ alpha : 0});
+		motion.Actuate.tween(this.match,1,{ x : 100, y : -290, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
+		motion.Actuate.tween(this.match,1,{ rotationZ : 30}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
 	}
 	,beginBurn: function() {
-		var i = Std["int"](Math.random() * (this.mesh.nodes.length - 1));
-		this.mesh.nodes[i].burn();
-		this.mesh.nodes[i + 1].burn();
 		this.active = true;
 	}
 	,endGame: function() {
@@ -1170,7 +1178,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.move = true;
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
-		haxe.Log.trace(this.stage.get_mouseX(),{ fileName : "Main.hx", lineNumber : 265, className : "Main", methodName : "onMouseDown", customParams : [this.stage.get_mouseY()]});
+		haxe.Log.trace(this.stage.get_mouseX(),{ fileName : "Main.hx", lineNumber : 282, className : "Main", methodName : "onMouseDown", customParams : [this.stage.get_mouseY()]});
 		if(!this.active && !MarshmallowNode.tweenLocked) this.startGame();
 		this.stage.addEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
@@ -1531,7 +1539,7 @@ FireEmitter.prototype = {
 		this.parent.addSubGeometry(fireParticle.subGeom);
 		this.fireParticles.push(fireParticle);
 	}
-	,update: function(gravity,marshmallowNodes) {
+	,update: function(gravity) {
 		var _g = 0;
 		var _g1 = this.fireParticles;
 		while(_g < _g1.length) {
@@ -3067,8 +3075,8 @@ var Marshmallow = function(cont,isBlackMallow) {
 	if(isBlackMallow == null) isBlackMallow = false;
 	this.PI = 3.1415926535897932;
 	this.innerRings = 3;
-	this.horizontalResolution = 16;
-	this.verticalResolution = 4;
+	this.horizontalResolution = 32;
+	this.verticalResolution = 8;
 	this.cylinderRadius = 100;
 	this.cylinderHeight = 200;
 	var mMaterial;
@@ -3076,23 +3084,17 @@ var Marshmallow = function(cont,isBlackMallow) {
 		var b = openfl.Assets.getBitmapData("embeds/texture.png");
 		mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(b));
 		mMaterial.set_lightPicker(Main.lightPicker);
-		var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
-		var specularMethod = new away3d.materials.methods.CelSpecularMethod();
-		specularMethod.set_smoothness(100);
-		diffuseMethod.set_smoothness(0);
-		mMaterial.set_diffuseMethod(diffuseMethod);
-		mMaterial.set_specularMethod(specularMethod);
 	} else {
 		var dat = new openfl.display.BitmapData(256,256,false,1118481);
 		mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
 		mMaterial.set_lightPicker(Main.lightPicker);
-		var diffuseMethod1 = new away3d.materials.methods.CelDiffuseMethod(3);
-		var specularMethod1 = new away3d.materials.methods.CelSpecularMethod();
-		specularMethod1.set_smoothness(100);
-		diffuseMethod1.set_smoothness(0);
-		mMaterial.set_diffuseMethod(diffuseMethod1);
-		mMaterial.set_specularMethod(specularMethod1);
 	}
+	var diffuseMethod = new away3d.materials.methods.CelDiffuseMethod(3);
+	var specularMethod = new away3d.materials.methods.CelSpecularMethod();
+	specularMethod.set_smoothness(100);
+	diffuseMethod.set_smoothness(0);
+	mMaterial.set_diffuseMethod(diffuseMethod);
+	mMaterial.set_specularMethod(specularMethod);
 	this.container = cont;
 	this.emitters = new Array();
 	this.nodes = new Array();
@@ -3141,7 +3143,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		while(_g < _g1.length) {
 			var emitter = _g1[_g];
 			++_g;
-			emitter.update(new openfl.geom.Vector3D(0,.2,0),this.nodes);
+			emitter.update(new openfl.geom.Vector3D(0,.2,0));
 		}
 		var fireTime = openfl.Lib.getTimer() - fireStartTime;
 		var nodeStartTime = openfl.Lib.getTimer();
@@ -3176,10 +3178,22 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		}
 		return done;
 	}
+	,burningNodes: function() {
+		var num = 0;
+		var _g = 0;
+		var _g1 = this.nodes;
+		while(_g < _g1.length) {
+			var node = _g1[_g];
+			++_g;
+			if(node.burning) num++;
+		}
+		return num;
+	}
 	,generateMeshAndNodes: function() {
 		var geometry = new away3d.core.base.Geometry();
 		this.subgeometry = new away3d.core.base.SubGeometry();
 		this.verts = new Array();
+		this.normals = new Array();
 		this.uvs = new Array();
 		var indices = new Array();
 		var verticesPerCap = 1;
@@ -3201,11 +3215,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var z = i1 / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
-				this.verts.push(x);
-				this.verts.push(y);
-				this.verts.push(z);
-				this.uvs.push(0);
-				this.uvs.push(.5);
 				var adjacents = new Array();
 				if(j > 0 && i1 > 0) {
 					indices.push(i1 * this.horizontalResolution + j);
@@ -3224,7 +3233,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 					if(j == 0) adjacents.push(i1 * this.horizontalResolution + this.horizontalResolution); else adjacents.push(i1 * this.horizontalResolution + j - 1);
 					if(i1 == 0) adjacents.push(this.horizontalResolution * (this.verticalResolution + 1) + verticesPerCap + (j / 2 | 0)); else adjacents.push(i1 * this.horizontalResolution + j - this.horizontalResolution);
 				}
-				if(i1 == 0) this.addNode(x,y,z,adjacents,true); else this.addNode(x,y,z,adjacents);
+				if(i1 == 0) this.addNode(1,x,y,z,adjacents); else this.addNode(0,x,y,z,adjacents);
 			}
 			if(i1 > 0) {
 				indices.push(i1 * this.horizontalResolution);
@@ -3242,11 +3251,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			var x1 = Math.cos(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var y1 = Math.sin(j1 / this.horizontalResolution * 2 * this.PI) * this.cylinderRadius;
 			var z1 = this.cylinderHeight / 2;
-			this.verts.push(x1);
-			this.verts.push(y1);
-			this.verts.push(z1);
-			this.uvs.push(0);
-			this.uvs.push(.5);
 			var adjacents1 = new Array();
 			adjacents1.push(this.horizontalResolution * (this.verticalResolution + 1) + (j1 / 2 | 0));
 			adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - this.horizontalResolution);
@@ -3260,7 +3264,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 - 1);
 			} else adjacents1.push(this.horizontalResolution * this.verticalResolution + this.horizontalResolution);
 			if(j1 < this.horizontalResolution) adjacents1.push(this.horizontalResolution * this.verticalResolution + j1 + 1); else adjacents1.push(this.horizontalResolution * this.verticalResolution);
-			this.addNode(x1,y1,z1,adjacents1,true);
+			this.addNode(1,x1,y1,z1,adjacents1);
 		}
 		indices.push(this.verticalResolution * this.horizontalResolution);
 		indices.push(this.verticalResolution * this.horizontalResolution - 1 + this.horizontalResolution);
@@ -3285,11 +3289,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x2 = Math.cos(j2 / numNodes * 2 * this.PI) * innerRadius;
 				var y2 = Math.sin(j2 / numNodes * 2 * this.PI) * innerRadius;
 				var z2 = this.cylinderHeight / 2;
-				this.verts.push(x2);
-				this.verts.push(y2);
-				this.verts.push(z2);
-				this.uvs.push(0);
-				this.uvs.push(.5);
 				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2);
 				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
 				if(j2 != numNodes - 1) adjacents2.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - numNodes + 1);
@@ -3306,7 +3305,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2);
 					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
 				}
-				this.addNode(x2,y2,z2,adjacents2);
+				this.addNode(2,x2,y2,z2,adjacents2);
 				totalInnerNodes += 1;
 			}
 			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes);
@@ -3325,11 +3324,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		var y3 = 0;
 		var z3 = this.cylinderHeight / 2;
 		var adjacents3 = new Array();
-		this.verts.push(x3);
-		this.verts.push(y3);
-		this.verts.push(z3);
-		this.uvs.push(0);
-		this.uvs.push(.5);
 		var numInnerRingNodes = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
 		var _g14 = 0;
 		var _g6 = numInnerRingNodes - 1;
@@ -3341,7 +3335,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			indices.push(totalNonInnerNodes + totalInnerNodes);
 		}
 		adjacents3.push(totalNonInnerNodes + totalInnerNodes - 1);
-		this.addNode(x3,y3,z3,adjacents3);
+		this.addNode(2,x3,y3,z3,adjacents3);
 		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
 		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes);
 		indices.push(totalNonInnerNodes + totalInnerNodes);
@@ -3362,11 +3356,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x4 = Math.cos(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
 				var y4 = Math.sin(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
 				var z4 = -this.cylinderHeight / 2;
-				this.verts.push(x4);
-				this.verts.push(y4);
-				this.verts.push(z4);
-				this.uvs.push(0);
-				this.uvs.push(.5);
 				if(i4 != 0) {
 					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2);
 					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
@@ -3388,7 +3377,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 					indices.push(totalNonInnerNodes + totalInnerNodes);
 					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
 				}
-				this.addNode(x4,y4,z4,adjacents4);
+				this.addNode(2,x4,y4,z4,adjacents4);
 				totalInnerNodes += 1;
 			}
 			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
@@ -3413,11 +3402,6 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		var y5 = 0;
 		var z5 = -this.cylinderHeight / 2;
 		var adjacents5 = new Array();
-		this.verts.push(x5);
-		this.verts.push(y5);
-		this.verts.push(z5);
-		this.uvs.push(0);
-		this.uvs.push(.5);
 		var numInnerRingNodes1 = Std["int"](this.horizontalResolution / Math.pow(2,this.innerRings - 1));
 		var _g16 = 0;
 		var _g8 = numInnerRingNodes1 - 1;
@@ -3429,13 +3413,14 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5 + 1);
 		}
 		adjacents5.push(totalNonInnerNodes + totalInnerNodes - 1);
-		this.addNode(x5,y5,z5,adjacents5);
+		this.addNode(2,x5,y5,z5,adjacents5);
 		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
 		indices.push(totalNonInnerNodes + totalInnerNodes);
 		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1);
 		this.subgeometry.updateVertexData(this.verts);
 		this.subgeometry.updateUVData(this.uvs);
 		this.subgeometry.updateIndexData(indices);
+		this.subgeometry.updateVertexNormalData(this.normals);
 		geometry.addSubGeometry(this.subgeometry);
 		var _g9 = 0;
 		var _g17 = this.nodes;
@@ -3446,24 +3431,44 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		}
 		return geometry;
 	}
-	,addNode: function(x,y,z,adjacents,corner) {
-		if(corner == null) corner = false;
-		var node = new MarshmallowNode(this.nodes.length,this,adjacents,corner);
+	,addNode: function(type,x,y,z,adjacents) {
+		var node = new MarshmallowNode(this.nodes.length,this,adjacents,type);
 		node.set_x(x);
 		node.set_y(y);
 		node.set_z(z);
+		node.type = type;
 		this.nodes.push(node);
+		this.verts.push(x);
+		this.verts.push(y);
+		this.verts.push(z);
+		this.uvs.push(0);
+		this.uvs.push(.5);
+		if(type == 0) {
+			var mag = Math.sqrt(x * x + y * y);
+			this.normals.push(x / mag);
+			this.normals.push(y / mag);
+			this.normals.push(0);
+		} else if(type == 1) {
+			this.normals.push(0);
+			this.normals.push(0);
+			this.normals.push(z / Math.abs(z));
+		} else {
+			var mag1 = Math.sqrt(x * x + y * y + z * z);
+			this.normals.push(x / mag1);
+			this.normals.push(y / mag1);
+			this.normals.push(z / mag1);
+		}
 	}
 	,__class__: Marshmallow
 });
-var MarshmallowNode = function(i,p,adjacent,corner) {
-	this.m = Math;
+Math.__name__ = ["Math"];
+var MarshmallowNode = function(i,p,adjacent,t) {
 	this.burnRatio = .005;
 	this.burnTimer = 300;
 	this.heatDissipation = .999;
 	this.burnThreshold = 90;
 	this.index = i;
-	this.isCorner = corner;
+	this.type = t;
 	this.heat = 0;
 	this.burned = false;
 	this.burning = false;
@@ -3496,6 +3501,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		this.oldX = 0;
 		this.oldY = 0;
 		this.oldZ = 0;
+		if(this.emitter != null) this.emitter.stop = true;
 		this.emitter = null;
 		this.addedHeat = 0;
 		this.heatMultiplier = 0;
@@ -3517,17 +3523,16 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		while(_g < _g1.length) {
 			var adj = _g1[_g];
 			++_g;
-			if(this.marshmallow.nodes[adj] == null) haxe.Log.trace(this.index,{ fileName : "MarshmallowNode.hx", lineNumber : 121, className : "MarshmallowNode", methodName : "addNeighbors", customParams : [adj,HxOverrides.indexOf(this.neighborIndices,adj,0)]});
 			this.neighbors.push(this.marshmallow.nodes[adj]);
 		}
-		if(this.isCorner) {
-			this.maxXGrowth = this.get_x() * (1.13 + this.m.random() / 10) - this.get_x();
-			this.maxYGrowth = this.get_y() * (1.13 + this.m.random() / 10) - this.get_y();
-			this.maxZGrowth = this.get_z() * (1.13 + this.m.random() / 10) - this.get_z();
+		if(this.type == 1) {
+			this.maxXGrowth = this.get_x() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_z();
 		} else {
-			this.maxXGrowth = this.get_x() * (1.2 + this.m.random() / 10) - this.get_x();
-			this.maxYGrowth = this.get_y() * (1.2 + this.m.random() / 10) - this.get_y();
-			this.maxZGrowth = this.get_z() * (1.2 + this.m.random() / 10) - this.get_z();
+			this.maxXGrowth = this.get_x() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_z();
 		}
 	}
 	,burn: function() {
@@ -3535,7 +3540,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		this.marshmallow.emitters.push(this.emitter);
 		this.burning = true;
 		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 2;
-		haxe.Log.trace("wooteern",{ fileName : "MarshmallowNode.hx", lineNumber : 150, className : "MarshmallowNode", methodName : "burn"});
+		haxe.Log.trace("wooteern",{ fileName : "MarshmallowNode.hx", lineNumber : 174, className : "MarshmallowNode", methodName : "burn"});
 	}
 	,dotProduct: function(aX,aY,aZ,bX,bY,bZ) {
 		return bX * aX + bY * aY + bZ * aZ;
@@ -3547,7 +3552,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 	}
 	,update: function(fireUp) {
 		if(this.oldX != this.get_x() || this.oldY != this.get_y() || this.oldZ != this.get_z()) {
-			this.magnitude = this.m.sqrt(this.get_x() * this.get_x() + this.get_y() * this.get_y() + this.get_z() * this.get_z());
+			this.magnitude = MarshmallowNode.m.sqrt(this.get_x() * this.get_x() + this.get_y() * this.get_y() + this.get_z() * this.get_z());
 			this.oldX = this.get_x();
 			this.oldY = this.get_y();
 			this.oldZ = this.get_z();
@@ -3556,7 +3561,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.heat = this.heat * this.heatDissipation;
 			if(this.heat < this.burnThreshold) this.burnCounter = this.burnTimer;
 			this.burnCounter += this.heat * this.burnRatio;
-			var fireIsAgainstMarshmallow = 0 > this.dotProduct(this.get_x(),this.get_y(),this.get_z(),fireUp.x,fireUp.y,fireUp.z) / this.m.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z) - this.magnitude;
+			var fireIsAgainstMarshmallow = 0 > this.dotProduct(this.get_x(),this.get_y(),this.get_z(),fireUp.x,fireUp.y,fireUp.z) / MarshmallowNode.m.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z) - this.magnitude;
 			var _g = 0;
 			var _g1 = this.neighbors;
 			while(_g < _g1.length) {
@@ -3564,8 +3569,8 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 				++_g;
 				if(!neighbor.burned) {
 					var fireMagnitude = Math.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z);
-					var neighborDistance = this.m.sqrt(this.m.pow(neighbor.get_scenePosition().x - this.get_scenePosition().x,2) + this.m.pow(neighbor.get_scenePosition().y - this.get_scenePosition().y,2) + this.m.pow(neighbor.get_scenePosition().z - this.get_scenePosition().z,2));
-					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / this.m.sqrt(neighborDistance);
+					var neighborDistance = MarshmallowNode.m.sqrt(MarshmallowNode.m.pow(neighbor.get_scenePosition().x - this.get_scenePosition().x,2) + MarshmallowNode.m.pow(neighbor.get_scenePosition().y - this.get_scenePosition().y,2) + MarshmallowNode.m.pow(neighbor.get_scenePosition().z - this.get_scenePosition().z,2));
+					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / MarshmallowNode.m.sqrt(neighborDistance);
 					if(fireIsAgainstMarshmallow) {
 						if(neighborProjection > .1) neighborProjection = 1.3 + (1 - neighborProjection) * 1.4;
 						if(neighbor.get_z() == this.get_z() && neighborProjection < .6) neighborProjection = 4 * neighborProjection + 1;
@@ -3587,7 +3592,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.emitter.stop = true;
 		}
 		var growth;
-		if(MarshmallowNode.tweenLocked) growth = this.m.min(1,this.burnCounter * MarshmallowNode.heatScale / this.burnTimer); else growth = this.m.min(1,this.burnCounter / this.burnTimer);
+		if(MarshmallowNode.tweenLocked) growth = MarshmallowNode.m.min(1,this.burnCounter * MarshmallowNode.heatScale / this.burnTimer); else growth = MarshmallowNode.m.min(1,this.burnCounter / this.burnTimer);
 		this.marshmallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 2] = this.get_z() + this.maxZGrowth * growth;
@@ -3601,7 +3606,35 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 	}
 	,__class__: MarshmallowNode
 });
-Math.__name__ = ["Math"];
+var Match = function() {
+	this.matchDistance = 40;
+	var mMaterial;
+	var dat = new openfl.display.BitmapData(256,256,false,15583663);
+	mMaterial = new away3d.materials.TextureMaterial(new away3d.textures.BitmapTexture(dat));
+	mMaterial.set_lightPicker(Main.lightPicker);
+	var cube = new away3d.primitives.CubeGeometry(10,300,10);
+	away3d.entities.Mesh.call(this,cube,mMaterial);
+	this.fireContainer = new away3d.containers.ObjectContainer3D();
+	this.fireContainer.set_y(150);
+	this.addChild(this.fireContainer);
+	this.emitter = new FireEmitter(Main.fireContainer,this.fireContainer);
+};
+$hxClasses["Match"] = Match;
+Match.__name__ = ["Match"];
+Match.__super__ = away3d.entities.Mesh;
+Match.prototype = $extend(away3d.entities.Mesh.prototype,{
+	update: function(deltaTime,nodes) {
+		this.emitter.update(new openfl.geom.Vector3D(0,.2,0));
+		var _g = 0;
+		while(_g < nodes.length) {
+			var node = nodes[_g];
+			++_g;
+			var distance = MarshmallowNode.m.sqrt(MarshmallowNode.m.pow(node.get_scenePosition().x - this.fireContainer.get_scenePosition().x,2) + MarshmallowNode.m.pow(node.get_scenePosition().y - this.fireContainer.get_scenePosition().y,2) + MarshmallowNode.m.pow(node.get_scenePosition().z - this.fireContainer.get_scenePosition().z,2));
+			if(distance < this.matchDistance) node.heat += 10;
+		}
+	}
+	,__class__: Match
+});
 var NMEPreloader = function() {
 	openfl.display.Sprite.call(this);
 	var backgroundColor = this.getBackgroundColor();
@@ -24555,6 +24588,61 @@ motion.actuators.TransformActuator.prototype = $extend(motion.actuators.SimpleAc
 	}
 	,__class__: motion.actuators.TransformActuator
 });
+motion.easing.Cubic = function() { };
+$hxClasses["motion.easing.Cubic"] = motion.easing.Cubic;
+motion.easing.Cubic.__name__ = ["motion","easing","Cubic"];
+motion.easing.Cubic.__properties__ = {get_easeOut:"get_easeOut",get_easeInOut:"get_easeInOut",get_easeIn:"get_easeIn"}
+motion.easing.Cubic.get_easeIn = function() {
+	return new motion.easing.CubicEaseIn();
+};
+motion.easing.Cubic.get_easeInOut = function() {
+	return new motion.easing.CubicEaseInOut();
+};
+motion.easing.Cubic.get_easeOut = function() {
+	return new motion.easing.CubicEaseOut();
+};
+motion.easing.CubicEaseIn = function() {
+};
+$hxClasses["motion.easing.CubicEaseIn"] = motion.easing.CubicEaseIn;
+motion.easing.CubicEaseIn.__name__ = ["motion","easing","CubicEaseIn"];
+motion.easing.CubicEaseIn.__interfaces__ = [motion.easing.IEasing];
+motion.easing.CubicEaseIn.prototype = {
+	calculate: function(k) {
+		return k * k * k;
+	}
+	,ease: function(t,b,c,d) {
+		return c * (t /= d) * t * t + b;
+	}
+	,__class__: motion.easing.CubicEaseIn
+};
+motion.easing.CubicEaseInOut = function() {
+};
+$hxClasses["motion.easing.CubicEaseInOut"] = motion.easing.CubicEaseInOut;
+motion.easing.CubicEaseInOut.__name__ = ["motion","easing","CubicEaseInOut"];
+motion.easing.CubicEaseInOut.__interfaces__ = [motion.easing.IEasing];
+motion.easing.CubicEaseInOut.prototype = {
+	calculate: function(k) {
+		if((k /= 0.5) < 1) return 0.5 * k * k * k; else return 0.5 * ((k -= 2) * k * k + 2);
+	}
+	,ease: function(t,b,c,d) {
+		if((t /= d / 2) < 1) return c / 2 * t * t * t + b; else return c / 2 * ((t -= 2) * t * t + 2) + b;
+	}
+	,__class__: motion.easing.CubicEaseInOut
+};
+motion.easing.CubicEaseOut = function() {
+};
+$hxClasses["motion.easing.CubicEaseOut"] = motion.easing.CubicEaseOut;
+motion.easing.CubicEaseOut.__name__ = ["motion","easing","CubicEaseOut"];
+motion.easing.CubicEaseOut.__interfaces__ = [motion.easing.IEasing];
+motion.easing.CubicEaseOut.prototype = {
+	calculate: function(k) {
+		return --k * k * k + 1;
+	}
+	,ease: function(t,b,c,d) {
+		return c * ((t = t / d - 1) * t * t + 1) + b;
+	}
+	,__class__: motion.easing.CubicEaseOut
+};
 motion.easing.ExpoEaseIn = function() {
 };
 $hxClasses["motion.easing.ExpoEaseIn"] = motion.easing.ExpoEaseIn;
@@ -32164,6 +32252,7 @@ Main.xAccelerometerAxis = 0;
 Main.yAccelerometerAxis = 0;
 Main.zAccelerometerAxis = 0;
 away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
+MarshmallowNode.m = Math;
 MarshmallowNode.init = false;
 MarshmallowNode.heatTransferThresholdProjection = -.2;
 MarshmallowNode.heatTransferModifier = .0015;
