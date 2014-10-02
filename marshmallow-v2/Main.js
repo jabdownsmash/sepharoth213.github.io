@@ -1052,6 +1052,7 @@ openfl.display.Sprite.prototype = $extend(openfl.display.DisplayObjectContainer.
 });
 var Main = function() {
 	this.active = false;
+	this.matchOut = false;
 	this.move = false;
 	openfl.display.Sprite.call(this);
 	this.stage.scaleMode = openfl.display.StageScaleMode.NO_SCALE;
@@ -1136,6 +1137,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		}
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
+		this.matchOut = false;
 		this.stage.addEventListener(openfl.events.Event.RESIZE,$bind(this,this.onResize));
 		this.onResize();
 	}
@@ -1148,9 +1150,10 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		var dt = (t - this._t) * 0.001;
 		this._t = t;
 		this.mesh.update(dt);
-		if(this.mesh.burningNodes() > 3) {
-			motion.Actuate.tween(this.match,1,{ x : -100, y : -800, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
-			motion.Actuate.tween(this.match,1,{ rotationZ : 120}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
+		if(this.mesh.burningNodes() > 3 && !this.matchOut) {
+			motion.Actuate.tween(this.match,2,{ x : -100, y : -800, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
+			motion.Actuate.tween(this.match,2,{ rotationZ : 120}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
+			this.matchOut = true;
 		}
 		this.match.update(dt,this.mesh.nodes);
 		this._view.render();
@@ -1159,8 +1162,8 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.mesh.reset($bind(this,this.beginBurn));
 		motion.Actuate.tween(this.txtField,1,{ alpha : 0});
 		motion.Actuate.tween(this.txtField2,1,{ alpha : 0});
-		motion.Actuate.tween(this.match,1,{ x : 100, y : -290, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
-		motion.Actuate.tween(this.match,1,{ rotationZ : 30}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
+		motion.Actuate.tween(this.match,3,{ x : 100, y : -290, z : 0}).ease(motion.easing.Cubic.get_easeInOut());
+		motion.Actuate.tween(this.match,3,{ rotationZ : 30}).smartRotation().ease(motion.easing.Cubic.get_easeInOut());
 	}
 	,beginBurn: function() {
 		this.active = true;
@@ -1178,7 +1181,7 @@ Main.prototype = $extend(openfl.display.Sprite.prototype,{
 		this.move = true;
 		this.lastMouseX = this.stage.get_mouseX();
 		this.lastMouseY = this.stage.get_mouseY();
-		haxe.Log.trace(this.stage.get_mouseX(),{ fileName : "Main.hx", lineNumber : 282, className : "Main", methodName : "onMouseDown", customParams : [this.stage.get_mouseY()]});
+		haxe.Log.trace(this.stage.get_mouseX(),{ fileName : "Main.hx", lineNumber : 286, className : "Main", methodName : "onMouseDown", customParams : [this.stage.get_mouseY()]});
 		if(!this.active && !MarshmallowNode.tweenLocked) this.startGame();
 		this.stage.addEventListener(openfl.events.Event.MOUSE_LEAVE,$bind(this,this.onStageMouseLeave));
 	}
@@ -1500,7 +1503,7 @@ var FireEmitter = function(parentObject,followObject) {
 	this.rotationalVariance = 1;
 	this.perpendicularVariance = .5;
 	this.verticalVariance = .5;
-	this.spawnChance = .4;
+	this.spawnChance = .3;
 	this.fireRate = 7;
 	this.fireCounter = 0;
 	this.follow = followObject;
@@ -1540,6 +1543,16 @@ FireEmitter.prototype = {
 		this.fireParticles.push(fireParticle);
 	}
 	,update: function(gravity) {
+		var position = this.follow.get_scenePosition();
+		this.x = position.x;
+		this.y = position.y;
+		this.z = position.z;
+		this.bgMesh.set_x(this.x);
+		this.bgMesh.set_y(this.y);
+		this.bgMesh.set_z(this.z);
+		this.bgMesh.set_rotationX(Math.random() * 360);
+		this.bgMesh.set_rotationY(Math.random() * 360);
+		this.bgMesh.set_rotationZ(Math.random() * 360);
 		var _g = 0;
 		var _g1 = this.fireParticles;
 		while(_g < _g1.length) {
@@ -1551,16 +1564,6 @@ FireEmitter.prototype = {
 			this.spawnFire();
 			this.fireCounter = 0;
 		}
-		var position = this.follow.get_scenePosition();
-		this.x = position.x;
-		this.y = position.y;
-		this.z = position.z;
-		this.bgMesh.set_x(this.x);
-		this.bgMesh.set_y(this.y);
-		this.bgMesh.set_z(this.z);
-		this.bgMesh.set_rotationX(Math.random() * 360);
-		this.bgMesh.set_rotationY(Math.random() * 360);
-		this.bgMesh.set_rotationZ(Math.random() * 360);
 		var _g2 = 0;
 		var _g11 = this.toRemove;
 		while(_g2 < _g11.length) {
@@ -1578,7 +1581,7 @@ FireEmitter.prototype = {
 var FireParticle = function(emitter,decayTime,xVel,yVel,zVel,xRVel,yRVel,zRVel,sg) {
 	this.oldScale = 1;
 	this.speedOffset = 0;
-	this.decayTime = 30;
+	this.decayTime = 10;
 	this.decayCounter = 0;
 	this.xVelocity = xVel;
 	this.yVelocity = yVel;
@@ -3074,9 +3077,9 @@ away3d.entities.Mesh.prototype = $extend(away3d.entities.Entity.prototype,{
 var Marshmallow = function(cont,isBlackMallow) {
 	if(isBlackMallow == null) isBlackMallow = false;
 	this.PI = 3.1415926535897932;
-	this.innerRings = 3;
-	this.horizontalResolution = 32;
-	this.verticalResolution = 8;
+	this.innerRings = 4;
+	this.horizontalResolution = 64;
+	this.verticalResolution = 16;
 	this.cylinderRadius = 100;
 	this.cylinderHeight = 200;
 	var mMaterial;
@@ -3152,7 +3155,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		while(_g2 < _g11.length) {
 			var node = _g11[_g2];
 			++_g2;
-			node.update(new openfl.geom.Vector3D(0,.2,0));
+			node.update(new openfl.geom.Vector3D(0,.2,0),deltaTime);
 		}
 		var _g3 = 0;
 		var _g12 = this.nodes;
@@ -3211,7 +3214,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 			var _g21 = this.horizontalResolution;
 			while(_g3 < _g21) {
 				var j = _g3++;
-				var angleOffset = i1 % 2 / this.horizontalResolution * 2 * this.PI / 2;
+				var angleOffset = 0;
 				var x = Math.cos(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var y = Math.sin(j / this.horizontalResolution * 2 * this.PI + angleOffset) * this.cylinderRadius;
 				var z = i1 / this.verticalResolution * this.cylinderHeight - this.cylinderHeight / 2;
@@ -3274,8 +3277,8 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		indices.push(this.verticalResolution * this.horizontalResolution - this.horizontalResolution);
 		var totalNonInnerNodes = this.horizontalResolution * (this.verticalResolution + 1);
 		var totalInnerNodes = 0;
-		var previousRingCount = this.horizontalResolution;
-		var previousPreviousRingCount = 0;
+		var previousRingStart = totalNonInnerNodes - this.horizontalResolution;
+		var currentRingStart = totalNonInnerNodes;
 		var _g13 = 0;
 		var _g5 = this.innerRings - 1;
 		while(_g13 < _g5) {
@@ -3289,36 +3292,36 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x2 = Math.cos(j2 / numNodes * 2 * this.PI) * innerRadius;
 				var y2 = Math.sin(j2 / numNodes * 2 * this.PI) * innerRadius;
 				var z2 = this.cylinderHeight / 2;
-				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2);
-				adjacents2.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
-				if(j2 != numNodes - 1) adjacents2.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents2.push(totalNonInnerNodes + totalInnerNodes - numNodes + 1);
-				if(i2 != this.innerRings - 2) adjacents2.push(totalNonInnerNodes + totalInnerNodes - j2 + numNodes + (j2 / 2 | 0)); else adjacents2.push(totalNonInnerNodes + verticesPerCap - 1);
+				adjacents2.push(previousRingStart + j2 * 2);
+				adjacents2.push(previousRingStart + j2 * 2 + 1);
+				if(j2 != numNodes - 1) adjacents2.push(currentRingStart + j2 + 1); else adjacents2.push(currentRingStart);
+				if(i2 != this.innerRings - 2) adjacents2.push(currentRingStart + numNodes + (j2 / 2 | 0)); else adjacents2.push(totalNonInnerNodes + verticesPerCap - 1);
 				if(j2 > 0) {
-					adjacents2.push(totalNonInnerNodes + totalInnerNodes - 1);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 - 1);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 - 1);
-					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2);
-					indices.push(totalNonInnerNodes - previousRingCount + j2 * 2 + 1);
+					adjacents2.push(currentRingStart + j2 - 1);
+					indices.push(currentRingStart + j2);
+					indices.push(currentRingStart + j2 - 1);
+					indices.push(previousRingStart + j2 * 2 - 1);
+					indices.push(currentRingStart + j2);
+					indices.push(previousRingStart + j2 * 2 - 1);
+					indices.push(previousRingStart + j2 * 2);
+					indices.push(currentRingStart + j2);
+					indices.push(previousRingStart + j2 * 2);
+					indices.push(previousRingStart + j2 * 2 + 1);
 				}
 				this.addNode(2,x2,y2,z2,adjacents2);
 				totalInnerNodes += 1;
 			}
-			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes);
-			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-			indices.push(totalNonInnerNodes - previousRingCount);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes);
-			indices.push(totalNonInnerNodes - previousRingCount);
-			indices.push(totalNonInnerNodes - previousRingCount + 1);
-			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes - 1);
-			indices.push(totalNonInnerNodes - previousRingCount);
-			previousRingCount = previousPreviousRingCount;
-			previousPreviousRingCount += numNodes;
+			indices.push(currentRingStart);
+			indices.push(currentRingStart + numNodes - 1);
+			indices.push(previousRingStart);
+			indices.push(currentRingStart + numNodes - numNodes);
+			indices.push(previousRingStart);
+			indices.push(previousRingStart + 1);
+			indices.push(currentRingStart + numNodes - 1);
+			indices.push(currentRingStart - 1);
+			indices.push(previousRingStart);
+			previousRingStart = currentRingStart;
+			currentRingStart += numNodes;
 		}
 		var x3 = 0;
 		var y3 = 0;
@@ -3339,10 +3342,10 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
 		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes);
 		indices.push(totalNonInnerNodes + totalInnerNodes);
-		totalNonInnerNodes = this.horizontalResolution * (this.verticalResolution + 1) + totalInnerNodes + 1;
+		totalNonInnerNodes = this.horizontalResolution * (this.verticalResolution + 1);
+		previousRingStart = 0;
+		currentRingStart = totalNonInnerNodes + verticesPerCap;
 		totalInnerNodes = 0;
-		previousRingCount = totalNonInnerNodes;
-		previousPreviousRingCount = 0;
 		var _g15 = 0;
 		var _g7 = this.innerRings - 1;
 		while(_g15 < _g7) {
@@ -3356,47 +3359,42 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 				var x4 = Math.cos(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
 				var y4 = Math.sin(j3 / numNodes1 * 2 * this.PI) * innerRadius1;
 				var z4 = -this.cylinderHeight / 2;
-				if(i4 != 0) {
-					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2);
-					adjacents4.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
-				} else {
-					adjacents4.push(j3 * 2);
-					adjacents4.push(j3 * 2 + 1);
-				}
-				if(j3 != numNodes1 - 1) adjacents4.push(totalNonInnerNodes + totalInnerNodes + 1); else adjacents4.push(totalNonInnerNodes + totalInnerNodes - numNodes1 + 1);
-				if(i4 != this.innerRings - 2) adjacents4.push(totalNonInnerNodes + totalInnerNodes - j3 + numNodes1 + (j3 / 2 | 0)); else adjacents4.push(totalNonInnerNodes + verticesPerCap - 1);
+				adjacents4.push(previousRingStart + j3 * 2);
+				adjacents4.push(previousRingStart + j3 * 2 + 1);
+				if(j3 != numNodes1 - 1) adjacents4.push(currentRingStart + j3 + 1); else adjacents4.push(currentRingStart);
+				if(i4 != this.innerRings - 2) adjacents4.push(currentRingStart + numNodes1 + (j3 / 2 | 0)); else adjacents4.push(totalNonInnerNodes + 2 * verticesPerCap - 1);
 				if(j3 > 0) {
-					adjacents4.push(totalNonInnerNodes + totalInnerNodes - 1);
-					indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 - 1);
-					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 - 1);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2);
-					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2);
-					indices.push(totalNonInnerNodes + totalInnerNodes);
-					indices.push(totalNonInnerNodes - previousRingCount + j3 * 2 + 1);
+					adjacents4.push(currentRingStart + j3 - 1);
+					indices.push(currentRingStart + j3);
+					indices.push(previousRingStart + j3 * 2 - 1);
+					indices.push(currentRingStart + j3 - 1);
+					indices.push(currentRingStart + j3);
+					indices.push(previousRingStart + j3 * 2);
+					indices.push(previousRingStart + j3 * 2 - 1);
+					indices.push(currentRingStart + j3);
+					indices.push(previousRingStart + j3 * 2 + 1);
+					indices.push(previousRingStart + j3 * 2);
 				}
 				this.addNode(2,x4,y4,z4,adjacents4);
 				totalInnerNodes += 1;
 			}
-			indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1);
-			indices.push(totalNonInnerNodes - previousRingCount);
-			indices.push(totalNonInnerNodes - previousRingCount);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1);
-			indices.push(totalNonInnerNodes - previousRingCount + 1);
-			if(i4 == 0) {
-				indices.push(0);
-				indices.push(this.horizontalResolution - 1);
-				indices.push(totalNonInnerNodes + totalInnerNodes - 1);
+			indices.push(currentRingStart);
+			indices.push(previousRingStart);
+			indices.push(currentRingStart + numNodes1 - 1);
+			indices.push(currentRingStart);
+			indices.push(previousRingStart + 1);
+			indices.push(previousRingStart);
+			if(i4 > 0) {
+				indices.push(currentRingStart + numNodes1 - 1);
+				indices.push(previousRingStart);
+				indices.push(currentRingStart - 1);
 			} else {
-				indices.push(totalNonInnerNodes + totalInnerNodes - numNodes1 - 1);
-				indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-				indices.push(totalNonInnerNodes - previousRingCount);
+				indices.push(currentRingStart + numNodes1 - 1);
+				indices.push(previousRingStart);
+				indices.push(previousRingStart + this.horizontalResolution - 1);
 			}
-			previousRingCount = previousPreviousRingCount;
-			previousPreviousRingCount += numNodes1;
+			previousRingStart = currentRingStart;
+			currentRingStart += numNodes1;
 		}
 		var x5 = 0;
 		var y5 = 0;
@@ -3407,16 +3405,16 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		var _g8 = numInnerRingNodes1 - 1;
 		while(_g16 < _g8) {
 			var i5 = _g16++;
-			adjacents5.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5);
-			indices.push(totalNonInnerNodes + totalInnerNodes);
-			indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1 + i5 + 1);
+			adjacents5.push(totalNonInnerNodes + totalInnerNodes * 2 - numInnerRingNodes1 + i5);
+			indices.push(totalNonInnerNodes + totalInnerNodes * 2 - numInnerRingNodes1 + i5);
+			indices.push(totalNonInnerNodes + totalInnerNodes * 2);
+			indices.push(totalNonInnerNodes + totalInnerNodes * 2 - numInnerRingNodes1 + i5 + 1);
 		}
-		adjacents5.push(totalNonInnerNodes + totalInnerNodes - 1);
+		adjacents5.push(totalNonInnerNodes + totalInnerNodes * 2 - 1);
 		this.addNode(2,x5,y5,z5,adjacents5);
-		indices.push(totalNonInnerNodes + totalInnerNodes - 1);
-		indices.push(totalNonInnerNodes + totalInnerNodes);
-		indices.push(totalNonInnerNodes + totalInnerNodes - numInnerRingNodes1);
+		indices.push(totalNonInnerNodes + totalInnerNodes * 2 - 1);
+		indices.push(totalNonInnerNodes + totalInnerNodes * 2);
+		indices.push(totalNonInnerNodes + totalInnerNodes * 2 - numInnerRingNodes1);
 		this.subgeometry.updateVertexData(this.verts);
 		this.subgeometry.updateUVData(this.uvs);
 		this.subgeometry.updateIndexData(indices);
@@ -3442,7 +3440,7 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 		this.verts.push(y);
 		this.verts.push(z);
 		this.uvs.push(0);
-		this.uvs.push(.5);
+		this.uvs.push(.7);
 		if(type == 0) {
 			var mag = Math.sqrt(x * x + y * y);
 			this.normals.push(x / mag);
@@ -3463,8 +3461,10 @@ Marshmallow.prototype = $extend(away3d.entities.Mesh.prototype,{
 });
 Math.__name__ = ["Math"];
 var MarshmallowNode = function(i,p,adjacent,t) {
+	this.heatDisspationTick = .0085;
+	this.heatDissipationCounter = 0;
 	this.burnRatio = .005;
-	this.burnTimer = 300;
+	this.burnTimer = 1800;
 	this.heatDissipation = .999;
 	this.burnThreshold = 90;
 	this.index = i;
@@ -3518,29 +3518,52 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 	}
 	,addNeighbors: function() {
 		this.neighbors = new Array();
+		this.neighborDistances = new Array();
+		this.distantNeighborIndices = new Array();
 		var _g = 0;
 		var _g1 = this.neighborIndices;
 		while(_g < _g1.length) {
 			var adj = _g1[_g];
 			++_g;
-			this.neighbors.push(this.marshmallow.nodes[adj]);
+			var _g2 = 0;
+			var _g3 = this.marshmallow.nodes[adj].neighborIndices;
+			while(_g2 < _g3.length) {
+				var dAdj = _g3[_g2];
+				++_g2;
+				if(dAdj != this.index && HxOverrides.indexOf(this.neighborIndices,dAdj,0) == -1 && HxOverrides.indexOf(this.distantNeighborIndices,dAdj,0) == -1) this.distantNeighborIndices.push(dAdj);
+			}
+		}
+		var _g4 = 0;
+		var _g11 = this.neighborIndices;
+		while(_g4 < _g11.length) {
+			var adj1 = _g11[_g4];
+			++_g4;
+			this.neighbors.push(this.marshmallow.nodes[adj1]);
+			this.neighborDistances.push(MarshmallowNode.m.sqrt(MarshmallowNode.m.pow(this.marshmallow.nodes[adj1].get_scenePosition().x - this.get_scenePosition().x,2) + MarshmallowNode.m.pow(this.marshmallow.nodes[adj1].get_scenePosition().y - this.get_scenePosition().y,2) + MarshmallowNode.m.pow(this.marshmallow.nodes[adj1].get_scenePosition().z - this.get_scenePosition().z,2)));
+		}
+		var _g5 = 0;
+		var _g12 = this.distantNeighborIndices;
+		while(_g5 < _g12.length) {
+			var adj2 = _g12[_g5];
+			++_g5;
+			this.neighbors.push(this.marshmallow.nodes[adj2]);
+			this.neighborDistances.push(MarshmallowNode.m.sqrt(MarshmallowNode.m.pow(this.marshmallow.nodes[adj2].get_scenePosition().x - this.get_scenePosition().x,2) + MarshmallowNode.m.pow(this.marshmallow.nodes[adj2].get_scenePosition().y - this.get_scenePosition().y,2) + MarshmallowNode.m.pow(this.marshmallow.nodes[adj2].get_scenePosition().z - this.get_scenePosition().z,2)));
 		}
 		if(this.type == 1) {
-			this.maxXGrowth = this.get_x() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_x();
-			this.maxYGrowth = this.get_y() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_y();
-			this.maxZGrowth = this.get_z() * (1.13 + MarshmallowNode.m.random() / 10) - this.get_z();
+			this.maxXGrowth = this.get_x() * (1.16 + MarshmallowNode.m.random() / 20) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.16 + MarshmallowNode.m.random() / 20) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.16 + MarshmallowNode.m.random() / 20) - this.get_z();
 		} else {
-			this.maxXGrowth = this.get_x() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_x();
-			this.maxYGrowth = this.get_y() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_y();
-			this.maxZGrowth = this.get_z() * (1.2 + MarshmallowNode.m.random() / 10) - this.get_z();
+			this.maxXGrowth = this.get_x() * (1.2 + MarshmallowNode.m.random() / 20) - this.get_x();
+			this.maxYGrowth = this.get_y() * (1.2 + MarshmallowNode.m.random() / 20) - this.get_y();
+			this.maxZGrowth = this.get_z() * (1.2 + MarshmallowNode.m.random() / 20) - this.get_z();
 		}
 	}
 	,burn: function() {
 		this.emitter = new FireEmitter(Main.fireContainer,this);
 		this.marshmallow.emitters.push(this.emitter);
 		this.burning = true;
-		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 2;
-		haxe.Log.trace("wooteern",{ fileName : "MarshmallowNode.hx", lineNumber : 174, className : "MarshmallowNode", methodName : "burn"});
+		if(this.heat < this.burnThreshold) this.heat = this.burnThreshold * 2; else this.heat = this.burnThreshold * 2;
 	}
 	,dotProduct: function(aX,aY,aZ,bX,bY,bZ) {
 		return bX * aX + bY * aY + bZ * aZ;
@@ -3550,7 +3573,7 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		this.addedHeat = 0;
 		this.heatMultiplier = 0;
 	}
-	,update: function(fireUp) {
+	,update: function(fireUp,dt) {
 		if(this.oldX != this.get_x() || this.oldY != this.get_y() || this.oldZ != this.get_z()) {
 			this.magnitude = MarshmallowNode.m.sqrt(this.get_x() * this.get_x() + this.get_y() * this.get_y() + this.get_z() * this.get_z());
 			this.oldX = this.get_x();
@@ -3558,27 +3581,31 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 			this.oldZ = this.get_z();
 		}
 		if(this.burning) {
-			this.heat = this.heat * this.heatDissipation;
-			if(this.heat < this.burnThreshold) this.burnCounter = this.burnTimer;
-			this.burnCounter += this.heat * this.burnRatio;
-			var fireIsAgainstMarshmallow = 0 > this.dotProduct(this.get_x(),this.get_y(),this.get_z(),fireUp.x,fireUp.y,fireUp.z) / MarshmallowNode.m.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z) - this.magnitude;
+			this.heatDissipationCounter += dt;
+			while(this.heatDissipationCounter > this.heatDisspationTick) {
+				this.heat -= this.heat - this.heat * this.heatDissipation;
+				this.heatDissipationCounter -= this.heatDisspationTick;
+			}
+			if(this.burning) this.burnCounter += this.heat * this.burnRatio * dt;
+			var fireIsAgainstMarshmallow = false;
+			if(this.burning) fireIsAgainstMarshmallow = true;
 			var _g = 0;
 			var _g1 = this.neighbors;
 			while(_g < _g1.length) {
 				var neighbor = _g1[_g];
 				++_g;
-				if(!neighbor.burned) {
-					var fireMagnitude = Math.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z);
-					var neighborDistance = MarshmallowNode.m.sqrt(MarshmallowNode.m.pow(neighbor.get_scenePosition().x - this.get_scenePosition().x,2) + MarshmallowNode.m.pow(neighbor.get_scenePosition().y - this.get_scenePosition().y,2) + MarshmallowNode.m.pow(neighbor.get_scenePosition().z - this.get_scenePosition().z,2));
-					var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / MarshmallowNode.m.sqrt(neighborDistance);
-					if(fireIsAgainstMarshmallow) {
-						if(neighborProjection > .1) neighborProjection = 1.3 + (1 - neighborProjection) * 1.4;
-						if(neighbor.get_z() == this.get_z() && neighborProjection < .6) neighborProjection = 4 * neighborProjection + 1;
-						this.heat += this.heat * MarshmallowNode.heatTransferModifier;
-					}
-					if(neighborProjection > MarshmallowNode.heatTransferThresholdProjection) {
-						var heatTransfer = (neighborProjection - MarshmallowNode.heatTransferThresholdProjection) / (1 - MarshmallowNode.heatTransferThresholdProjection);
-						neighbor.addedHeat += this.heat * heatTransfer * MarshmallowNode.heatTransferModifier;
+				var fireMagnitude = Math.sqrt(fireUp.x * fireUp.x + fireUp.y * fireUp.y + fireUp.z * fireUp.z);
+				var neighborDistance = this.neighborDistances[HxOverrides.indexOf(this.neighbors,neighbor,0)];
+				var neighborProjection = this.dotProduct(neighbor.get_scenePosition().x - this.get_scenePosition().x,neighbor.get_scenePosition().y - this.get_scenePosition().y,neighbor.get_scenePosition().z - this.get_scenePosition().z,fireUp.x,fireUp.y,fireUp.z) / MarshmallowNode.m.sqrt(neighborDistance);
+				if(this.burning && fireIsAgainstMarshmallow) {
+					if(neighborProjection > .1) neighborProjection = 1.3 + (1 - neighborProjection) * 1.4;
+					if(neighbor.get_z() == this.get_z() && neighborProjection < .6) neighborProjection = 4 * neighborProjection + 1;
+					this.heat += this.heat * MarshmallowNode.heatTransferModifier;
+				}
+				if(neighborProjection > MarshmallowNode.heatTransferThresholdProjection) {
+					var heatTransfer = (neighborProjection - MarshmallowNode.heatTransferThresholdProjection) / (1 - MarshmallowNode.heatTransferThresholdProjection);
+					neighbor.addedHeat += this.heat * heatTransfer * MarshmallowNode.heatTransferModifier / neighborDistance * dt;
+					if(this.burning) {
 						neighbor.heatMultiplier += .5;
 						if(fireIsAgainstMarshmallow && this.get_z() != this.marshmallow.cylinderHeight / 2 && this.get_z() != -this.marshmallow.cylinderHeight / 2) neighbor.heatMultiplier += .5;
 					}
@@ -3589,15 +3616,20 @@ MarshmallowNode.prototype = $extend(away3d.containers.ObjectContainer3D.prototyp
 		if(this.burnCounter > this.burnTimer && !this.burned) {
 			this.burned = true;
 			this.burning = false;
+			this.heat = 0;
 			this.emitter.stop = true;
 		}
+		if(this.burnCounter > this.burnTimer) {
+			this.burnCounter += this.heat / 33;
+			this.heat = 0;
+		}
 		var growth;
-		if(MarshmallowNode.tweenLocked) growth = MarshmallowNode.m.min(1,this.burnCounter * MarshmallowNode.heatScale / this.burnTimer); else growth = MarshmallowNode.m.min(1,this.burnCounter / this.burnTimer);
+		if(MarshmallowNode.tweenLocked) growth = MarshmallowNode.m.min(100,this.burnCounter * MarshmallowNode.heatScale / this.burnTimer); else growth = MarshmallowNode.m.min(100,this.burnCounter / this.burnTimer);
 		this.marshmallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth;
 		this.marshmallow.verts[this.index * 3 + 2] = this.get_z() + this.maxZGrowth * growth;
 		this.marshmallow.subgeometry.updateVertexData(this.marshmallow.verts);
-		this.marshmallow.uvs[this.index * 2] = (1 - growth) / 2;
+		this.marshmallow.uvs[this.index * 2] = (1 - Math.min(.99,growth)) / 2;
 		this.marshmallow.subgeometry.updateUVData(this.marshmallow.uvs);
 		this.marshmallow.blackMallow.verts[this.index * 3] = this.get_x() + this.maxXGrowth * growth * 2;
 		this.marshmallow.blackMallow.verts[this.index * 3 + 1] = this.get_y() + this.maxYGrowth * growth * 2;
@@ -32255,7 +32287,7 @@ away3d.library.assets.NamedAssetBase.DEFAULT_NAMESPACE = "default";
 MarshmallowNode.m = Math;
 MarshmallowNode.init = false;
 MarshmallowNode.heatTransferThresholdProjection = -.2;
-MarshmallowNode.heatTransferModifier = .0015;
+MarshmallowNode.heatTransferModifier = .0085;
 MarshmallowNode.heatScale = 1;
 MarshmallowNode.tweenLocked = false;
 aglsl.Context3D.enableErrorChecking = false;
