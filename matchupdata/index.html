@@ -134,6 +134,7 @@ function plotChart(title,applicableMatches,checkFunction){
   }
   if(totalMatches == 0)
   {
+    console.log(title)
     return;
   }
   var dataToPlot = [ ['won',wonMatches/totalMatches],['lost',1 - wonMatches/totalMatches]];
@@ -186,7 +187,6 @@ function plotChart(title,applicableMatches,checkFunction){
 
 
 function myFunction() {
-   var players;
    var playerNumber = document.getElementById("player").value;
    if(!checkNumber(playerNumber))
    {
@@ -227,6 +227,22 @@ function myFunction() {
       for(character in characters)
       {
         plotChart(characters[character],applicableMatches,function(dataEntry) {return dataEntry.character == characters[character]});
+      }
+      for(player in players)
+      {
+        plotChart(players[player].idNumber.toString(),applicableMatches,function(dataEntry) {
+          if(players[player].idNumber == dataEntry.player1)
+          {
+            // return playerNumber == dataEntry.player2;
+            return true;
+          }
+          else if(players[player].idNumber == dataEntry.player2)
+          {
+            // return playerNumber == dataEntry.player1;
+            return true;
+          }
+          return false;
+        });
       }
    }
    return false;
