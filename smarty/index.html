@@ -34,10 +34,16 @@ var HttpClient = function() {
 
 function smartifyWord(word) {
   trimmedWord = word.replace(/[^\w\s]|_/g, "");
-  aClient = new HttpClient();
-  aClient.get('http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + trimmedWord + '/json', function(answer) {
+  url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + trimmedWord + '/json?callback=smartifyCallback';
+  // aClient = new HttpClient();
+  // aClient.get(url);
+  var s = document.createElement("script"); 
+  s.src = url;
+  document.getElementsByTagName("head")[0].appendChild(s); 
+}
+
+function smartifyCallback(answer) {
     console.log(answer);
-  });
 }
 
 function myFunction() {
