@@ -1,0 +1,55 @@
+<html>
+   <head >
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+      <title >smartr</title>
+   </head>
+<body>
+<h1>smartysaurus</h1>
+
+<br />
+<br />
+text here
+<br />
+<input type="text" id="text">
+
+<br />
+<br />
+
+<button onclick="myFunction()">smartify</button>
+
+<script>
+
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                aCallback(anHttpRequest.responseText);
+        }
+
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+}
+
+function smartifyWord(word) {
+  trimmedWord = word.replace(/[^\w\s]|_/g, "");
+  aClient = new HttpClient();
+  aClient.get('http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + trimmedWord + '/json', function(answer) {
+    console.log(answer);
+  });
+}
+
+function myFunction() {
+  text = document.getElementById("text").value;
+  words = text.split(" ");
+
+  for(wordIndex in words)
+  {
+    smartifyWord(words[wordIndex]);
+  }
+}
+</script>
+ 
+</body>
+</html>
