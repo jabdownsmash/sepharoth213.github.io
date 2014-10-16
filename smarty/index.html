@@ -10,49 +10,79 @@
 <br />
 text here
 <br />
+<form target="uploader_iframe" onsubmit="myFunction();">
 <input type="text" id="text">
-
 <br />
 <br />
 
 <button onclick="myFunction()">smartify</button>
+</form>
+<iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
+
+<p id='output'></p>
 
 <script>
 
-var HttpClient = function() {
-    this.get = function(aUrl, aCallback) {
-        anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-                aCallback(anHttpRequest.responseText);
+results = [];
+callbacks = [];
+waitingResponse = false;
+
+function smartifyWord(word,wordIndex) {
+
+  callbacks[wordIndex] = function (answer)
+  {
+    waitingResponse = false;
+    var bestResult = word;
+    for(answerIndex in answer)
+    {
+      if(answer[answerIndex].hasOwnProperty('syn'))
+      {
+        for(synonymIndex in answer[answerIndex]['syn'])
+        {
+          synonym = answer[answerIndex]['syn'][synonymIndex];
+          if(synonym.length > bestResult.length)
+          {
+            bestResult = synonym;
+          }
         }
-
-        anHttpRequest.open( "GET", aUrl, true );            
-        anHttpRequest.send( null );
+      }
     }
-}
+    results[wordIndex] = bestResult;
+    updateResult();
+  };
 
-function smartifyWord(word) {
-  trimmedWord = word.replace(/[^\w\s]|_/g, "");
-  url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + trimmedWord + '/json?callback=smartifyCallback';
-  // aClient = new HttpClient();
-  // aClient.get(url);
+  var url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + word + '/json?callback=callbacks[' + wordIndex + ']';
+
   var s = document.createElement("script"); 
+  s.onError = function() {results.push(word);};
+
   s.src = url;
   document.getElementsByTagName("head")[0].appendChild(s); 
 }
 
 function smartifyCallback(answer) {
-    console.log(answer);
+}
+
+function updateResult()
+{
+  var endSentence = '';
+  for(resultIndex in results)
+  {
+    endSentence += results[resultIndex] + ' ';
+  }
+  document.getElementById("output").innerHTML = endSentence;
 }
 
 function myFunction() {
   text = document.getElementById("text").value;
-  words = text.split(" ");
-
+  words = results = text.split(" ");
   for(wordIndex in words)
   {
-    smartifyWord(words[wordIndex]);
+    trimmedWord = words[wordIndex].replace(/[^\w\s]|_/g, "");
+    if(trimmedWord.length > 4)
+    {
+      smartifyWord(trimmedWord,wordIndex);
+    }
   }
 }
 </script>
