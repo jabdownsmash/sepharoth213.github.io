@@ -1,7 +1,7 @@
 <html>
    <head >
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
-      <title >smartr</title>
+      <title >smartysaurus</title>
    </head>
 <body>
 <h1>smartysaurus</h1>
@@ -10,12 +10,12 @@
 <br />
 text here
 <br />
-<form target="uploader_iframe" onsubmit="myFunction();">
+<form target="uploader_iframe" onsubmit="smartifyInput();">
 <input type="text" id="text">
 <br />
 <br />
 
-<button onclick="myFunction()">smartify</button>
+<button onclick="smartifyInput()">smartify</button>
 </form>
 <iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
 
@@ -73,13 +73,13 @@ function updateResult()
   document.getElementById("output").innerHTML = endSentence;
 }
 
-function myFunction() {
+function smartifyInput() {
   text = document.getElementById("text").value;
   words = results = text.split(" ");
   for(wordIndex in words)
   {
     trimmedWord = words[wordIndex].replace(/[^\w\s]|_/g, "");
-    if(trimmedWord.length > 4)
+    if(trimmedWord.length > 3)
     {
       smartifyWord(trimmedWord,wordIndex);
     }
