@@ -21,7 +21,7 @@ text here
 <iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
 
 <p id='output'></p>
-
+<button id="reSmartify" onclick="reSmartify()" style="display: none;">resmartify</button>
 <script>
 
 var myFirebaseRef = new Firebase("https://smartysaurus.firebaseio.com/");
@@ -89,14 +89,31 @@ function smartifyWord(word,wordIndex) {
   } 
 }
 
+function reSmartify()
+{
+  document.getElementById("text").value = document.getElementById("output").innerHTML;
+  smartifyInput();
+}
+
 function updateResult()
 {
   var endSentence = '';
+  var previousWord = '';
   for(resultIndex in results)
   {
     endSentence += results[resultIndex] + ' ';
   }
-  document.getElementById("output").innerHTML = endSentence;
+  var cleanedSentence = '';
+  var endSentenceSplit = endSentence.split(' ');
+  for(endSentenceIndex in endSentenceSplit)
+  {
+    if(previousWord != endSentenceSplit[endSentenceIndex])
+    {
+      cleanedSentence += endSentenceSplit[endSentenceIndex] + ' ';
+    }
+    previousWord = endSentenceSplit[endSentenceIndex];
+  }
+  document.getElementById("output").innerHTML = cleanedSentence;
 }
 
 function smartifyInput() {
@@ -111,6 +128,10 @@ function smartifyInput() {
     }
   }
   updateResult();
+  if(text != '')
+  {
+    document.getElementById('reSmartify').style.display = 'block';
+  }
 }
 </script>
  
