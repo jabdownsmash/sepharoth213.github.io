@@ -1,5 +1,6 @@
 <html>
    <head >
+   <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
       <title >smartysaurus</title>
    </head>
@@ -15,7 +16,7 @@ text here
 <br />
 <br />
 
-<button onclick="smartifyInput()">smartify</button>
+<button>smartify</button>
 </form>
 <iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
 
@@ -23,44 +24,61 @@ text here
 
 <script>
 
+var myFirebaseRef = new Firebase("https://smartysaurus.firebaseio.com/");
+myFirebaseRef.child("maxLength").on("value", function(thesaurusData) {
+ thesaurus = thesaurusData.val();
+});
+
 results = [];
 callbacks = [];
 waitingResponse = false;
 
 function smartifyWord(word,wordIndex) {
-
-  callbacks[wordIndex] = function (answer)
+  var foundCachedWord = false;
+  for(thesaurusIndex in thesaurus)
   {
-    waitingResponse = false;
-    var bestResult = word;
-    for(answerIndex in answer)
+    if(word == thesaurus[thesaurusIndex].word)
     {
-      if(answer[answerIndex].hasOwnProperty('syn'))
+      results[wordIndex] = thesaurus[thesaurusIndex].smartifiedWord;
+      foundCachedWord = true;
+      updateResult();
+    }
+  }
+  if(!foundCachedWord)
+  {
+    callbacks[wordIndex] = function (answer)
+    {
+      waitingResponse = false;
+      var bestResult = word;
+      for(answerIndex in answer)
       {
-        for(synonymIndex in answer[answerIndex]['syn'])
+        if(answer[answerIndex].hasOwnProperty('syn'))
         {
-          synonym = answer[answerIndex]['syn'][synonymIndex];
-          if(synonym.length > bestResult.length)
+          for(synonymIndex in answer[answerIndex]['syn'])
           {
-            bestResult = synonym;
+            synonym = answer[answerIndex]['syn'][synonymIndex];
+            if(synonym.length > bestResult.length)
+            {
+              bestResult = synonym;
+            }
           }
         }
       }
-    }
-    results[wordIndex] = bestResult;
-    updateResult();
-  };
+      results[wordIndex] = bestResult;
+      var postsRef = myFirebaseRef.child("maxLength");
+      postsRef.push({
+        word: word,
+        smartifiedWord: bestResult
+      });
+      updateResult();
+    };
 
-  var url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + word + '/json?callback=callbacks[' + wordIndex + ']';
+    var url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + word + '/json?callback=callbacks[' + wordIndex + ']';
 
-  var s = document.createElement("script"); 
-  s.onError = function() {results.push(word);};
-
-  s.src = url;
-  document.getElementsByTagName("head")[0].appendChild(s); 
-}
-
-function smartifyCallback(answer) {
+    var s = document.createElement("script"); 
+    s.src = url;
+    document.getElementsByTagName("head")[0].appendChild(s);
+  } 
 }
 
 function updateResult()
@@ -76,12 +94,12 @@ function updateResult()
 function smartifyInput() {
   text = document.getElementById("text").value;
   words = results = text.split(" ");
-  for(wordIndex in words)
+  for(var i = 0; i < words.length; i++)
   {
-    trimmedWord = words[wordIndex].replace(/[^\w\s]|_/g, "");
+    trimmedWord = words[i].replace(/[^\w\s]|_/g, "");
     if(trimmedWord.length > 3)
     {
-      smartifyWord(trimmedWord,wordIndex);
+      smartifyWord(trimmedWord,i);
     }
   }
   updateResult();
