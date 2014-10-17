@@ -65,13 +65,21 @@ function smartifyWord(word,wordIndex) {
         }
       }
       results[wordIndex] = bestResult;
-      var postsRef = myFirebaseRef.child("maxLength");
-      postsRef.push({
-        word: word,
-        smartifiedWord: bestResult
-      });
+      for(thesaurusIndex in thesaurus)
+      {
+        if(word == thesaurus[thesaurusIndex].word)
+        {
+          var postsRef = myFirebaseRef.child("maxLength");
+          postsRef.child(thesaurusIndex).update({word: word, smartifiedWord: bestResult});
+        }
+      }
       updateResult();
     };
+    var postsRef = myFirebaseRef.child("maxLength");
+    postsRef.push({
+      word: word,
+      smartifiedWord: word
+    });
 
     var url = 'http://words.bighugelabs.com/api/2/305bee1130ca6310d2d3199eb1bbde79/' + word + '/json?callback=callbacks[' + wordIndex + ']';
 
